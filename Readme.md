@@ -4,9 +4,9 @@
 
 > Currently only client operations are supported. Server operations will be added in the future if there is significant enough interest.
 
-### Getting Started
+## Getting Started
 
-#### Install NuGet packages
+### Install NuGet packages
 
 Include `ble.net` in your shared project
 ```powershell
@@ -25,6 +25,6 @@ Install-Package ble.net-ios
 Install-Package ble.net-uwp
 ```
 
-#### Obtain a reference to `BluetoothLowEnergyAdapter`
+### Obtain a reference to `BluetoothLowEnergyAdapter`
 
 Each platform project has a class `BluetoothLowEnergyAdapter` with a static method `BluetoothLowEnergyAdapter.ObtainDefault(/*possible arguments*/)`. Obtain this reference and then provide it to your application code using whatever dependency injector or manual referene passing you are using.
