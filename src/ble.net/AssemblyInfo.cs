@@ -12,8 +12,8 @@ namespace nexus.protocols.ble
 {
    public static class AssemblyInfo
    {
-      public const String VERSION = "0.10.5";
-      public const String VERSION_SHORT = "0.10.5";
+      public const String VERSION = "0.10.6";
+      public const String VERSION_SHORT = VERSION;
       public const String ID = "ble.net";
       public const String URL = "https://github.com/nexussays/ble.net";
       public const Boolean IS_DEBUG = 

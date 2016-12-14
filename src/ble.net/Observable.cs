@@ -6,10 +6,7 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using nexus.core;
-using nexus.core.logging;
-using nexus.core.resharper;
 
 namespace nexus.protocols.ble
 {
@@ -72,29 +69,6 @@ namespace nexus.protocols.ble
          {
             throw new InvalidOperationException( "Cannot perform operations on disposed {0}".F( GetType().Name ) );
          }
-      }
-   }
-
-   public static class LogDebugExtensions
-   {
-      [Conditional( "DEBUG" )]
-      public static void Debug( this ILog log, params Object[] objects )
-      {
-         log.Trace( objects );
-      }
-
-      [Conditional( "DEBUG" )]
-      [StringFormatMethod( "message" )]
-      public static void Debug( this ILog log, String message, params Object[] messageArgs )
-      {
-         log.Trace( message, messageArgs );
-      }
-
-      [Conditional( "DEBUG" )]
-      [StringFormatMethod( "message" )]
-      public static void Debug( this ILog log, Object[] objects, String message, params Object[] messageArgs )
-      {
-         log.Trace( message, messageArgs );
       }
    }
 }
