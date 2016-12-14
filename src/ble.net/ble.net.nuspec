@@ -1,0 +1,19 @@
+﻿<?xml version="1.0"?>
+
+<package>
+   <metadata>
+      <id>$id$</id>
+      <version>$version$</version>
+      <authors>$author$</authors>
+      <owners></owners>
+      <description>$description$</description>
+      <releaseNotes></releaseNotes>
+      <summary></summary>
+      <language>en-US</language>
+      <projectUrl>https://github.com/nexussays/ble.net</projectUrl>
+      <requireLicenseAcceptance>false</requireLicenseAcceptance>
+      <licenseUrl>https://www.mozilla.org/en-US/MPL/2.0/</licenseUrl>
+      <copyright>Copyright Malachi Griffie</copyright>
+      <tags></tags>
+   </metadata>
+</package>
