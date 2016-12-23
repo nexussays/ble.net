@@ -2,7 +2,7 @@
 
 `ble.net` is a Bluetooth Low Energy (aka BLE, aka Bluetooth LE, aka Bluetooth Smart) PCL to enable simple development of BLE clients on Android, iOS, and Windows 10 (advertising only at the moment, the underlying UWP connection API is pretty bad).
 
-> Currently only client operations are supported. Server operations will be added in the future if there is significant enough interest.
+Currently only client operations are supported. Server operations will be added in the future if there is significant enough interest.
 
 ## Getting Started
 
@@ -17,7 +17,6 @@ In each platform project, install the relevant package:
 ```powershell
 Install-Package ble.net-android
 ```
-> Note that there are two packages for Android, `ble.net-android` and `ble.net-android21`; the API 21+ package is not materially different for client operations but will be needed if/when server operations are implemented. You should probably just use `ble.net-android` unless you have a specific reason not to.
 ```powershell
 Install-Package ble.net-ios
 ```
@@ -25,6 +24,8 @@ Install-Package ble.net-ios
 Install-Package ble.net-uwp
 ```
 
+> Note that there are two packages for Android, `ble.net-android` and `ble.net-android21`; the API 21+ package is not materially different for client operations but will be needed if/when server operations are implemented. You should probably just use `ble.net-android` unless you have a specific reason not to do so.
+
 ### Obtain a reference to `BluetoothLowEnergyAdapter`
 
-Each platform project has a class `BluetoothLowEnergyAdapter` with a static method `BluetoothLowEnergyAdapter.ObtainDefault(/*possible arguments*/)`. Obtain this reference and then provide it to your application code using whatever dependency injector or manual referene passing you are using.
+Each platform project has a class `BluetoothLowEnergyAdapter` with a static method `BluetoothLowEnergyAdapter.ObtainDefaultAdapter(/*possible arguments depending on platform*/)`. Obtain this reference and then provide it to your application code using whatever dependency injector or manual reference passing you are using in your project.

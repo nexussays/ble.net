@@ -15,7 +15,7 @@ namespace nexus.protocols.ble
    /// interface to instantiate it. Use a <see cref="IBluetoothLowEnergyAdapter" /> to scan for BLE advertisements and connect
    /// to found devices.
    /// </summary>
-   public interface IBluetoothLowEnergyAdapter
+   public interface IBluetoothLowEnergyAdapter : IDisposable
    {
       /// <summary>
       /// True if the adapter is currently enabled and operational

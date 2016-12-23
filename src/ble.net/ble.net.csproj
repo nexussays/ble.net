@@ -53,8 +53,8 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Reference Include="nexus.core, Version=0.25.5.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\lib\packages\nexus.core.0.25.5\lib\portable-net45+win+MonoAndroid10+xamarinios10+MonoTouch10\nexus.core.dll</HintPath>
+    <Reference Include="nexus.core, Version=0.25.7.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\lib\packages\nexus.core.0.25.7\lib\portable-net45+win+MonoAndroid10+xamarinios10+MonoTouch10\nexus.core.dll</HintPath>
       <Private>True</Private>
     </Reference>
   </ItemGroup>
