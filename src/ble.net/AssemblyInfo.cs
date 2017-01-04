@@ -12,7 +12,7 @@ namespace nexus.protocols.ble
 {
    public static class AssemblyInfo
    {
-      public const String VERSION = "0.10.7";
+      public const String VERSION = "0.10.12";
       public const String VERSION_SHORT = VERSION;
       public const String ID = "ble.net";
       public const String URL = "https://github.com/nexussays/ble.net";

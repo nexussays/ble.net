@@ -44,6 +44,11 @@ namespace nexus.protocols.ble
       Task<Boolean> EnableAdapter();
 
       /// <summary>
+      /// Register to receive a notification when the adapter's state has changed
+      /// </summary>
+      IDisposable OnStateChanged( IObserver<Boolean> observer );
+
+      /// <summary>
       /// Scan for nearby BLE device advertisements. The devices discovered are not guaranteed to be unique, i.e. -- each device
       /// will likely be provided to the observer multiple times as the BLE scanner picks up advertisements.
       /// </summary>

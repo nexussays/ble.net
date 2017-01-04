@@ -29,3 +29,18 @@ Install-Package ble.net-uwp
 ### Obtain a reference to `BluetoothLowEnergyAdapter`
 
 Each platform project has a class `BluetoothLowEnergyAdapter` with a static method `BluetoothLowEnergyAdapter.ObtainDefaultAdapter(/*possible arguments depending on platform*/)`. Obtain this reference and then provide it to your application code using whatever dependency injector or manual reference passing you are using in your project.
+
+#### android
+
+If you want to be able to enable/disable the adapter, in your `Activity.OnCreate()` call:
+```csharp
+BluetoothLowEnergyAdapter.InitActivity( this );
+```
+
+If you want `IBluetoothLowEnergyAdapter.OnStateChanged` to be hooked up, in your calling `Activity`:
+```csharp
+protected sealed override void OnActivityResult( Int32 requestCode, Result resultCode, Intent data )
+{
+   BluetoothLowEnergyAdapter.OnActivityResult( requestCode, resultCode, data );
+}
+```

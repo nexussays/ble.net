@@ -25,7 +25,10 @@ namespace nexus.protocols.ble
 
       public void Dispose()
       {
-         ThrowIfDisposed();
+         if(IsDisposed)
+         {
+            return;
+         }
 
          IsDisposed = true;
          foreach(var observer in m_observers)
@@ -67,7 +70,7 @@ namespace nexus.protocols.ble
       {
          if(IsDisposed)
          {
-            throw new InvalidOperationException( "Cannot perform operations on disposed {0}".F( GetType().Name ) );
+            throw new ObjectDisposedException( "Cannot perform operations on disposed {0}".F( GetType().Name ) );
          }
       }
    }
