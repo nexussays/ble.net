@@ -17,7 +17,7 @@ namespace nexus.protocols.ble
          "Cross-platform Bluetooth Low Energy (BLE) library for Android, iOS, and (partially) UWP";
       internal const String URL = "https://github.com/nexussays/ble.net";
 
-      internal const String VERSION = "0.10.14";
+      internal const String VERSION = "0.10.15";
       internal const String VERSION_SHORT = VERSION;
 
       internal const Boolean IS_DEBUG = 

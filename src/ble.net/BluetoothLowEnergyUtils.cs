@@ -39,7 +39,6 @@ namespace nexus.protocols.ble
       /// The default time to scan if no timeout is provided
       /// </summary>
       public static readonly TimeSpan DefaultScanTimeout = TimeSpan.FromSeconds( 15 );
-
       /// <summary>
       ///    <c>0000xxxx-0000-1000-8000-00805f9b34fb</c>
       /// </summary>
@@ -224,6 +223,28 @@ namespace nexus.protocols.ble
          bytes[2] = 0;
          bytes[3] = 0;
          return s_adoptedKeyBase.Equals( id );
+      }
+
+      /// <summary>
+      /// Listen for NOTIFY events on this characteristic.
+      /// </summary>
+      public static IDisposable NotifyCharacteristicValue( this IBleGattServer server, Guid service, Guid characteristic,
+                                                           Action<Tuple<Guid, Byte[]>> onNotify,
+                                                           Action<Exception> onError = null )
+      {
+         return server.NotifyCharacteristicValue( service, characteristic, Observer.Create( onNotify, null, onError ) );
+      }
+
+      /// <summary>
+      /// Listen for NOTIFY events on this characteristic.
+      /// </summary>
+      public static IDisposable NotifyCharacteristicValue( this IBleGattServer server, Guid service, Guid characteristic,
+                                                           Action<Byte[]> onNotify, Action<Exception> onError = null )
+      {
+         return server.NotifyCharacteristicValue(
+            service,
+            characteristic,
+            Observer.Create( ( Tuple<Guid, Byte[]> tuple ) => onNotify( tuple.Item2 ), null, onError ) );
       }
 
       /// <summary>
