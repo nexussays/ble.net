@@ -33,11 +33,11 @@ Each platform project has a class `BluetoothLowEnergyAdapter` with a static meth
 #### Android-specific setup
 
 If you want the adapter enable/disable functions to work, in your main `Activity`:
-```csharp
+```cs
 protected override void OnCreate( Bundle bundle )
 {
    // ...
-   
+
    BluetoothLowEnergyAdapter.InitActivity( this );
 
    // ...
@@ -45,7 +45,7 @@ protected override void OnCreate( Bundle bundle )
 ```
 
 If you want `IBluetoothLowEnergyAdapter.OnStateChanged` to work, in your calling `Activity`:
-```csharp
+```cs
 protected sealed override void OnActivityResult( Int32 requestCode, Result resultCode, Intent data )
 {
    BluetoothLowEnergyAdapter.OnActivityResult( requestCode, resultCode, data );
@@ -57,13 +57,13 @@ protected sealed override void OnActivityResult( Int32 requestCode, Result resul
 > See sample Xamarin Forms app included in the repo for a complete example.
 
 All the exmaples presume you have some `adapter` passed in as per the setup notes above:
-```csharp
+```cs
 IBluetoothLowEnergyAdapter adapter = /* platform provided adapter value */;
 ```
 
 ### Scan for devices/advertisements/beacons
 
-```csharp
+```cs
 await adapter.ScanForDevices(
       ( IBlePeripheral peripheral ) =>
       {
@@ -81,22 +81,70 @@ await adapter.ScanForDevices(
 
 ### Connect to a BLE device
 
-```csharp
+```cs
 var device = await adapter.ConnectToDevice( peripheral, TimeSpan.FromSeconds( 5 ) );
+```
 
-// read a specific value
+### Enumerate all services on the device
+
+```cs
+foreach(var guid in await device.ListAllServices())
+{
+   Debug.WriteLine( $"service: {guid}" );
+}
+```
+
+### Enumerate all characteristics of a service
+
+```cs
+Debug.WriteLine( $"service: {serviceGuid}" );
+foreach(var guid in await device.ListServiceCharacteristics( serviceGuid ))
+{
+   Debug.WriteLine( $"characteristic: {guid}" );
+}
+```
+
+### Read a characteristic
+
+```cs
 try
 {
-   var value = await m_device.ReadCharacteristicValue( KNOWN_SERVICE_GUID, KNOWN_CHARACTERISTIC_GUID );
+   var value = await device.ReadCharacteristicValue( someServiceGuid, someCharacteristicGuid );
 }
 catch(GattException ex)
 {
    Debug.WriteLine( ex.ToString() );
 }
+```
 
-// enumerate all services on the device
-foreach(var guid in await m_device.ListAllServices())
+### Listen for notifications on a characteristic
+
+```cs
+try
 {
-   Debug.WriteLine( guid );
+   var unsubscribe = device.NotifyCharacteristicValue(
+      someServiceGuid,
+      someCharacteristicGuid,
+      bytes => /* do something with notification bytes */ );
+}
+catch(GattException ex)
+{
+   Debug.WriteLine( ex.ToString() );
+}
+```
+
+### Write to a characteristic
+
+```cs
+try
+{
+   var value = await device.WriteCharacteristicValue(
+      someServiceGuid,
+      someCharacteristicGuid,
+      new byte[]{ 1, 2, 3 } );
+}
+catch(GattException ex)
+{
+   Debug.WriteLine( ex.ToString() );
 }
 ```
