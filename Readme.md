@@ -122,7 +122,8 @@ catch(GattException ex)
 ```cs
 try
 {
-   var unsubscribe = device.NotifyCharacteristicValue(
+   // will stop listening when device is disconnected
+   device.NotifyCharacteristicValue(
       someServiceGuid,
       someCharacteristicGuid,
       bytes => /* do something with notification bytes */ );
@@ -131,6 +132,27 @@ catch(GattException ex)
 {
    Debug.WriteLine( ex.ToString() );
 }
+```
+
+Or, if you want to stop listening for notifications at a time you specify, instead of waiting for the device to disconnect:
+```cs
+IDisposable unsubscribe;
+
+try
+{
+   unsubscribe = device.NotifyCharacteristicValue(
+      someServiceGuid,
+      someCharacteristicGuid,
+      bytes => /* do something with notification bytes */ );
+}
+catch(GattException ex)
+{
+   Debug.WriteLine( ex.ToString() );
+}
+
+// ... later ...
+// dispose when you're done listening for notifications
+unsubscribe.Dispose();
 ```
 
 ### Write to a characteristic
