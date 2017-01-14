@@ -1,0 +1,73 @@
+﻿<?xml version="1.0"
+      encoding="utf-8"?>
+
+<util:BasePage xmlns="http://xamarin.com/schemas/2014/forms"
+               xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+               xmlns:util="clr-namespace:ble.net.sampleapp.util;assembly=ble.net.sampleapp"
+               Title="{Binding PageTitle}"
+               x:Class="ble.net.sampleapp.view.BleGattServicePage">
+
+   <StackLayout Style="{StaticResource LayoutStack}"
+                Orientation="Vertical">
+      <ListView ItemsSource="{Binding Characteristic}"
+                ItemSelected="OnItemSelected"
+                SeparatorVisibility="None"
+                HasUnevenRows="True"
+                SeparatorColor="#aaaaaa"
+                VerticalOptions="FillAndExpand"
+                HorizontalOptions="FillAndExpand">
+         <x:Arguments>
+            <ListViewCachingStrategy>RecycleElement</ListViewCachingStrategy>
+         </x:Arguments>
+         <ListView.RowHeight>
+            <OnPlatform x:TypeArguments="x:Int32"
+                        iOS="200" />
+         </ListView.RowHeight>
+         <ListView.ItemTemplate>
+            <DataTemplate>
+               <ViewCell>
+                  <Frame Padding="{StaticResource GridPadding}"
+                         Margin="{StaticResource GridPadding}">
+                     <StackLayout Orientation="Vertical"
+                                  HorizontalOptions="StartAndExpand"
+                                  VerticalOptions="CenterAndExpand">
+                        <Label Text="{Binding Name}"
+                               HorizontalOptions="StartAndExpand"
+                               VerticalOptions="Start" />
+                        <Label Text="{Binding ValueAsHex}"
+                               HorizontalOptions="StartAndExpand" />
+                        <Label Text="{Binding ValueAsString}"
+                               HorizontalOptions="StartAndExpand" />
+                        <StackLayout Orientation="Horizontal"
+                                     HorizontalOptions="FillAndExpand"
+                                     VerticalOptions="CenterAndExpand">
+                           <Button Command="{Binding RefreshValueCommand}"
+                                   IsEnabled="{Binding IsBusy, Converter={StaticResource InvertBoolean}}"
+                                   IsVisible="{Binding CanRead}"
+                                   Text="Read" />
+                           <Button Command="{Binding WriteBytesCommand}"
+                                   IsEnabled="{Binding IsBusy, Converter={StaticResource InvertBoolean}}"
+                                   IsVisible="{Binding CanWrite}"
+                                   Text="Write" />
+                           <Entry HorizontalOptions="FillAndExpand"
+                                  WidthRequest="60"
+                                  IsEnabled="{Binding IsBusy, Converter={StaticResource InvertBoolean}}"
+                                  IsVisible="{Binding CanWrite}"
+                                  Text="{Binding WriteValue}" />
+                           <Label IsVisible="{Binding CanNotify}"
+                                  VerticalTextAlignment="Center"
+                                  VerticalOptions="CenterAndExpand"
+                                  Text="Notify:" />
+                           <Switch IsToggled="{Binding Path=NotifyEnabled, Mode=TwoWay}"
+                                   VerticalOptions="Center"
+                                   IsVisible="{Binding CanNotify}" />
+                        </StackLayout>
+                     </StackLayout>
+                  </Frame>
+               </ViewCell>
+            </DataTemplate>
+         </ListView.ItemTemplate>
+      </ListView>
+   </StackLayout>
+
+</util:BasePage>

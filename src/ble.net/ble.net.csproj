@@ -128,7 +128,7 @@
     <Compile Include="advertisement\AdvertisingDataItem.cs" />
     <Compile Include="advertisement\AdvertisingDataType.cs" />
     <Compile Include="advertisement\AdvertisingDataFlags.cs" />
-    <Compile Include="AssemblyInfo.cs" />
+    <Compile Include="Properties\BaseAssemblyInfo.cs" />
     <Compile Include="BluetoothLowEnergyUtils.cs" />
     <Compile Include="CharacteristicProperty.cs" />
     <Compile Include="ConnectionState.cs" />
@@ -147,16 +147,13 @@
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
   <PropertyGroup>
-      <CodeContractsInstallDir Condition=" '$(CodeContractsInstallDir)' == '' ">$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\..\lib\packages\DotNet.Contracts.1.10.20606.1\'))</CodeContractsInstallDir>
+    <CodeContractsInstallDir Condition=" '$(CodeContractsInstallDir)' == '' ">$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\..\lib\packages\DotNet.Contracts.1.10.20606.1\'))</CodeContractsInstallDir>
   </PropertyGroup>
-   <Import Project="..\..\build\Microsoft.CodeContracts.targets"
-           Condition="'$(CodeContractsImported)' != 'true' AND '$(DontImportCodeContracts)' != 'true'"  />
-   <Target Name="EnsureCCNuGetPackageBuildImports"
-           BeforeTargets="PrepareForBuild">
-      <PropertyGroup>
-         <ErrorText>Ensure you have installed the NuGet package DotNet.Contracts@1.10.20606.1</ErrorText>
-      </PropertyGroup>
-      <Error Condition="!Exists('..\..\lib\packages\DotNet.Contracts.1.10.20606.1\bin\cccheck.exe')"
-             Text="$([System.String]::Format('$(ErrorText)', '..\..\lib\packages\DotNet.Contracts.1.10.20606.1\bin\cccheck.exe'))" />
-   </Target>
+  <Import Project="..\..\build\Microsoft.CodeContracts.targets" Condition="'$(CodeContractsImported)' != 'true' AND '$(DontImportCodeContracts)' != 'true'" />
+  <Target Name="EnsureCCNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>Ensure you have installed the NuGet package DotNet.Contracts@1.10.20606.1</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('..\..\lib\packages\DotNet.Contracts.1.10.20606.1\bin\cccheck.exe')" Text="$([System.String]::Format('$(ErrorText)', '..\..\lib\packages\DotNet.Contracts.1.10.20606.1\bin\cccheck.exe'))" />
+  </Target>
 </Project>

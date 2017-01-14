@@ -24,13 +24,15 @@ namespace nexus.protocols.ble
       Boolean IsEnabled { get; }
 
       /// <summary>
-      /// Connect to a discovered <see cref="IBlePeripheral" />
+      /// Attempt to connect to the provided <paramref name="device" />, and continue the attempt until <paramref name="ct" /> is
+      /// cancelled.
       /// </summary>
       Task<IBleGattServer> ConnectToDevice( IBlePeripheral device, CancellationToken ct );
 
       /// <summary>
-      /// Attempt to find and connect to the given device by ID, see <see cref="IBlePeripheral.DeviceId" /> for more information
-      /// and relation to the device's MAC address
+      /// Attempt to find and connect to the device with given ID, and continue the attempt until <paramref name="ct" /> is
+      /// cancelled. (see <see cref="IBlePeripheral.DeviceId" /> for more information on how <paramref name="id" /> relates to
+      /// the device's MAC address)
       /// </summary>
       Task<IBleGattServer> ConnectToDevice( Guid id, CancellationToken ct );
 

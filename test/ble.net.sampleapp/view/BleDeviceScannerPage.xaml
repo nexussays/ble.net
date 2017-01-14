@@ -1,0 +1,76 @@
+﻿<?xml version="1.0"
+      encoding="utf-8"?>
+
+<util:BasePage xmlns="http://xamarin.com/schemas/2014/forms"
+               xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+               xmlns:util="clr-namespace:ble.net.sampleapp.util;assembly=ble.net.sampleapp"
+               Title="{Binding PageTitle}"
+               x:Class="ble.net.sampleapp.view.BleDeviceScannerPage">
+
+   <StackLayout Style="{StaticResource LayoutStack}"
+                Orientation="Vertical">
+      <Label Text="Discovered Devices"
+             FontSize="24"
+             HorizontalOptions="StartAndExpand" />
+      <StackLayout Orientation="Horizontal"
+                   HorizontalOptions="CenterAndExpand">
+         <ActivityIndicator IsRunning="{Binding IsScanning}"
+                            IsVisible="{Binding IsScanning}">
+            <ActivityIndicator.WidthRequest>
+               <OnPlatform x:TypeArguments="x:Double"
+                           Android="40"
+                           iOS="40"
+                           WinPhone="100" />
+            </ActivityIndicator.WidthRequest>
+         </ActivityIndicator>
+         <Button Text="Scan For Devices"
+                 IsVisible="{Binding IsScanning, Converter={StaticResource InvertBoolean}}"
+                 Command="{Binding ScanForDevicesCommand}" />
+         <Switch IsToggled="{Binding IsAdapterEnabled, Mode=OneWay}"
+                 VerticalOptions="Center"
+                 Toggled="Switch_OnToggled" />
+      </StackLayout>
+      <ListView ItemsSource="{Binding FoundDevices}"
+                ItemSelected="OnBleDeviceSelected"
+                HasUnevenRows="True"
+                SeparatorColor="#aaaaaa"
+                VerticalOptions="FillAndExpand"
+                HorizontalOptions="FillAndExpand">
+         <x:Arguments>
+            <ListViewCachingStrategy>RecycleElement</ListViewCachingStrategy>
+         </x:Arguments>
+         <ListView.SeparatorVisibility>
+            <OnPlatform x:TypeArguments="SeparatorVisibility"
+                        Android="None"
+                        iOS="Default"
+                        WinPhone="None" />
+         </ListView.SeparatorVisibility>
+         <ListView.ItemTemplate>
+            <DataTemplate>
+               <ViewCell>
+                  <Frame Padding="{StaticResource GridPadding}">
+                     <StackLayout Orientation="Horizontal"
+                                  VerticalOptions="FillAndExpand"
+                                  HorizontalOptions="FillAndExpand">
+                        <StackLayout Orientation="Vertical"
+                                     HorizontalOptions="StartAndExpand"
+                                     VerticalOptions="StartAndExpand">
+                           <Label Text="{Binding Name}"
+                                  HorizontalOptions="StartAndExpand"
+                                  VerticalOptions="Start" />
+                           <Label Text="{Binding Id}"
+                                  HorizontalOptions="StartAndExpand"
+                                  LineBreakMode="TailTruncation" />
+                        </StackLayout>
+                        <Label Text="{Binding Rssi}"
+                               HorizontalOptions="End"
+                               MinimumWidthRequest="30" />
+                     </StackLayout>
+                  </Frame>
+               </ViewCell>
+            </DataTemplate>
+         </ListView.ItemTemplate>
+      </ListView>
+   </StackLayout>
+
+</util:BasePage>

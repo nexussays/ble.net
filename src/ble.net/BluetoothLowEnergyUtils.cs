@@ -250,7 +250,7 @@ namespace nexus.protocols.ble
       }
 
       /// <summary>
-      /// Scan for nearby BLE device advertisements.
+      /// Scan for nearby BLE device advertisements. Stop scanning after <paramref name="timeout" />
       /// </summary>
       /// <param name="adapter">The adapter to use for scanning</param>
       /// <param name="advertisementDiscovered">Callback to notify for each discovered advertisement</param>
@@ -270,6 +270,40 @@ namespace nexus.protocols.ble
                                          IObserver<IBlePeripheral> advertisementDiscovered )
       {
          return ScanForDevices( adapter, advertisementDiscovered, DefaultScanTimeout );
+      }
+
+      /// <summary>
+      /// Scan for nearby BLE device advertisements. Stop scanning after <paramref name="timeout" />
+      /// </summary>
+      /// <param name="adapter">The adapter to use for scanning</param>
+      /// <param name="advertisementDiscovered">Callback to notify for each discovered advertisement</param>
+      /// <param name="timeout">cancel scan after this length of time</param>
+      public static Task ScanForDevices( this IBluetoothLowEnergyAdapter adapter,
+                                         Action<IBlePeripheral> advertisementDiscovered, TimeSpan timeout )
+      {
+         return ScanForDevices( adapter, advertisementDiscovered, new CancellationTokenSource( timeout ).Token );
+      }
+
+      /// <summary>
+      /// Scan for nearby BLE device advertisements. Stop scanning after <see cref="DefaultScanTimeout" />
+      /// </summary>
+      /// <param name="adapter">The adapter to use for scanning</param>
+      /// <param name="advertisementDiscovered">Callback to notify for each discovered advertisement</param>
+      public static Task ScanForDevices( this IBluetoothLowEnergyAdapter adapter,
+                                         Action<IBlePeripheral> advertisementDiscovered )
+      {
+         return ScanForDevices( adapter, advertisementDiscovered, DefaultScanTimeout );
+      }
+
+      /// <summary>
+      /// Scan for nearby BLE device advertisements. Stop scanning when <paramref name="token" /> is cancelled.
+      /// </summary>
+      /// <param name="adapter">The adapter to use for scanning</param>
+      /// <param name="advertisementDiscovered">Callback to notify for each discovered advertisement</param>
+      public static Task ScanForDevices( this IBluetoothLowEnergyAdapter adapter,
+                                         Action<IBlePeripheral> advertisementDiscovered, CancellationToken token )
+      {
+         return adapter.ScanForDevices( Observer.Create( advertisementDiscovered ), token );
       }
    }
 }
