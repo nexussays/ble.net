@@ -1,4 +1,4 @@
-# ble.net ![Build status](https://img.shields.io/vso/build/nexussays/ebc6aafa-2931-41dc-b030-7f1eff5a28e5/7.svg?style=flat-square) [![NuGet](https://img.shields.io/nuget/v/ble.net.svg?style=flat-square)](https://www.nuget.org/packages/ble.net) [![MPLv2 License](https://img.shields.io/badge/license-MPLv2-blue.svg?style=flat-square)](https://www.mozilla.org/MPL/2.0/)
+# ble.net ![Build status](https://img.shields.io/vso/build/nexussays/ebc6aafa-2931-41dc-b030-7f1eff5a28e5/7.svg?style=flat-square) [![NuGet](https://img.shields.io/nuget/v/ble.net.svg?style=flat-square)](https://www.nuget.org/packages/ble.net) [![MPLv2 License](https://img.shields.io/badge/license-MPLv2-blue.svg?style=flat-square)](https://www.mozilla.org/MPL/2.0/) [![API docs](https://img.shields.io/badge/-API%20docs-blue.svg)](http://dotnetapis.com/pkg/ble.net)
 
 `ble.net` is a Bluetooth Low Energy (aka BLE, aka Bluetooth LE, aka Bluetooth Smart) PCL to enable simple development of BLE clients on Android, iOS, and Windows 10 (advertising only at the moment, the underlying UWP connection API is pretty bad).
 
@@ -126,6 +126,7 @@ try
    device.NotifyCharacteristicValue(
       someServiceGuid,
       someCharacteristicGuid,
+      // Observer takes Tuple<Guid, Byte[]> or Byte[]
       bytes => /* do something with notification bytes */ );
 }
 catch(GattException ex)
@@ -134,15 +135,16 @@ catch(GattException ex)
 }
 ```
 
-Or, if you want to stop listening for notifications at a time you specify, instead of waiting for the device to disconnect:
+For stopping a notification listener, `NotifyCharacteristicValue` returns an `IDisposable` that removes your notification observer when called:
 ```cs
-IDisposable unsubscribe;
+IDisposable notifier;
 
 try
 {
-   unsubscribe = device.NotifyCharacteristicValue(
+   notifier = device.NotifyCharacteristicValue(
       someServiceGuid,
       someCharacteristicGuid,
+      // Observer takes Tuple<Guid, Byte[]> or Byte[]
       bytes => /* do something with notification bytes */ );
 }
 catch(GattException ex)
@@ -151,8 +153,8 @@ catch(GattException ex)
 }
 
 // ... later ...
-// dispose when you're done listening for notifications
-unsubscribe.Dispose();
+// done listening for notifications
+notifier.Dispose();
 ```
 
 ### Write to a characteristic
