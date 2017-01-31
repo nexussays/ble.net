@@ -33,7 +33,7 @@ Each platform project has a class `BluetoothLowEnergyAdapter` with a static meth
 #### Android-specific setup
 
 If you want the adapter enable/disable functions to work, in your main `Activity`:
-```cs
+```csharp
 protected override void OnCreate( Bundle bundle )
 {
    // ...
@@ -45,7 +45,7 @@ protected override void OnCreate( Bundle bundle )
 ```
 
 If you want `IBluetoothLowEnergyAdapter.OnStateChanged` to work, in your calling `Activity`:
-```cs
+```csharp
 protected sealed override void OnActivityResult( Int32 requestCode, Result resultCode, Intent data )
 {
    BluetoothLowEnergyAdapter.OnActivityResult( requestCode, resultCode, data );
@@ -57,13 +57,13 @@ protected sealed override void OnActivityResult( Int32 requestCode, Result resul
 > See sample Xamarin Forms app included in the repo for a complete example.
 
 All the exmaples presume you have some `adapter` passed in as per the setup notes above:
-```cs
+```csharp
 IBluetoothLowEnergyAdapter adapter = /* platform provided adapter value */;
 ```
 
 ### Scan for devices/advertisements/beacons
 
-```cs
+```csharp
 await adapter.ScanForDevices(
       ( IBlePeripheral peripheral ) =>
       {
@@ -81,13 +81,13 @@ await adapter.ScanForDevices(
 
 ### Connect to a BLE device
 
-```cs
+```csharp
 var device = await adapter.ConnectToDevice( peripheral, TimeSpan.FromSeconds( 5 ) );
 ```
 
 ### Enumerate all services on the device
 
-```cs
+```csharp
 foreach(var guid in await device.ListAllServices())
 {
    Debug.WriteLine( $"service: {guid}" );
@@ -96,7 +96,7 @@ foreach(var guid in await device.ListAllServices())
 
 ### Enumerate all characteristics of a service
 
-```cs
+```csharp
 Debug.WriteLine( $"service: {serviceGuid}" );
 foreach(var guid in await device.ListServiceCharacteristics( serviceGuid ))
 {
@@ -106,7 +106,7 @@ foreach(var guid in await device.ListServiceCharacteristics( serviceGuid ))
 
 ### Read a characteristic
 
-```cs
+```csharp
 try
 {
    var value = await device.ReadCharacteristicValue( someServiceGuid, someCharacteristicGuid );
@@ -119,7 +119,7 @@ catch(GattException ex)
 
 ### Listen for notifications on a characteristic
 
-```cs
+```csharp
 try
 {
    // will stop listening when device is disconnected
@@ -136,7 +136,7 @@ catch(GattException ex)
 ```
 
 For stopping a notification listener, `NotifyCharacteristicValue` returns an `IDisposable` that removes your notification observer when called:
-```cs
+```csharp
 IDisposable notifier;
 
 try
@@ -159,7 +159,7 @@ notifier.Dispose();
 
 ### Write to a characteristic
 
-```cs
+```csharp
 try
 {
    var value = await device.WriteCharacteristicValue(
