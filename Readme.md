@@ -1,8 +1,9 @@
 # ble.net ![Build status](https://img.shields.io/vso/build/nexussays/ebc6aafa-2931-41dc-b030-7f1eff5a28e5/7.svg?style=flat-square) [![NuGet](https://img.shields.io/nuget/v/ble.net.svg?style=flat-square)](https://www.nuget.org/packages/ble.net) [![MPLv2 License](https://img.shields.io/badge/license-MPLv2-blue.svg?style=flat-square)](https://www.mozilla.org/MPL/2.0/) [![API docs](https://img.shields.io/badge/apidocs-DotNetApis-blue.svg?style=flat-square)](http://dotnetapis.com/pkg/ble.net)
 
-`ble.net` is a Bluetooth Low Energy (aka BLE, aka Bluetooth LE, aka Bluetooth Smart) PCL to enable simple development of BLE clients on Android, iOS, and Windows 10 (advertising only at the moment, the underlying UWP connection API is pretty bad).
+`ble.net` is a Bluetooth Low Energy (aka BLE, aka Bluetooth LE, aka Bluetooth Smart) PCL to enable simple development of BLE clients on Android, iOS, and Windows 10.
 
-Currently only client operations are supported. Server operations will be added in the future if there is significant enough interest.
+> Currently Windows 10 / UWP only supports observing broadcasts/advertisements.
+> No support for hosting/creating a GATT server.
 
 ## Setup
 
@@ -54,41 +55,55 @@ protected sealed override void OnActivityResult( Int32 requestCode, Result resul
 
 ## API
 
-> See sample Xamarin Forms app included in the repo for a complete example.
+> See [sample Xamarin Forms app](/test/ble.net.sampleapp/) included in the repo for a complete example.
 
 All the exmaples presume you have some `adapter` passed in as per the setup notes above:
 ```csharp
 IBluetoothLowEnergyAdapter adapter = /* platform provided adapter value */;
 ```
 
-### Scan for devices/advertisements/beacons
+### Scan for broadcast advertisements
 
 ```csharp
 await adapter.ScanForDevices(
       ( IBlePeripheral peripheral ) =>
       {
-         // connect to peripheral
-         //m_adapter.ConnectToDevice( peripheral, TimeSpan.FromSeconds( 5 ) );
-         // or read the advertising data
+         // read the advertising data...
          //peripheral.Advertisement.DeviceName
          //peripheral.Advertisement.Services
          //peripheral.Advertisement.ManufacturerSpecificData
          //peripheral.Advertisement.ServiceData
+
+         // ...or connect to the device (see next example)...
       },
       // scan for 30 seconds and then stop
       TimeSpan.FromSeconds( 30 ) );
+
+// scanning has completed
 ```
 
 ### Connect to a BLE device
 
 ```csharp
-var device = await adapter.ConnectToDevice( peripheral, TimeSpan.FromSeconds( 5 ) );
+// If the connection isn't established before timeout (or a CancellationToken) is triggered, it will be stopped
+var connection = await adapter.ConnectToDevice( device: peripheral, timeout: TimeSpan.FromSeconds( 5 ) );
+if(connection.IsSuccessful())
+{
+   var gattServer = connection.GattServer;
+   // do things with gattServer here... (see further examples...)
+}
+else
+{
+   // Do something to inform user or otherwise handle unsuccessful connection.
+   Log.Info( "Error connecting to device. result={0:g}", connection.ConnectionResult );
+   // e.g., "Error connecting to device. result=ConnectionAttemptCancelled"
+}
 ```
 
-### Enumerate all services on the device
+### Enumerate all services on the GATT Server
 
 ```csharp
-foreach(var guid in await device.ListAllServices())
+foreach(var guid in await gattServer.ListAllServices())
 {
    Debug.WriteLine( $"service: {guid}" );
 }
@@ -98,7 +113,7 @@ foreach(var guid in await device.ListAllServices())
 
 ```csharp
 Debug.WriteLine( $"service: {serviceGuid}" );
-foreach(var guid in await device.ListServiceCharacteristics( serviceGuid ))
+foreach(var guid in await gattServer.ListServiceCharacteristics( serviceGuid ))
 {
    Debug.WriteLine( $"characteristic: {guid}" );
 }
@@ -109,7 +124,7 @@ foreach(var guid in await device.ListServiceCharacteristics( serviceGuid ))
 ```csharp
 try
 {
-   var value = await device.ReadCharacteristicValue( someServiceGuid, someCharacteristicGuid );
+   var value = await gattServer.ReadCharacteristicValue( someServiceGuid, someCharacteristicGuid );
 }
 catch(GattException ex)
 {
@@ -122,12 +137,12 @@ catch(GattException ex)
 ```csharp
 try
 {
-   // will stop listening when device is disconnected
-   device.NotifyCharacteristicValue(
+   // will stop listening when gattServer is disconnected
+   gattServer.NotifyCharacteristicValue(
       someServiceGuid,
       someCharacteristicGuid,
       // Observer takes Tuple<Guid, Byte[]> or Byte[]
-      bytes => /* do something with notification bytes */ );
+      bytes => {/* do something with notification bytes */} );
 }
 catch(GattException ex)
 {
@@ -141,11 +156,11 @@ IDisposable notifier;
 
 try
 {
-   notifier = device.NotifyCharacteristicValue(
+   notifier = gattServer.NotifyCharacteristicValue(
       someServiceGuid,
       someCharacteristicGuid,
       // Observer takes Tuple<Guid, Byte[]> or Byte[]
-      bytes => /* do something with notification bytes */ );
+      bytes => {/* do something with notification bytes */} );
 }
 catch(GattException ex)
 {
@@ -162,10 +177,36 @@ notifier.Dispose();
 ```csharp
 try
 {
-   var value = await device.WriteCharacteristicValue(
+   // the resulting value of the characteristic is returned
+   var value = await gattServer.WriteCharacteristicValue(
       someServiceGuid,
       someCharacteristicGuid,
       new byte[]{ 1, 2, 3 } );
+}
+catch(GattException ex)
+{
+   Debug.WriteLine( ex.ToString() );
+}
+```
+
+### Do a bunch of things
+
+```csharp
+try
+{
+   var read = gattServer.ReadCharacteristicValue( /* arguments... */ );
+   await
+      Task.WhenAll(
+         new Task[]
+         {
+            gattServer.WriteCharacteristicValue( /* arguments... */ ),
+            gattServer.WriteCharacteristicValue( /* arguments... */ ),
+            gattServer.WriteCharacteristicValue( /* arguments... */ ),
+            gattServer.WriteCharacteristicValue( /* arguments... */ ),
+            read
+         } );
+
+   return await read;
 }
 catch(GattException ex)
 {

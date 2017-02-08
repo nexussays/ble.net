@@ -16,23 +16,22 @@ namespace ble.net.sampleapp
    {
       private readonly NavigationPage m_root;
 
-      public FormsApp( IBluetoothLowEnergyAdapter adapter )
+      public FormsApp( IBluetoothLowEnergyAdapter adapter, IUserDialogs dialogs )
       {
          InitializeComponent();
-         var dialogs = UserDialogs.Instance;
+         var bleGattServerViewModel = new BleGattServerViewModel( dialogs, adapter );
          m_root =
             new NavigationPage(
                new BleDeviceScannerPage(
                   model: new BleDeviceScannerViewModel( adapter, dialogs ),
-                  bleDeviceSelectedCommand:
-                  new Command(
+                  bleDeviceSelectedCommand: new Command(
                      async p =>
                      {
+                        bleGattServerViewModel.Update( (BlePeripheralViewModel)p );
                         await
                            m_root.PushAsync(
                               new BleGattServerPage(
-                                 model:
-                                 new BleGattServerViewModel( (BlePeripheralViewModel)p, UserDialogs.Instance, adapter ),
+                                 model: bleGattServerViewModel,
                                  bleServiceSelectedCommand:
                                  new Command(
                                     async s =>

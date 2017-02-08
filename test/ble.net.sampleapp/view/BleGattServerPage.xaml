@@ -12,13 +12,12 @@
                 HorizontalOptions="FillAndExpand"
                 Orientation="Vertical">
 
-      <StackLayout Orientation="Horizontal"
+      <StackLayout Orientation="Vertical"
                    HorizontalOptions="CenterAndExpand"
-                   VerticalOptions="Center"
-                   HeightRequest="40">
-         <Label Text="{Binding DeviceConnectionState}" />
+                   VerticalOptions="CenterAndExpand"
+                   IsVisible="{Binding IsBusy}">
          <ActivityIndicator IsRunning="{Binding IsBusy}"
-                            IsVisible="{Binding IsBusy}">
+                            HeightRequest="40">
             <ActivityIndicator.WidthRequest>
                <OnPlatform x:TypeArguments="x:Double"
                            Android="40"
@@ -26,9 +25,13 @@
                            WinPhone="400" />
             </ActivityIndicator.WidthRequest>
          </ActivityIndicator>
+         <Label Text="{Binding Connection}"
+                HorizontalOptions="CenterAndExpand"
+                FontSize="20" />
       </StackLayout>
 
       <ListView ItemsSource="{Binding Services}"
+                IsVisible="{Binding IsBusy, Converter={StaticResource InvertBoolean}}"
                 ItemSelected="OnServiceSelected"
                 VerticalOptions="FillAndExpand"
                 HorizontalOptions="FillAndExpand">

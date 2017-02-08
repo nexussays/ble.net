@@ -1,4 +1,10 @@
-﻿using System;
+﻿// Copyright Malachi Griffie
+// 
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
+
+using System;
 using System.Linq;
 using nexus.core;
 using nexus.core.logging;
@@ -20,7 +26,6 @@ namespace ble.net.sampleapp.ios
          // ReSharper disable once ConditionIsAlwaysTrueOrFalse
          if(IS_DEBUG)
          {
-            // dump all entries to Android system log in debug mode
             SystemLog.Instance.AddSink(
                         entry =>
                         {

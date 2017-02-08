@@ -10,29 +10,30 @@ using System.Linq;
 using Acr.UserDialogs;
 using ble.net.sampleapp.util;
 using nexus.protocols.ble;
+using nexus.protocols.ble.connection;
 
 namespace ble.net.sampleapp.viewmodel
 {
    public class BleGattServiceViewModel : BaseViewModel
    {
-      private readonly IBleGattServer m_device;
-      private readonly IUserDialogs m_dialogs;
+      private readonly IUserDialogs m_dialogManager;
+      private readonly IBleGattServer m_gattServer;
       private Boolean m_isBusy;
-      private Guid m_serviceId;
+      private Guid m_serviceGuid;
 
-      public BleGattServiceViewModel( Guid service, IBleGattServer device, IUserDialogs dialogs )
+      public BleGattServiceViewModel( Guid service, IBleGattServer gattServer, IUserDialogs dialogManager )
       {
-         m_serviceId = service;
+         m_serviceGuid = service;
          Characteristic = new ObservableCollection<BleGattCharacteristicViewModel>();
-         m_device = device;
-         m_dialogs = dialogs;
+         m_gattServer = gattServer;
+         m_dialogManager = dialogManager;
       }
 
       public ObservableCollection<BleGattCharacteristicViewModel> Characteristic { get; }
 
-      public Guid Guid => m_serviceId;
+      public Guid Guid => m_serviceGuid;
 
-      public String Id => m_serviceId.ToString();
+      public String Id => m_serviceGuid.ToString();
 
       public Boolean IsBusy
       {
@@ -40,7 +41,7 @@ namespace ble.net.sampleapp.viewmodel
          protected set { Set( ref m_isBusy, value ); }
       }
 
-      public String Name => null /*KnownAttributes.Get(m_serviceId)?.Description*/?? Id;
+      public String Name => TiSensorTag.GetName( m_serviceGuid ) ?? Id;
 
       public String PageTitle => Name;
 
@@ -51,14 +52,15 @@ namespace ble.net.sampleapp.viewmodel
             return;
          }
          IsBusy = true;
-         var services = await m_device.ListServiceCharacteristics( m_serviceId );
+         var services = await m_gattServer.ListServiceCharacteristics( m_serviceGuid );
          var list = services?.ToList();
          if(list != null)
          {
             //Log.Trace( "Discovered chars={0}", list.Select( g => g.ToString() ).Join( "," ) );
             foreach(var c in list)
             {
-               Characteristic.Add( new BleGattCharacteristicViewModel( m_serviceId, c, m_device, m_dialogs ) );
+               Characteristic.Add(
+                  new BleGattCharacteristicViewModel( m_serviceGuid, c, m_gattServer, m_dialogManager ) );
             }
          }
          IsBusy = false;

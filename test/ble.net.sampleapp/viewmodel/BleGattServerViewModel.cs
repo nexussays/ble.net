@@ -7,36 +7,38 @@
 using System;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Threading.Tasks;
 using Acr.UserDialogs;
 using ble.net.sampleapp.util;
 using nexus.core;
 using nexus.core.logging;
 using nexus.protocols.ble;
+using nexus.protocols.ble.connection;
 
 namespace ble.net.sampleapp.viewmodel
 {
    public class BleGattServerViewModel : BaseViewModel
    {
-      private readonly IBluetoothLowEnergyAdapter m_ble;
-      private readonly IUserDialogs m_dialog;
-      private readonly BlePeripheralViewModel m_peripheral;
-      private IBleGattServer m_device;
+      private readonly IBluetoothLowEnergyAdapter m_bleAdapter;
+      private readonly IUserDialogs m_dialogManager;
+      private String m_connectionState;
+      private IBleGattServer m_gattServer;
       private Boolean m_isBusy;
+      private BlePeripheralViewModel m_peripheral;
 
-      public BleGattServerViewModel( BlePeripheralViewModel peripheral, IUserDialogs dialogs,
-                                     IBluetoothLowEnergyAdapter ble )
+      public BleGattServerViewModel( IUserDialogs dialogsManager, IBluetoothLowEnergyAdapter bleAdapter )
       {
-         m_peripheral = peripheral;
-         m_ble = ble;
-         m_dialog = dialogs;
+         m_bleAdapter = bleAdapter;
+         m_dialogManager = dialogsManager;
+         m_connectionState = ConnectionState.Disconnected.ToString();
          Services = new ObservableCollection<BleGattServiceViewModel>();
       }
 
-      public String DeviceConnectionState
-         =>
-         m_device?.State == ConnectionState.Connected && IsBusy
-            ? "Reading Services"
-            : (m_device?.State ?? ConnectionState.Disconnected).ToString();
+      public String Connection
+      {
+         get { return m_connectionState; }
+         private set { Set( ref m_connectionState, value ); }
+      }
 
       public Boolean IsBusy
       {
@@ -44,65 +46,94 @@ namespace ble.net.sampleapp.viewmodel
          protected set { Set( ref m_isBusy, value ); }
       }
 
-      public String PageTitle => m_peripheral.Name;
+      public String Manufacturer => m_peripheral?.Manufacturer;
+
+      public String Name => m_peripheral?.Name;
+
+      public String PageTitle => Name + " (" + Manufacturer + ")";
 
       public ObservableCollection<BleGattServiceViewModel> Services { get; }
 
       public void CloseConnection()
       {
-         Log.Trace( "Closing connection to GATT Server" );
-         m_device?.Dispose();
+         Log.Trace( "{0}. Closing connection to GATT Server. state={1:g}", GetType().Name, m_gattServer?.State );
+         m_gattServer?.Dispose();
          Services.Clear();
+         IsBusy = false;
       }
 
       public override async void OnAppearing()
       {
-         // if we're budy or have a valid connection, then no-op
-         if(IsBusy || (m_device != null && m_device.State != ConnectionState.Disconnected))
+         // if we're busy or have a valid connection, then no-op
+         if(IsBusy || (m_gattServer != null && m_gattServer.State != ConnectionState.Disconnected))
          {
+            Log.Debug( "OnAppearing. state={0} isbusy={1}", m_gattServer?.State, IsBusy );
             return;
          }
 
-         IsBusy = true;
          CloseConnection();
-         Log.Debug( "Connecting to device. address={0}", m_peripheral.Address );
-         m_device = await m_ble.ConnectToDevice( m_peripheral.Model );
-         RaisePropertyChanged( nameof( DeviceConnectionState ) );
-         m_device.Subscribe(
-            Observer.Create(
-               ( ConnectionState c ) =>
-               {
-                  Log.Info( "Device state changed. address={0} status={1}", m_peripheral.Address, c );
-                  RaisePropertyChanged( nameof( DeviceConnectionState ) );
-               } ) );
-         Log.Debug("Connected to device. address={0} status={1}", m_peripheral.Address, m_device.State);
-         if(m_device.State == ConnectionState.Connected || m_device.State == ConnectionState.Connecting)
+         IsBusy = true;
+
+         Log.Debug( "Connecting to device. id={0}", m_peripheral.Id );
+         var connection =
+            await
+               m_bleAdapter.ConnectToDevice(
+                  device: m_peripheral.Model,
+                  timeout: TimeSpan.FromSeconds( 5 ),
+                  progress: progress => { Connection = progress.ToString(); } );
+         if(connection.IsSuccessful())
          {
-            var services = (await m_device.ListAllServices()).ToList();
+            m_gattServer = connection.GattServer;
+            Connection = "Reading Services";
+            Log.Debug( "Connected to device. id={0} status={1}", m_peripheral.Id, m_gattServer.State );
+
+            m_gattServer.Subscribe(
+               c =>
+               {
+                  if(c == ConnectionState.Disconnected)
+                  {
+                     m_dialogManager.Toast( "Device disconnected" );
+                     CloseConnection();
+                  }
+                  Connection = c.ToString();
+               } );
+
+            // small possibility the device could disconnect between connecting and getting services and throw somewhere along here
+            var services = (await m_gattServer.ListAllServices()).ToList();
             foreach(var serviceId in services)
             {
                if(Services.Any( viewModel => viewModel.Guid.Equals( serviceId ) ))
                {
                   continue;
                }
-               Services.Add( new BleGattServiceViewModel( serviceId, m_device, m_dialog ) );
+               Services.Add( new BleGattServiceViewModel( serviceId, m_gattServer, m_dialogManager ) );
             }
-            if(services.Count == 0)
+            if(Services.Count == 0)
             {
-               m_dialog.Toast( "No services found" );
+               m_dialogManager.Toast( "No services found" );
             }
+            Connection = m_gattServer.State.ToString();
          }
          else
          {
-            Log.Warn(
-               "Error connecting to device. address={0} state={1}",
-               m_device.Address.EncodeToBase16String(),
-               m_device.State );
-            m_dialog.Toast( "Error connecting to device" );
+            var errorMsg =
+               "Error connecting to device: {0}".F(
+                  connection.ConnectionResult == ConnectionResult.ConnectionAttemptCancelled
+                     ? "Timeout"
+                     : connection.ConnectionResult.ToString() );
+            Log.Info( errorMsg );
+            m_dialogManager.Toast( errorMsg, TimeSpan.FromSeconds( 5 ) );
          }
-         Log.Debug("Read services. address={0} status={1}", m_peripheral.Address, m_device.State);
          IsBusy = false;
-         RaisePropertyChanged(nameof(DeviceConnectionState));
+      }
+
+      public void Update( BlePeripheralViewModel peripheral )
+      {
+         if(m_peripheral != null && !m_peripheral.Model.Equals( peripheral.Model ))
+         {
+            CloseConnection();
+         }
+         m_peripheral = peripheral;
       }
    }
 }

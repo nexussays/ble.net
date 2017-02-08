@@ -17,6 +17,7 @@
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <OutputPath>..\..\artifacts\bin\$(AssemblyName)\$(Configuration)\$(Platform)</OutputPath>
     <DocumentationFile>..\..\artifacts\bin\$(AssemblyName)\$(Configuration)\$(Platform)\$(AssemblyName).xml</DocumentationFile>
+    <BaseIntermediateOutputPath>..\..\artifacts\obj\$(AssemblyName)\</BaseIntermediateOutputPath>
     <CodeContractsAssemblyMode>1</CodeContractsAssemblyMode>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
@@ -54,7 +55,7 @@
     <CodeContractsRunInBackground>True</CodeContractsRunInBackground>
     <CodeContractsShowSquigglies>True</CodeContractsShowSquigglies>
     <CodeContractsUseBaseLine>False</CodeContractsUseBaseLine>
-    <CodeContractsEmitXMLDocs>True</CodeContractsEmitXMLDocs>
+    <CodeContractsEmitXMLDocs>False</CodeContractsEmitXMLDocs>
     <CodeContractsCustomRewriterAssembly />
     <CodeContractsCustomRewriterClass />
     <CodeContractsLibPaths />
@@ -64,10 +65,10 @@
     <CodeContractsBaseLineFile />
     <CodeContractsCacheAnalysisResults>True</CodeContractsCacheAnalysisResults>
     <CodeContractsSkipAnalysisIfCannotConnectToCache>False</CodeContractsSkipAnalysisIfCannotConnectToCache>
-    <CodeContractsFailBuildOnWarnings>True</CodeContractsFailBuildOnWarnings>
+    <CodeContractsFailBuildOnWarnings>False</CodeContractsFailBuildOnWarnings>
     <CodeContractsBeingOptimisticOnExternal>True</CodeContractsBeingOptimisticOnExternal>
     <CodeContractsRuntimeCheckingLevel>Pre and Post</CodeContractsRuntimeCheckingLevel>
-    <CodeContractsReferenceAssembly>Build</CodeContractsReferenceAssembly>
+    <CodeContractsReferenceAssembly>DoNotBuild</CodeContractsReferenceAssembly>
     <CodeContractsAnalysisWarningLevel>1</CodeContractsAnalysisWarningLevel>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
@@ -125,15 +126,18 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="advertisement\AdvertisingManufacturerData.cs" />
     <Compile Include="advertisement\AdvertisingDataItem.cs" />
     <Compile Include="advertisement\AdvertisingDataType.cs" />
     <Compile Include="advertisement\AdvertisingDataFlags.cs" />
+    <Compile Include="BleAdapterState.cs" />
     <Compile Include="connection\BleDeviceConnection.cs" />
     <Compile Include="connection\ConnectionProgress.cs" />
     <Compile Include="connection\ConnectionResult.cs" />
+    <Compile Include="IAdapterState.cs" />
     <Compile Include="Properties\BaseAssemblyInfo.cs" />
     <Compile Include="BluetoothLowEnergyUtils.cs" />
-    <Compile Include="CharacteristicProperty.cs" />
+    <Compile Include="connection\CharacteristicProperty.cs" />
     <Compile Include="connection\ConnectionState.cs" />
     <Compile Include="GattException.cs" />
     <Compile Include="advertisement\IBleAdvertisement.cs" />
@@ -144,8 +148,8 @@
     <Compile Include="ScanFilter.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Reference Include="nexus.core, Version=0.25.7.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\lib\packages\nexus.core.0.25.7\lib\portable-net45+win+MonoAndroid10+xamarinios10+MonoTouch10\nexus.core.dll</HintPath>
+    <Reference Include="nexus.core, Version=0.26.2.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\lib\packages\nexus.core.0.26.2\lib\portable45-net45+win8\nexus.core.dll</HintPath>
       <Private>True</Private>
     </Reference>
   </ItemGroup>
@@ -160,4 +164,15 @@
     </PropertyGroup>
     <Error Condition="!Exists('..\..\lib\packages\DotNet.Contracts.1.10.20606.1\bin\cccheck.exe')" Text="$([System.String]::Format('$(ErrorText)', '..\..\lib\packages\DotNet.Contracts.1.10.20606.1\bin\cccheck.exe'))" />
   </Target>
+  <Import Project="..\..\lib\packages\GitVersionTask.3.6.5\build\portable-net+sl+win+wpa+wp\GitVersionTask.targets" Condition="Exists('..\..\lib\packages\GitVersionTask.3.6.5\build\portable-net+sl+win+wpa+wp\GitVersionTask.targets')" />
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('..\..\lib\packages\GitVersionTask.3.6.5\build\portable-net+sl+win+wpa+wp\GitVersionTask.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\lib\packages\GitVersionTask.3.6.5\build\portable-net+sl+win+wpa+wp\GitVersionTask.targets'))" />
+  </Target>
+  <PropertyGroup Condition="  '$(Configuration)' == 'Release' ">
+    <PostBuildEvent>$(SolutionDir)lib\packages\NuGet.CommandLine.3.5.0\tools\NuGet.exe pack "$(ProjectPath)" -OutputDirectory "..\..\..\..\packages" -Properties Configuration=$(ConfigurationName) -IncludeReferencedProjects  /verbosity detailed</PostBuildEvent>
+    <RunPostBuildEvent>OnOutputUpdated</RunPostBuildEvent>
+  </PropertyGroup>
 </Project>

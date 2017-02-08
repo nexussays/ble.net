@@ -8,6 +8,7 @@ using System;
 using System.Linq;
 using ble.net.sampleapp.util;
 using nexus.core;
+using nexus.core.logging;
 using nexus.protocols.ble;
 
 namespace ble.net.sampleapp.viewmodel
@@ -42,15 +43,18 @@ namespace ble.net.sampleapp.viewmodel
 
       public String Id => Model.DeviceId.ToString();
 
+      public String Manufacturer
+         =>
+         Model.Advertisement.ManufacturerSpecificData.Select( x => BleSampleAppUtils.GetManufacturerName( x.CompanyId ) )
+              .Join( "," );
+
       public IBlePeripheral Model { get; }
 
-      public String Name
-         =>
-         (Model.Advertisement.DeviceName ?? Address) + " " +
-         Model.Advertisement.ManufacturerSpecificData.Select(
-                 x => "(" + BleSampleAppUtils.GetManufacturerName( x.Key ) + ")" ).Join( "," );
+      public String Name => Model.Advertisement.DeviceName ?? Address;
 
       public Int32 Rssi => Model.Rssi;
+
+      public String Signal => Model.Rssi + "+" + Model.Advertisement.TxPowerLevel;
 
       public override Boolean Equals( Object other )
       {
@@ -69,13 +73,13 @@ namespace ble.net.sampleapp.viewmodel
 
       public void Update( IBlePeripheral device )
       {
-         if(!Model.Equals( device ))
-         {
-            return;
-         }
          Advertisement = Model.Advertisement.ToString();
+
          RaisePropertyChanged( nameof( Rssi ) );
          RaisePropertyChanged( nameof( Name ) );
+         RaisePropertyChanged( nameof( Signal ) );
+         RaisePropertyChanged( nameof( Manufacturer ) );
+         RaisePropertyChanged( nameof( Advertisement ) );
       }
    }
 }

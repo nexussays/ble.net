@@ -9,27 +9,49 @@
 
    <StackLayout Style="{StaticResource LayoutStack}"
                 Orientation="Vertical">
+
+      <Grid>
+         <Grid.ColumnDefinitions>
+            <ColumnDefinition />
+            <ColumnDefinition />
+         </Grid.ColumnDefinitions>
+         <StackLayout HorizontalOptions="StartAndExpand"
+                      Orientation="Horizontal">
+            <Label Text="Scanning"
+                   IsVisible="{Binding IsScanning}"
+                   VerticalOptions="Center" />
+            <AbsoluteLayout IsVisible="{Binding IsScanning}">
+               <ActivityIndicator IsRunning="{Binding IsScanning}">
+                  <ActivityIndicator.WidthRequest>
+                     <OnPlatform x:TypeArguments="x:Double"
+                                 Android="40"
+                                 iOS="40"
+                                 WinPhone="100" />
+                  </ActivityIndicator.WidthRequest>
+               </ActivityIndicator>
+               <Label AbsoluteLayout.LayoutBounds=".5,.5,-1,-1"
+                      AbsoluteLayout.LayoutFlags="PositionProportional"
+                      Text="{Binding ScanTimeRemaining}" />
+            </AbsoluteLayout>
+            <Button Text="Scan For Devices"
+                    IsVisible="{Binding IsScanning, Converter={StaticResource InvertBoolean}}"
+                    Command="{Binding ScanForDevicesCommand}"
+                    HorizontalOptions="Start" />
+         </StackLayout>
+         <StackLayout Grid.Column="1"
+                      HorizontalOptions="EndAndExpand"
+                      Orientation="Horizontal">
+            <Label Text="Bluetooth"
+                   VerticalOptions="Center" />
+            <Switch IsToggled="{Binding IsAdapterEnabled, Mode=OneWay}"
+                    VerticalOptions="Center"
+                    Toggled="Switch_OnToggled" />
+         </StackLayout>
+      </Grid>
+
       <Label Text="Discovered Devices"
-             FontSize="24"
+             FontSize="22"
              HorizontalOptions="StartAndExpand" />
-      <StackLayout Orientation="Horizontal"
-                   HorizontalOptions="CenterAndExpand">
-         <ActivityIndicator IsRunning="{Binding IsScanning}"
-                            IsVisible="{Binding IsScanning}">
-            <ActivityIndicator.WidthRequest>
-               <OnPlatform x:TypeArguments="x:Double"
-                           Android="40"
-                           iOS="40"
-                           WinPhone="100" />
-            </ActivityIndicator.WidthRequest>
-         </ActivityIndicator>
-         <Button Text="Scan For Devices"
-                 IsVisible="{Binding IsScanning, Converter={StaticResource InvertBoolean}}"
-                 Command="{Binding ScanForDevicesCommand}" />
-         <Switch IsToggled="{Binding IsAdapterEnabled, Mode=OneWay}"
-                 VerticalOptions="Center"
-                 Toggled="Switch_OnToggled" />
-      </StackLayout>
       <ListView ItemsSource="{Binding FoundDevices}"
                 ItemSelected="OnBleDeviceSelected"
                 HasUnevenRows="True"
@@ -49,22 +71,26 @@
             <DataTemplate>
                <ViewCell>
                   <Frame Padding="{StaticResource GridPadding}">
-                     <StackLayout Orientation="Horizontal"
+                     <StackLayout Orientation="Vertical"
                                   VerticalOptions="FillAndExpand"
                                   HorizontalOptions="FillAndExpand">
-                        <StackLayout Orientation="Vertical"
-                                     HorizontalOptions="StartAndExpand"
-                                     VerticalOptions="StartAndExpand">
+                        <StackLayout Orientation="Horizontal"
+                                     HorizontalOptions="FillAndExpand">
                            <Label Text="{Binding Name}"
-                                  HorizontalOptions="StartAndExpand"
-                                  VerticalOptions="Start" />
+                                  HorizontalOptions="StartAndExpand" />
+                           <Label Text="{Binding Signal}"
+                                  HorizontalOptions="End"
+                                  MinimumWidthRequest="30" />
+                        </StackLayout>
+                        <StackLayout Orientation="Horizontal"
+                                     HorizontalOptions="FillAndExpand">
                            <Label Text="{Binding Id}"
                                   HorizontalOptions="StartAndExpand"
                                   LineBreakMode="TailTruncation" />
+                           <Label Text="{Binding Manufacturer, StringFormat='({0})'}"
+                                  HorizontalOptions="End" />
                         </StackLayout>
-                        <Label Text="{Binding Rssi}"
-                               HorizontalOptions="End"
-                               MinimumWidthRequest="30" />
+
                      </StackLayout>
                   </Frame>
                </ViewCell>

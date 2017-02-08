@@ -1,9 +1,12 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Linq;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Navigation;
+using nexus.core;
+using nexus.core.logging;
 using Xamarin.Forms;
 using Application = Windows.UI.Xaml.Application;
 using Frame = Windows.UI.Xaml.Controls.Frame;
@@ -15,12 +18,41 @@ namespace ble.net.sampleapp.uwp
    /// </summary>
    sealed partial class App : Application
    {
+      public const Boolean IS_DEBUG = 
+#if DEBUG
+         true;
+#else
+         false;
+#endif
+
       /// <summary>
       /// Initializes the singleton application object.  This is the first line of authored code
       /// executed, and as such is the logical equivalent of main() or WinMain().
       /// </summary>
       public App()
       {
+         // ReSharper disable once ConditionIsAlwaysTrueOrFalse
+         if(IS_DEBUG)
+         {
+            UnhandledException += ( sender, e ) =>
+            {
+               Debug.WriteLine( e.Message );
+               Debug.WriteLine( e.ToString() );
+               e.Handled = true;
+            };
+
+            SystemLog.Instance.AddSink(
+                        entry =>
+                        {
+                           var entryData = entry.Data.ToList();
+                           Debug.WriteLine(
+                              entry.FormatMessageAndArguments() +
+                              (entryData.Count > 0
+                                 ? " --- " + entryData.Select( x => x?.ToString() + "" ).Join( " " )
+                                 : "") );
+                        } );
+         }
+
          InitializeComponent();
          Suspending += OnSuspending;
       }

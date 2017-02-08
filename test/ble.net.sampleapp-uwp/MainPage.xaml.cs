@@ -1,4 +1,5 @@
-﻿using nexus.protocols.ble;
+﻿using Acr.UserDialogs;
+using nexus.protocols.ble;
 
 namespace ble.net.sampleapp.uwp
 {
@@ -8,7 +9,7 @@ namespace ble.net.sampleapp.uwp
       {
          InitializeComponent();
 
-         LoadApplication( new FormsApp( BluetoothLowEnergyAdapter.ObtainDefaultAdapter() ) );
+         LoadApplication( new FormsApp( BluetoothLowEnergyAdapter.ObtainDefaultAdapter(), UserDialogs.Instance) );
       }
    }
 }

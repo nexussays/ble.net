@@ -12,51 +12,59 @@ using ble.net.sampleapp.util;
 using nexus.core;
 using nexus.core.logging;
 using nexus.protocols.ble;
+using nexus.protocols.ble.connection;
 using Xamarin.Forms;
 
 namespace ble.net.sampleapp.viewmodel
 {
    public class BleGattCharacteristicViewModel : BaseViewModel
    {
-      private readonly IBleGattServer m_device;
-      private readonly IUserDialogs m_dialogs;
-      private readonly Guid m_service;
-      private Guid m_characteristic;
+      private readonly IBleGattServer m_gattServer;
+      private readonly IUserDialogs m_dialogManager;
+      private readonly Guid m_serviceGuid;
+      private Guid m_characteristicGuid;
       private Boolean m_isBusy;
+      private IDisposable m_notificationSubscription;
       private CharacteristicProperty m_props;
-      private IDisposable m_unsubscribe;
       private String m_valueAsHex;
       private String m_valueAsString;
       private String m_writeValue;
 
-      public BleGattCharacteristicViewModel( Guid service, Guid characteristic, IBleGattServer device,
-                                             IUserDialogs dialogs )
+      public BleGattCharacteristicViewModel( Guid serviceGuid, Guid characteristicGuid, IBleGattServer gattServer,
+                                             IUserDialogs dialogManager )
       {
-         m_device = device;
-         m_dialogs = dialogs;
-         m_service = service;
-         m_characteristic = characteristic;
+         m_gattServer = gattServer;
+         m_dialogManager = dialogManager;
+         m_serviceGuid = serviceGuid;
+         m_characteristicGuid = characteristicGuid;
 
-         RefreshValueCommand = new Command( async () => { await ReadValue(); } );
+         RefreshValueCommand = new Command( async () => { await ReadCharacteristicValue(); } );
          EnableNotificationsCommand = new Command( EnableNotifications );
          DisableNotificationsCommand = new Command( DisableNotifications );
-         ToggleNotificationsCommand = new Command( ToggleNotifications );
+         ToggleNotificationsCommand = new Command( () => { NotifyEnabled = !NotifyEnabled; } );
          WriteBytesCommand = new Command( async () => { await WriteCurrentBytes(); } );
 
          ValueAsHex = String.Empty;
          ValueAsString = String.Empty;
 
-         m_device.ReadCharacteristicProperties( m_service, m_characteristic ).ContinueWith(
+         m_gattServer.ReadCharacteristicProperties( m_serviceGuid, m_characteristicGuid ).ContinueWith(
                     x =>
                     {
                        Device.BeginInvokeOnMainThread(
                           () =>
                           {
-                             //Log.Trace( "Reading properties for characteristic. id={0}", m_characteristic );
-                             m_props = x.Result;
-                             RaisePropertyChanged( nameof( CanNotify ) );
-                             RaisePropertyChanged( nameof( CanRead ) );
-                             RaisePropertyChanged( nameof( CanWrite ) );
+                             if(x.IsFaulted)
+                             {
+                                m_dialogManager.Toast( x.Exception.GetBaseException().Message );
+                             }
+                             else
+                             {
+                                Log.Trace( "Reading properties for characteristic. id={0}", m_characteristicGuid );
+                                m_props = x.Result;
+                                RaisePropertyChanged( nameof( CanNotify ) );
+                                RaisePropertyChanged( nameof( CanRead ) );
+                                RaisePropertyChanged( nameof( CanWrite ) );
+                             }
                           } );
                     } );
       }
@@ -71,7 +79,7 @@ namespace ble.net.sampleapp.viewmodel
 
       public ICommand EnableNotificationsCommand { get; }
 
-      public String Id => m_characteristic.ToString();
+      public String Id => m_characteristicGuid.ToString();
 
       public Boolean IsBusy
       {
@@ -79,14 +87,14 @@ namespace ble.net.sampleapp.viewmodel
          protected set { Set( ref m_isBusy, value ); }
       }
 
-      public String Name => null /*KnownAttributes.Get( m_characteristic )?.Description */?? Id;
+      public String Name => TiSensorTag.GetName( m_characteristicGuid ) ?? Id;
 
       public Boolean NotifyEnabled
       {
-         get { return m_unsubscribe != null; }
+         get { return m_notificationSubscription != null; }
          set
          {
-            if(value != (m_unsubscribe != null))
+            if(value != (m_notificationSubscription != null))
             {
                if(value)
                {
@@ -127,72 +135,49 @@ namespace ble.net.sampleapp.viewmodel
 
       public override void OnDisappearing()
       {
-         //m_unsubscribe?.Dispose();
-         //m_unsubscribe = null;
-      }
-
-      public void Update( Guid ch, Byte[] value )
-      {
-         if(!m_characteristic.Equals( ch ))
-         {
-            Log.Warn( "Characteristics differ. ch1={0} ch2={1}", m_characteristic, ch );
-            return;
-         }
-         UpdateDisplayedValue( value );
+         //m_notificationSubscription?.Dispose();
+         //m_notificationSubscription = null;
       }
 
       private void DisableNotifications()
       {
          Log.Trace( "DisableNotifications" );
-         m_unsubscribe?.Dispose();
-         m_unsubscribe = null;
+         m_notificationSubscription?.Dispose();
+         m_notificationSubscription = null;
          RaisePropertyChanged( nameof( NotifyEnabled ) );
       }
 
       private void EnableNotifications()
       {
-         if(m_unsubscribe == null)
+         if(m_notificationSubscription == null)
          {
-            Log.Trace( "EnableNotifications" );
             try
             {
-               m_unsubscribe = m_device.NotifyCharacteristicValue(
-                  m_service,
-                  m_characteristic,
-                  Observer.Create<Tuple<Guid, Byte[]>>( res => Update( res.Item1, res.Item2 ) ) );
+               m_notificationSubscription = m_gattServer.NotifyCharacteristicValue(
+                  m_serviceGuid,
+                  m_characteristicGuid,
+                  UpdateDisplayedValue);
             }
             catch(GattException ex)
             {
-               m_dialogs.Toast( ex.Message );
+               m_dialogManager.Toast( ex.Message );
             }
          }
          RaisePropertyChanged( nameof( NotifyEnabled ) );
       }
 
-      private async Task ReadValue()
+      private async Task ReadCharacteristicValue()
       {
          IsBusy = true;
          try
          {
-            UpdateDisplayedValue( await m_device.ReadCharacteristicValue( m_service, m_characteristic ) );
+            UpdateDisplayedValue( await m_gattServer.ReadCharacteristicValue( m_serviceGuid, m_characteristicGuid ) );
          }
          catch(GattException ex)
          {
-            m_dialogs.Toast( ex.Message );
+            m_dialogManager.Toast( ex.Message );
          }
          IsBusy = false;
-      }
-
-      private void ToggleNotifications()
-      {
-         if(NotifyEnabled)
-         {
-            DisableNotifications();
-         }
-         else
-         {
-            EnableNotifications();
-         }
       }
 
       private void UpdateDisplayedValue( Byte[] bytes )
@@ -217,23 +202,21 @@ namespace ble.net.sampleapp.viewmodel
             try
             {
                IsBusy = true;
-               var task = m_device.WriteCharacteristicValue( m_service, m_characteristic, val );
+               var writeTask = m_gattServer.WriteCharacteristicValue( m_serviceGuid, m_characteristicGuid, val );
+               // notify UI to clear written value from input field
                WriteValue = "";
-               UpdateDisplayedValue( await task );
+               // update the characteristic value with the awaited results of the write
+               UpdateDisplayedValue( await writeTask );
             }
             catch(GattException ex)
             {
-               Log.Warn( ex.Message );
-               m_dialogs.Toast( ex.Message );
+               Log.Warn( ex.ToString() );
+               m_dialogManager.Toast( ex.Message );
             }
             finally
             {
                IsBusy = false;
             }
-         }
-         else
-         {
-            Log.Info( "Nothing to write" );
          }
       }
    }
