@@ -94,14 +94,14 @@ if(connection.IsSuccessful())
 else
 {
    // Do something to inform user or otherwise handle unsuccessful connection.
-   Log.Info( "Error connecting to device. result={0:g}", connection.ConnectionResult );
+   Debug.WriteLine( "Error connecting to device. result={0:g}", connection.ConnectionResult );
    // e.g., "Error connecting to device. result=ConnectionAttemptCancelled"
 }
 ```
 
 Connection also optionally takes an `IProgress` argument and has several utility overloads, e.g.:
 ```csharp
-var connection = await adapter.ConnectToDevice( peripheral, ct, progress => Log.Info(progress) );
+var connection = await adapter.ConnectToDevice( peripheral, ct, progress => Debug.WriteLine(progress) );
 ```
 
 ### Enumerate all services on the GATT Server
