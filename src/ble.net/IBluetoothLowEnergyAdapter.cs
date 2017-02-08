@@ -7,6 +7,7 @@
 using System;
 using System.Threading;
 using System.Threading.Tasks;
+using nexus.protocols.ble.connection;
 
 namespace nexus.protocols.ble
 {
@@ -15,13 +16,12 @@ namespace nexus.protocols.ble
    /// interface to instantiate it. Use a <see cref="IBluetoothLowEnergyAdapter" /> to scan for BLE advertisements and connect
    /// to found devices.
    /// </summary>
-   public interface IBluetoothLowEnergyAdapter : IDisposable
+   public interface IBluetoothLowEnergyAdapter
    {
       /// <summary>
-      /// True if the adapter is currently enabled and operational
+      /// The state of this BLE adapter and controls to enable or disable it
       /// </summary>
-      /// TODO: move to some IAdapterState
-      Boolean IsEnabled { get; }
+      IAdapterStateControl State { get; }
 
       /// <summary>
       /// Attempt to connect to the provided <paramref name="device" />, and continue the attempt until <paramref name="ct" /> is
@@ -39,18 +39,11 @@ namespace nexus.protocols.ble
                                                  IProgress<ConnectionProgress> progress = null );
 
       /// <summary>
-      /// The state of the bluetooth adapter and controls to toggle it on or off
+      /// Scan for nearby BLE device advertisements. The devices discovered are not guaranteed to be unique, i.e. -- each device
+      /// will likely be provided to the observer multiple times as the BLE scanner picks up advertisements.
       /// </summary>
-      /// TODO: move to some IAdapterStateControl
-      Task<Boolean> DisableAdapter();
-
-      /// TODO: move to some IAdapterStateControl
-      Task<Boolean> EnableAdapter();
-
-      /// <summary>
-      /// Register to receive a notification when the adapter's state has changed
-      /// </summary>
-      IDisposable OnStateChanged( IObserver<Boolean> observer );
+      /// <param name="advertisementDiscovered">Callback to notify for each discovered advertisement</param>
+      /// <param name="ct">Scan will run continuously until this token is cancelled</param>
       Task ScanForBroadcasts( IObserver<IBlePeripheral> advertisementDiscovered, CancellationToken ct );
 
       /// <summary>
