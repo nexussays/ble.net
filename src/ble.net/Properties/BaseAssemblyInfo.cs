@@ -5,6 +5,20 @@
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
 using System;
+using System.Reflection;
+
+[assembly: AssemblyCompany( "nexussays" )]
+[assembly: AssemblyCopyright( "Copyright Malachi Griffie <malachi@nexussays.com>" )]
+[assembly: AssemblyTrademark( "" )]
+[assembly: AssemblyCulture( "" )]
+
+#if DEBUG
+
+[assembly: AssemblyConfiguration( "debug" )]
+#else
+
+[assembly: AssemblyConfiguration( "release" )]
+#endif
 
 // ReSharper disable once CheckNamespace
 
@@ -16,10 +30,6 @@ namespace nexus.protocols.ble
       internal const String PROJECT_DESCRIPTION =
          "Cross-platform Bluetooth Low Energy (BLE) library for Android, iOS, and (partially) UWP";
       internal const String URL = "https://github.com/nexussays/ble.net";
-
-      internal const String VERSION = "0.10.15";
-      internal const String VERSION_SHORT = VERSION;
-
       internal const Boolean IS_DEBUG = 
 #if DEBUG
          true;
