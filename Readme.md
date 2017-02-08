@@ -3,7 +3,6 @@
 `ble.net` is a Bluetooth Low Energy (aka BLE, aka Bluetooth LE, aka Bluetooth Smart) PCL to enable simple development of BLE clients on Android, iOS, and Windows 10.
 
 > Currently Windows 10 / UWP only supports observing broadcasts/advertisements.
-> No support for hosting/creating a GATT server.
 
 ## Setup
 
