@@ -28,7 +28,7 @@ Install-Package ble.net-uwp
 
 ### 2. Obtain a reference to `BluetoothLowEnergyAdapter`
 
-Each platform project has a class `BluetoothLowEnergyAdapter` with a static method `BluetoothLowEnergyAdapter.ObtainDefaultAdapter()`. Obtain this reference and then provide it to your application code using whatever dependency injector or manual reference passing you are using in your project.
+Each platform project has a static method `BluetoothLowEnergyAdapter.ObtainDefaultAdapter()`. Obtain this reference and then provide it to your application code using whatever dependency injector or manual reference passing you are using in your project.
 
 #### Android-specific setup
 
@@ -56,7 +56,7 @@ protected sealed override void OnActivityResult( Int32 requestCode, Result resul
 
 > See [sample Xamarin Forms app](/test/ble.net.sampleapp/) included in the repo for a complete example.
 
-All the exmaples presume you have some `adapter` passed in as per the setup notes above:
+All the examples presume you have some `adapter` passed in as per the setup notes above:
 ```csharp
 IBluetoothLowEnergyAdapter adapter = /* platform provided adapter value */;
 ```
@@ -85,7 +85,7 @@ await adapter.ScanForDevices(
 
 ```csharp
 // If the connection isn't established before timeout (or a CancellationToken) is triggered, it will be stopped
-var connection = await adapter.ConnectToDevice( device: peripheral, timeout: TimeSpan.FromSeconds( 5 ) );
+var connection = await adapter.ConnectToDevice( peripheral, TimeSpan.FromSeconds( 5 ));
 if(connection.IsSuccessful())
 {
    var gattServer = connection.GattServer;
@@ -97,6 +97,11 @@ else
    Log.Info( "Error connecting to device. result={0:g}", connection.ConnectionResult );
    // e.g., "Error connecting to device. result=ConnectionAttemptCancelled"
 }
+```
+
+Connection also optionally takes an `IProgress` argument and has several utility overloads, e.g.:
+```csharp
+var connection = await adapter.ConnectToDevice( peripheral, ct, progress => Log.Info(progress) );
 ```
 
 ### Enumerate all services on the GATT Server
