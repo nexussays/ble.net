@@ -141,6 +141,7 @@
     <Compile Include="IBlePeripheral.cs" />
     <Compile Include="connection\IBleGattServer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ScanFilter.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="nexus.core, Version=0.25.7.0, Culture=neutral, processorArchitecture=MSIL">

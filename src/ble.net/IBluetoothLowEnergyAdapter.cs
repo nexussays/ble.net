@@ -51,15 +51,16 @@ namespace nexus.protocols.ble
       /// Register to receive a notification when the adapter's state has changed
       /// </summary>
       IDisposable OnStateChanged( IObserver<Boolean> observer );
+      Task ScanForBroadcasts( IObserver<IBlePeripheral> advertisementDiscovered, CancellationToken ct );
 
       /// <summary>
-      /// Scan for nearby BLE device advertisements. The devices discovered are not guaranteed to be unique, i.e. -- each device
+      /// Scan for nearby BLE device advertisements that match <paramref name="filter" />. The devices discovered are not
+      /// guaranteed to be unique, i.e. -- each device
       /// will likely be provided to the observer multiple times as the BLE scanner picks up advertisements.
       /// </summary>
+      /// <param name="filter">Scan filter that will ignore broadcast advertisements that do not match. see: <see cref="ScanFilter.Factory"/></param>
       /// <param name="advertisementDiscovered">Callback to notify for each discovered advertisement</param>
       /// <param name="ct">Scan will run continuously until this token is cancelled</param>
-      /// TODO: Add a method to scan with a filter on service, name, etc. Task ScanForDevices( ScanFilter filter, IObserver
-      /// <IBluetoothLowEnergyPeripheral> advertisementDiscovered, CancellationToken ct );
-      Task ScanForDevices( IObserver<IBlePeripheral> advertisementDiscovered, CancellationToken ct );
+      Task ScanForBroadcasts( ScanFilter filter, IObserver<IBlePeripheral> advertisementDiscovered, CancellationToken ct );
    }
 }
