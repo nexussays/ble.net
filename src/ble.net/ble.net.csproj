@@ -131,6 +131,7 @@
     <Compile Include="advertisement\AdvertisingDataType.cs" />
     <Compile Include="advertisement\AdvertisingDataFlags.cs" />
     <Compile Include="BleAdapterState.cs" />
+    <Compile Include="CharacteristicProperty.cs" />
     <Compile Include="connection\BleDeviceConnection.cs" />
     <Compile Include="connection\ConnectionProgress.cs" />
     <Compile Include="connection\ConnectionResult.cs" />
@@ -157,7 +158,6 @@
   <PropertyGroup>
     <CodeContractsInstallDir Condition=" '$(CodeContractsInstallDir)' == '' ">$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\..\lib\packages\DotNet.Contracts.1.10.20606.1\'))</CodeContractsInstallDir>
   </PropertyGroup>
-  <Import Project="..\..\build\Microsoft.CodeContracts.targets" Condition="'$(CodeContractsImported)' != 'true' AND '$(DontImportCodeContracts)' != 'true'" />
   <Target Name="EnsureCCNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>
       <ErrorText>Ensure you have installed the NuGet package DotNet.Contracts@1.10.20606.1</ErrorText>

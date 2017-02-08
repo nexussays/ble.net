@@ -54,7 +54,7 @@ namespace ble.net.sampleapp.viewmodel
 
       public Int32 Rssi => Model.Rssi;
 
-      public String Signal => Model.Rssi + "+" + Model.Advertisement.TxPowerLevel;
+      public String Signal => Model.Rssi + (Model.Advertisement.TxPowerLevel > 0 ? "+" + Model.Advertisement.TxPowerLevel : "");
 
       public override Boolean Equals( Object other )
       {

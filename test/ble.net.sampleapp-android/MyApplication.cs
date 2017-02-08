@@ -10,6 +10,7 @@ using Android.App;
 using Android.Runtime;
 using nexus.core;
 using nexus.core.logging;
+using Log = Android.Util.Log;
 
 namespace ble.net.sampleapp.android
 {
