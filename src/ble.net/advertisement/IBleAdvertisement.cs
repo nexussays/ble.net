@@ -6,14 +6,13 @@
 
 using System;
 using System.Collections.Generic;
-using nexus.protocols.ble.advertisement;
 
-namespace nexus.protocols.ble
+namespace nexus.protocols.ble.advertisement
 {
    /// <summary>
    /// Structured data from a BLE perihperal device's advertisement broadcast (and possible also scan response)
    /// </summary>
-   public interface IBlePeripheralAdvertisement
+   public interface IBleAdvertisement
    {
       /// <summary>
       /// The name of this device
@@ -23,9 +22,9 @@ namespace nexus.protocols.ble
       AdvertisingDataFlags Flags { get; }
 
       /// <summary>
-      /// The manufacturer specific data associated with the manufacturer id.
+      /// Manufacturer specific data
       /// </summary>
-      IEnumerable<KeyValuePair<Int32, Byte[]>> ManufacturerSpecificData { get; }
+      IEnumerable<AdvertisingManufacturerData> ManufacturerSpecificData { get; }
 
       /// <summary>
       /// List of the raw bytes of the advertisement fields, if available.
@@ -35,7 +34,7 @@ namespace nexus.protocols.ble
       IEnumerable<KeyValuePair<Guid, Byte[]>> ServiceData { get; }
 
       /// <summary>
-      /// Services advertised by this device. Not necessarily an exhaustive list.
+      /// Select services advertised by this peripheral.
       /// </summary>
       IEnumerable<Guid> Services { get; }
 

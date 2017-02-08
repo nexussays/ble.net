@@ -9,26 +9,26 @@ using System;
 namespace nexus.protocols.ble.advertisement
 {
    /// <summary>
-   /// Advertising Data Structure. A single data item in the 31-byte advertising payload
+   /// Manufacturer data in an advertising payload
    /// </summary>
-   public struct AdvertisingDataItem
+   public struct AdvertisingManufacturerData
    {
-      public AdvertisingDataItem( AdvertisingDataType type, Byte[] data )
+      public AdvertisingManufacturerData( UInt16 company, Byte[] data )
       {
-         Type = type;
+         CompanyId = company;
          Data = data;
       }
-
-      /// <summary>
-      /// The content of this advertising payload
-      /// </summary>
-      public Byte[] Data { get; }
 
       /// <summary>
       /// The type of an entry in the 31-byte advertising PDU payload.
       /// Assigned numbers are used in GAP for inquiry response, EIR data type values, manufacturer-specific data, advertising
       /// data, low energy UUIDs and appearance characteristics, and class of device.
       /// </summary>
-      public AdvertisingDataType Type { get; }
+      public UInt16 CompanyId { get; }
+
+      /// <summary>
+      /// The content of this advertising payload
+      /// </summary>
+      public Byte[] Data { get; }
    }
 }
