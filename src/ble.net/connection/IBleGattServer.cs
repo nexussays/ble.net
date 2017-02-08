@@ -8,7 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace nexus.protocols.ble
+namespace nexus.protocols.ble.connection
 {
    /// <summary>
    /// An active connection to a <see cref="IBlePeripheral" />. The GATT Server connection is established when
@@ -25,8 +25,12 @@ namespace nexus.protocols.ble
       /// The current state of the connection to the device.
       /// Default: <see cref="ConnectionState.Disconnected" />
       /// </summary>
-      /// TODO: There are no connect/disconnect methods
       ConnectionState State { get; }
+
+      /// <summary>
+      /// Be notified of changes to <see cref="State"/>
+      /// </summary>
+      new IDisposable Subscribe( IObserver<ConnectionState> observer );
 
       /// <summary>
       /// Enumerate all services on this device

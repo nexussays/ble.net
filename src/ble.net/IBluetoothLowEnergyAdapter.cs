@@ -27,14 +27,16 @@ namespace nexus.protocols.ble
       /// Attempt to connect to the provided <paramref name="device" />, and continue the attempt until <paramref name="ct" /> is
       /// cancelled.
       /// </summary>
-      Task<IBleGattServer> ConnectToDevice( IBlePeripheral device, CancellationToken ct );
+      Task<BleDeviceConnection> ConnectToDevice( IBlePeripheral device, CancellationToken ct,
+                                                 IProgress<ConnectionProgress> progress = null );
 
       /// <summary>
       /// Attempt to find and connect to the device with given ID, and continue the attempt until <paramref name="ct" /> is
       /// cancelled. (see <see cref="IBlePeripheral.DeviceId" /> for more information on how <paramref name="id" /> relates to
       /// the device's MAC address)
       /// </summary>
-      Task<IBleGattServer> ConnectToDevice( Guid id, CancellationToken ct );
+      Task<BleDeviceConnection> ConnectToDevice( Guid id, CancellationToken ct,
+                                                 IProgress<ConnectionProgress> progress = null );
 
       /// <summary>
       /// The state of the bluetooth adapter and controls to toggle it on or off

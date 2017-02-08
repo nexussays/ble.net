@@ -128,15 +128,18 @@
     <Compile Include="advertisement\AdvertisingDataItem.cs" />
     <Compile Include="advertisement\AdvertisingDataType.cs" />
     <Compile Include="advertisement\AdvertisingDataFlags.cs" />
+    <Compile Include="connection\BleDeviceConnection.cs" />
+    <Compile Include="connection\ConnectionProgress.cs" />
+    <Compile Include="connection\ConnectionResult.cs" />
     <Compile Include="Properties\BaseAssemblyInfo.cs" />
     <Compile Include="BluetoothLowEnergyUtils.cs" />
     <Compile Include="CharacteristicProperty.cs" />
-    <Compile Include="ConnectionState.cs" />
+    <Compile Include="connection\ConnectionState.cs" />
     <Compile Include="GattException.cs" />
-    <Compile Include="IBlePeripheralAdvertisement.cs" />
+    <Compile Include="advertisement\IBleAdvertisement.cs" />
     <Compile Include="IBluetoothLowEnergyAdapter.cs" />
     <Compile Include="IBlePeripheral.cs" />
-    <Compile Include="IBleGattServer.cs" />
+    <Compile Include="connection\IBleGattServer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
