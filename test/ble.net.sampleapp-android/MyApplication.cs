@@ -6,6 +6,7 @@
 
 using System;
 using System.Linq;
+using System.Reflection;
 using Android.App;
 using Android.Runtime;
 using nexus.core;
@@ -27,6 +28,7 @@ namespace ble.net.sampleapp.android
       protected MyApplication( IntPtr javaReference, JniHandleOwnership transfer )
          : base( javaReference, transfer )
       {
+         SystemLog.Instance.Id = Assembly.GetAssembly( GetType() ).GetName().Name;
       }
 
       public override void OnCreate()

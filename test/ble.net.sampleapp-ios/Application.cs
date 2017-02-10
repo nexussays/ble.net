@@ -6,6 +6,7 @@
 
 using System;
 using System.Linq;
+using System.Reflection;
 using nexus.core;
 using nexus.core.logging;
 using UIKit;
@@ -26,6 +27,7 @@ namespace ble.net.sampleapp.ios
          // ReSharper disable once ConditionIsAlwaysTrueOrFalse
          if(IS_DEBUG)
          {
+            SystemLog.Instance.Id = Assembly.GetAssembly( typeof(Application) ).GetName().Name;
             SystemLog.Instance.AddSink(
                         entry =>
                         {

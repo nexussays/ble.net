@@ -131,14 +131,13 @@
     <Compile Include="advertisement\AdvertisingDataType.cs" />
     <Compile Include="advertisement\AdvertisingDataFlags.cs" />
     <Compile Include="BleAdapterState.cs" />
-    <Compile Include="CharacteristicProperty.cs" />
     <Compile Include="connection\BleDeviceConnection.cs" />
     <Compile Include="connection\ConnectionProgress.cs" />
     <Compile Include="connection\ConnectionResult.cs" />
     <Compile Include="IAdapterState.cs" />
     <Compile Include="Properties\BaseAssemblyInfo.cs" />
     <Compile Include="BluetoothLowEnergyUtils.cs" />
-    <Compile Include="connection\CharacteristicProperty.cs" />
+    <Compile Include="CharacteristicProperty.cs" />
     <Compile Include="connection\ConnectionState.cs" />
     <Compile Include="GattException.cs" />
     <Compile Include="advertisement\IBleAdvertisement.cs" />
@@ -149,8 +148,8 @@
     <Compile Include="ScanFilter.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Reference Include="nexus.core, Version=0.26.2.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\lib\packages\nexus.core.0.26.2\lib\portable45-net45+win8\nexus.core.dll</HintPath>
+    <Reference Include="nexus.core, Version=0.26.3.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\lib\packages\nexus.core.0.26.3\lib\portable45-net45+win8\nexus.core.dll</HintPath>
       <Private>True</Private>
     </Reference>
   </ItemGroup>

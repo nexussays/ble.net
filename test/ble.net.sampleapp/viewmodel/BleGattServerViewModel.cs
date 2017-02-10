@@ -7,7 +7,6 @@
 using System;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Threading.Tasks;
 using Acr.UserDialogs;
 using ble.net.sampleapp.util;
 using nexus.core;
@@ -56,8 +55,11 @@ namespace ble.net.sampleapp.viewmodel
 
       public void CloseConnection()
       {
-         Log.Trace( "{0}. Closing connection to GATT Server. state={1:g}", GetType().Name, m_gattServer?.State );
-         m_gattServer?.Dispose();
+         if(m_gattServer != null)
+         {
+            Log.Trace( "Closing connection to GATT Server. state={0:g}", m_gattServer?.State );
+            m_gattServer.Dispose();
+         }
          Services.Clear();
          IsBusy = false;
       }
@@ -74,7 +76,6 @@ namespace ble.net.sampleapp.viewmodel
          CloseConnection();
          IsBusy = true;
 
-         Log.Debug( "Connecting to device. id={0}", m_peripheral.Id );
          var connection =
             await
                m_bleAdapter.ConnectToDevice(
