@@ -105,12 +105,12 @@
       <HintPath>..\..\lib\packages\Acr.UserDialogs.6.3.7\lib\Xamarin.iOS10\Acr.UserDialogs.Interface.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="ble.net, Version=0.12.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\lib\packages\ble.net.0.12.0\lib\portable45-net45+win8\ble.net.dll</HintPath>
+    <Reference Include="ble.net, Version=0.12.2.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\lib\packages\ble.net.0.12.2\lib\portable45-net45+win8\ble.net.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="ble.net-ios, Version=0.12.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\lib\packages\ble.net-ios.0.12.0\lib\xamarinios10\ble.net-ios.dll</HintPath>
+    <Reference Include="ble.net-ios, Version=0.12.2.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\lib\packages\ble.net-ios.0.12.2\lib\xamarinios10\ble.net-ios.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="nexus.core, Version=0.26.3.0, Culture=neutral, processorArchitecture=MSIL">
