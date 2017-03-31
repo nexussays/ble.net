@@ -21,7 +21,7 @@ namespace nexus.protocols.ble
       /// <summary>
       /// The state of this BLE adapter and controls to enable or disable it
       /// </summary>
-      IAdapterStateControl State { get; }
+      IAdapterControl State { get; }
 
       /// <summary>
       /// Attempt to connect to the provided <paramref name="device" />, and continue the attempt until <paramref name="ct" /> is

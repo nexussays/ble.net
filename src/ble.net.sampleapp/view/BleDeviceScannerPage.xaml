@@ -78,7 +78,7 @@
                                      HorizontalOptions="FillAndExpand">
                            <Label Text="{Binding Name}"
                                   HorizontalOptions="StartAndExpand" />
-                           <Label Text="{Binding Signal}"
+                           <Label Text="{Binding Rssi}"
                                   HorizontalOptions="End"
                                   MinimumWidthRequest="30" />
                         </StackLayout>

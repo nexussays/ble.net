@@ -5,49 +5,24 @@
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
 using System;
-using System.Threading.Tasks;
 
 namespace nexus.protocols.ble
 {
    /// <summary>
-   /// The state of an adapter and controls to enable or disable it
+   /// The state of an adapter
    /// </summary>
-   public interface IAdapterStateControl : IAdapterState
-   {
-      /// <summary>
-      /// <c>true</c> if the current platform allows disabling this adapter
-      /// </summary>
-      Boolean AdapterCanBeDisabled { get; }
-
-      /// <summary>
-      /// <c>true</c> if the current platform allows enabling this adapter
-      /// </summary>
-      Boolean AdapterCanBeEnabled { get; }
-
-      /// <summary>
-      /// Disable this adapter system-wide
-      /// </summary>
-      /// <returns></returns>
-      Task<Boolean> DisableAdapter();
-
-      /// <summary>
-      /// Enable this adapter system-wide
-      /// </summary>
-      Task<Boolean> EnableAdapter();
-   }
-
-   public interface IAdapterState : IObservable<BleAdapterState>
+   public interface IAdapterState : IObservable<EnabledDisabledState>
    {
       /// <summary>
       /// True if the adapter is currently enabled and operational
       /// </summary>
-      BleAdapterState CurrentState { get; }
+      EnabledDisabledState CurrentState { get; }
 
       /// <summary>
       /// Register an observer to be notified when <see cref="CurrentState" /> has changed. This applies to external adapter
-      /// changes as well as calls made to <see cref="IAdapterStateControl.EnableAdapter" /> or
-      /// <see cref="IAdapterStateControl.DisableAdapter" />.
+      /// changes as well as calls made to <see cref="IAdapterControl.EnableAdapter" /> or
+      /// <see cref="IAdapterControl.DisableAdapter" />.
       /// </summary>
-      new IDisposable Subscribe( IObserver<BleAdapterState> observer );
+      new IDisposable Subscribe( IObserver<EnabledDisabledState> observer );
    }
 }

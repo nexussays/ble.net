@@ -54,7 +54,7 @@ namespace ble.net.sampleapp.viewmodel
 
       public Int32 Rssi => Model.Rssi;
 
-      public String Signal => Model.Rssi + (Model.Advertisement.TxPowerLevel > 0 ? "+" + Model.Advertisement.TxPowerLevel : "");
+      public String Signal => Model.Rssi + "+" + Model.Advertisement.TxPowerLevel;
 
       public override Boolean Equals( Object other )
       {
@@ -74,6 +74,18 @@ namespace ble.net.sampleapp.viewmodel
       public void Update( IBlePeripheral device )
       {
          Advertisement = Model.Advertisement.ToString();
+         //Log.Debug(
+         //   "Updating peripheral. name={0} flags={1} services={2} mfg={3} data={4} tx={5} service-data={6}",
+         //   device.Advertisement?.DeviceName,
+         //   device.Advertisement?.Flags,
+         //   device.Advertisement?.Services.Select( x => x.ToString() ).Join( "," ),
+         //   device.Advertisement?.ManufacturerSpecificData.Select(
+         //            x => x.CompanyId + "|" + x.Data?.ToArray()?.EncodeToBase16String() ).Join( "," ),
+         //   device.Advertisement?.RawData.Select( x => x.Type + "|" + x.Data?.ToArray()?.EncodeToBase16String() )
+         //         .Join( "," ),
+         //   device.Advertisement?.TxPowerLevel,
+         //   device.Advertisement?.ServiceData.Select( x => x.Key + "|" + x.Value?.ToArray()?.EncodeToBase16String() )
+         //         .Join( "," ) );
 
          RaisePropertyChanged( nameof( Rssi ) );
          RaisePropertyChanged( nameof( Name ) );

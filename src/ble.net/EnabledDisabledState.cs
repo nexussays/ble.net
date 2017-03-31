@@ -7,28 +7,28 @@
 namespace nexus.protocols.ble
 {
    /// <summary>
-   /// The state of the BLE device adapter.
+   /// Represents the state of some entity that can be enabled and disabled
    /// </summary>
-   public enum BleAdapterState
+   public enum EnabledDisabledState
    {
       /// <summary>
-      /// The state of this adapter is unknown
+      /// The state of this entity is unknown
       /// </summary>
       Unknown,
       /// <summary>
-      /// The adapter is disabled and unavailable for use
+      /// The entity is disabled and unavailable for use
       /// </summary>
       Disabled,
       /// <summary>
-      /// The adapter is currently transitioning to <see cref="Disabled" />
+      /// The entity is currently transitioning to <see cref="Disabled" />
       /// </summary>
       Disabling,
       /// <summary>
-      /// The adapter is currently transitioning to <see cref="Enabled" />
+      /// The entity is currently transitioning to <see cref="Enabled" />
       /// </summary>
       Enabling,
       /// <summary>
-      /// The adapter is anabled and ready for use
+      /// The entity is aeabled and ready for use
       /// </summary>
       Enabled
    }
