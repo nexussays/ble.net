@@ -56,7 +56,7 @@ protected sealed override void OnActivityResult( Int32 requestCode, Result resul
 
 ## API
 
-> See [sample Xamarin Forms app](/test/ble.net.sampleapp/) included in the repo for a complete example.
+> See [sample Xamarin Forms app](/src/ble.net.sampleapp/) included in the repo for a complete example.
 
 All the examples presume you have some `adapter` passed in as per the setup notes above:
 ```csharp
