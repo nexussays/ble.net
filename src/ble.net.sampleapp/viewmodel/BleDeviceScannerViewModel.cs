@@ -52,8 +52,8 @@ namespace ble.net.sampleapp.viewmodel
 
       public Boolean IsAdapterEnabled
          =>
-         m_bleAdapter.State.CurrentState == BleAdapterState.Enabled ||
-         m_bleAdapter.State.CurrentState == BleAdapterState.Unknown;
+         m_bleAdapter.State.CurrentState == EnabledDisabledState.Enabled ||
+         m_bleAdapter.State.CurrentState == EnabledDisabledState.Unknown;
 
       public Boolean IsScanning
       {
