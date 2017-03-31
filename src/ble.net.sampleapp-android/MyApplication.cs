@@ -74,7 +74,7 @@ namespace ble.net.sampleapp.android
       }
    }
 
-   [Activity( Label = "BLE.net Sample App", Theme = "@style/MainTheme", MainLauncher = false,
+   [Activity( Label = "BLE.net Sample App", Theme = "@style/MainTheme", MainLauncher = false, Icon = "@drawable/icon",
       ConfigurationChanges = ConfigChanges.ScreenSize | ConfigChanges.Orientation )]
    public class MainActivity : FormsAppCompatActivity
    {
@@ -99,7 +99,7 @@ namespace ble.net.sampleapp.android
       }
    }
 
-   [Activity( Theme = "@style/MainTheme", MainLauncher = true, NoHistory = true )]
+   [Activity(Theme = "@style/AppTheme.Splash", MainLauncher = true, NoHistory = true)]
    public class SplashActivity : Activity
    {
       protected override void OnCreate( Bundle bundle )
