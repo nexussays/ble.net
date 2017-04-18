@@ -26,8 +26,6 @@ Install-Package ble.net-ios
 Install-Package ble.net-uwp
 ```
 
-> Note that there are two packages for Android, `ble.net-android` and `ble.net-android21`; the API 21+ package is not materially different for client operations but will be needed if/when server operations are implemented. You should probably just use `ble.net-android`.
-
 ### 2. Obtain a reference to `BluetoothLowEnergyAdapter`
 
 Each platform project has a static method `BluetoothLowEnergyAdapter.ObtainDefaultAdapter()`. Obtain this reference and then provide it to your application code using whatever dependency injector or manual reference passing you are using in your project.
