@@ -16,6 +16,7 @@ Install-Package ble.net
 ```
 
 In each platform project, install the relevant package:
+
 ```powershell
 Install-Package ble.net-android
 ```
@@ -29,6 +30,11 @@ Install-Package ble.net-uwp
 ### 2. Obtain a reference to `BluetoothLowEnergyAdapter`
 
 Each platform project has a static method `BluetoothLowEnergyAdapter.ObtainDefaultAdapter()`. Obtain this reference and then provide it to your application code using whatever dependency injector or manual reference passing you are using in your project.
+
+Examples:
+* [Android Xamarin.Forms](src/ble.net.sampleapp-android/MyApplication.cs#L98)
+* [iOS Xamarin.Forms](src/ble.net.sampleapp-ios/MyApplication.cs#L64)
+* [UWP Xamarin.Forms](src/ble.net.sampleapp-uwp/MainPage.xaml.cs#L12)
 
 #### Android-specific setup
 
