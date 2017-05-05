@@ -1,10 +1,10 @@
 ﻿{
   "dependencies": {
     "Acr.UserDialogs": "6.3.7",
-    "ble.net": "0.12.2",
-    "ble.net-uwp": "0.12.2",
+    "ble.net": "0.12.4",
+    "ble.net-uwp": "0.12.4",
     "Microsoft.NETCore.UniversalWindowsPlatform": "5.2.2",
-    "nexus.core": "0.26.3",
+    "nexus.core": "0.26.7",
     "Xamarin.Forms": "2.3.3.180"
   },
   "frameworks": {

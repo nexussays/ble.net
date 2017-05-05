@@ -72,16 +72,39 @@
       <HintPath>..\..\lib\packages\AndHUD.1.2.0\lib\MonoAndroid\AndHUD.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="ble.net, Version=0.12.2.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\lib\packages\ble.net.0.12.2\lib\portable45-net45+win8\ble.net.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="ble.net, Version=0.12.4.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\lib\packages\ble.net.0.12.4\lib\portable45-net45+win8\ble.net.dll</HintPath>
     </Reference>
-    <Reference Include="ble.net-android, Version=0.12.2.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\lib\packages\ble.net-android.0.12.2\lib\monoandroid44\ble.net-android.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="ble.net-android, Version=0.12.4.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\lib\packages\ble.net-android.0.12.4\lib\monoandroid44\ble.net-android.dll</HintPath>
     </Reference>
     <Reference Include="FormsViewGroup, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\lib\packages\Xamarin.Forms.2.3.3.180\lib\MonoAndroid10\FormsViewGroup.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.Azure.Mobile, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\lib\packages\Microsoft.Azure.Mobile.0.7.0\lib\MonoAndroid403\Microsoft.Azure.Mobile.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.Azure.Mobile.Analytics, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\lib\packages\Microsoft.Azure.Mobile.Analytics.0.7.0\lib\MonoAndroid403\\Microsoft.Azure.Mobile.Analytics.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.Azure.Mobile.Analytics.Android.Bindings">
+      <HintPath>..\..\lib\packages\Microsoft.Azure.Mobile.Analytics.0.7.0\lib\MonoAndroid403\\Microsoft.Azure.Mobile.Analytics.Android.Bindings.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.Azure.Mobile.Android.Bindings, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\lib\packages\Microsoft.Azure.Mobile.0.7.0\lib\MonoAndroid403\Microsoft.Azure.Mobile.Android.Bindings.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.Azure.Mobile.Crashes, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\lib\packages\Microsoft.Azure.Mobile.Crashes.0.7.0\lib\MonoAndroid403\Microsoft.Azure.Mobile.Crashes.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.Azure.Mobile.Crashes.Android.Bindings, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\lib\packages\Microsoft.Azure.Mobile.Crashes.0.7.0\lib\MonoAndroid403\Microsoft.Azure.Mobile.Crashes.Android.Bindings.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Mono.Android" />
@@ -90,9 +113,8 @@
       <HintPath>..\..\lib\packages\Newtonsoft.Json.9.0.1\lib\portable-net45+wp80+win8+wpa81\Newtonsoft.Json.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="nexus.core, Version=0.26.3.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\lib\packages\nexus.core.0.26.3\lib\portable45-net45+win8\nexus.core.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="nexus.core, Version=0.26.7.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\lib\packages\nexus.core.0.26.7\lib\portable45-net45+win8\nexus.core.dll</HintPath>
     </Reference>
     <Reference Include="Nito.AsyncEx, Version=3.0.1.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\lib\packages\Nito.AsyncEx.3.0.1\lib\MonoAndroid\Nito.AsyncEx.dll</HintPath>

@@ -87,7 +87,7 @@
                            <Label Text="{Binding Id}"
                                   HorizontalOptions="StartAndExpand"
                                   LineBreakMode="TailTruncation" />
-                           <Label Text="{Binding Manufacturer, StringFormat='({0})'}"
+                           <Label Text="{Binding Manufacturer}"
                                   HorizontalOptions="End" />
                         </StackLayout>
 

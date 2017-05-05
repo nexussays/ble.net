@@ -109,17 +109,38 @@
       <HintPath>..\..\lib\packages\Acr.UserDialogs.6.3.7\lib\Xamarin.iOS10\Acr.UserDialogs.Interface.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="ble.net, Version=0.12.2.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\lib\packages\ble.net.0.12.2\lib\portable45-net45+win8\ble.net.dll</HintPath>
+    <Reference Include="ble.net, Version=0.12.4.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\lib\packages\ble.net.0.12.4\lib\portable45-net45+win8\ble.net.dll</HintPath>
+    </Reference>
+    <Reference Include="ble.net-ios, Version=0.12.4.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\lib\packages\ble.net-ios.0.12.4\lib\xamarinios10\ble.net-ios.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Azure.Mobile, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\lib\packages\Microsoft.Azure.Mobile.0.7.0\lib\Xamarin.iOS10\Microsoft.Azure.Mobile.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="ble.net-ios, Version=0.12.2.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\lib\packages\ble.net-ios.0.12.2\lib\xamarinios10\ble.net-ios.dll</HintPath>
+    <Reference Include="Microsoft.Azure.Mobile.Analytics">
+      <HintPath>..\..\lib\packages\Microsoft.Azure.Mobile.Analytics.0.7.0\lib\Xamarin.iOS10\\Microsoft.Azure.Mobile.Analytics.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="nexus.core, Version=0.26.3.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\lib\packages\nexus.core.0.26.3\lib\portable45-net45+win8\nexus.core.dll</HintPath>
+    <Reference Include="Microsoft.Azure.Mobile.Analytics.iOS.Bindings">
+      <HintPath>..\..\lib\packages\Microsoft.Azure.Mobile.Analytics.0.7.0\lib\Xamarin.iOS10\\Microsoft.Azure.Mobile.Analytics.iOS.Bindings.dll</HintPath>
       <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.Azure.Mobile.Crashes, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\lib\packages\Microsoft.Azure.Mobile.Crashes.0.7.0\lib\Xamarin.iOS10\Microsoft.Azure.Mobile.Crashes.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.Azure.Mobile.Crashes.iOS.Bindings, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\lib\packages\Microsoft.Azure.Mobile.Crashes.0.7.0\lib\Xamarin.iOS10\Microsoft.Azure.Mobile.Crashes.iOS.Bindings.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.Azure.Mobile.iOS.Bindings, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\lib\packages\Microsoft.Azure.Mobile.0.7.0\lib\Xamarin.iOS10\Microsoft.Azure.Mobile.iOS.Bindings.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="nexus.core, Version=0.26.7.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\lib\packages\nexus.core.0.26.7\lib\portable45-net45+win8\nexus.core.dll</HintPath>
     </Reference>
     <Reference Include="Splat, Version=1.6.2.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\lib\packages\Splat.1.6.2\lib\Xamarin.iOS10\Splat.dll</HintPath>

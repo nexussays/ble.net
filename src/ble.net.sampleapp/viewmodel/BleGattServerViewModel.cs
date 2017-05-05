@@ -18,6 +18,8 @@ namespace ble.net.sampleapp.viewmodel
 {
    public class BleGattServerViewModel : BaseViewModel
    {
+      private const Int32 CONNECTION_TIMEOUT_SECONDS = 15;
+
       private readonly IBluetoothLowEnergyAdapter m_bleAdapter;
       private readonly IUserDialogs m_dialogManager;
       private String m_connectionState;
@@ -67,7 +69,7 @@ namespace ble.net.sampleapp.viewmodel
       public override async void OnAppearing()
       {
          // if we're busy or have a valid connection, then no-op
-         if(IsBusy || (m_gattServer != null && m_gattServer.State != ConnectionState.Disconnected))
+         if(IsBusy || m_gattServer != null && m_gattServer.State != ConnectionState.Disconnected)
          {
             Log.Debug( "OnAppearing. state={0} isbusy={1}", m_gattServer?.State, IsBusy );
             return;
@@ -76,12 +78,10 @@ namespace ble.net.sampleapp.viewmodel
          CloseConnection();
          IsBusy = true;
 
-         var connection =
-            await
-               m_bleAdapter.ConnectToDevice(
-                  device: m_peripheral.Model,
-                  timeout: TimeSpan.FromSeconds( 5 ),
-                  progress: progress => { Connection = progress.ToString(); } );
+         var connection = await m_bleAdapter.ConnectToDevice(
+            device: m_peripheral.Model,
+            timeout: TimeSpan.FromSeconds( CONNECTION_TIMEOUT_SECONDS ),
+            progress: progress => { Connection = progress.ToString(); } );
          if(connection.IsSuccessful())
          {
             m_gattServer = connection.GattServer;
@@ -117,11 +117,17 @@ namespace ble.net.sampleapp.viewmodel
          }
          else
          {
-            var errorMsg =
-               "Error connecting to device: {0}".F(
-                  connection.ConnectionResult == ConnectionResult.ConnectionAttemptCancelled
-                     ? "Timeout"
-                     : connection.ConnectionResult.ToString() );
+            String errorMsg;
+            if(connection.ConnectionResult == ConnectionResult.ConnectionAttemptCancelled)
+            {
+               errorMsg = "Connection attempt cancelled after {0} seconds (see {1})".F(
+                  CONNECTION_TIMEOUT_SECONDS,
+                  GetType().Name + ".cs" );
+            }
+            else
+            {
+               errorMsg = "Error connecting to device: {0}".F( connection.ConnectionResult );
+            }
             Log.Info( errorMsg );
             m_dialogManager.Toast( errorMsg, TimeSpan.FromSeconds( 5 ) );
          }
