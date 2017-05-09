@@ -110,10 +110,10 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="ble.net, Version=0.12.8.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\lib\packages\ble.net.0.12.8-alpha0002\lib\portable45-net45+win8\ble.net.dll</HintPath>
+      <HintPath>..\..\lib\packages\ble.net.0.12.8\lib\portable45-net45+win8\ble.net.dll</HintPath>
     </Reference>
     <Reference Include="ble.net-ios, Version=0.12.8.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\lib\packages\ble.net-ios.0.12.8-alpha0002\lib\xamarinios10\ble.net-ios.dll</HintPath>
+      <HintPath>..\..\lib\packages\ble.net-ios.0.12.8\lib\xamarinios10\ble.net-ios.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Azure.Mobile, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\lib\packages\Microsoft.Azure.Mobile.0.7.0\lib\Xamarin.iOS10\Microsoft.Azure.Mobile.dll</HintPath>
