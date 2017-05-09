@@ -54,6 +54,7 @@
     <Compile Include="connection\ConnectionResult.cs" />
     <Compile Include="IAdapterState.cs" />
     <Compile Include="IAdapterControl.cs" />
+    <Compile Include="IScanFilter.cs" />
     <Compile Include="Properties\BaseAssemblyInfo.cs" />
     <Compile Include="BluetoothLowEnergyUtils.cs" />
     <Compile Include="CharacteristicProperty.cs" />

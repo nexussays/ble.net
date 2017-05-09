@@ -13,7 +13,7 @@ namespace nexus.protocols.ble
 {
    /// <summary>
    /// Filter used when scanning for broadcasts. If broadcast advertisements do not match the scan filter, they will not be
-   /// reported to your observer.
+   /// reported to your observer. See <see cref="Factory" />.
    /// </summary>
    public sealed class ScanFilter : IScanFilter
    {
@@ -88,7 +88,7 @@ namespace nexus.protocols.ble
       }
 
       /// <summary>
-      /// Initialization settings for a scan filter
+      /// Factory to create a new <see cref="ScanFilter" />
       /// </summary>
       public class Factory : IScanFilter
       {
@@ -111,31 +111,27 @@ namespace nexus.protocols.ble
          {
             return new ScanFilter( this );
          }
+
+         /// <inheritdoc cref="AdvertisedDeviceName" />
+         public Factory SetAdvertisedDeviceName( String value )
+         {
+            AdvertisedDeviceName = value;
+            return this;
+         }
+
+         /// <inheritdoc cref="AdvertisedManufacturerCompanyId" />
+         public Factory SetAdvertisedManufacturerCompanyId( UInt16? value )
+         {
+            AdvertisedManufacturerCompanyId = value;
+            return this;
+         }
+
+         /// <inheritdoc cref="IgnoreRepeatBroadcasts" />
+         public Factory SetIgnoreRepeatBroadcasts( Boolean value )
+         {
+            IgnoreRepeatBroadcasts = value;
+            return this;
+         }
       }
-   }
-
-   public interface IScanFilter
-   {
-      /// <summary>
-      /// The broadcast advertisement is displaying this device name
-      /// </summary>
-      String AdvertisedDeviceName { get; }
-
-      /// <summary>
-      /// The broadcast advertisement has manufacturer data matching this company id
-      /// <see href="https://www.bluetooth.com/specifications/assigned-numbers/company-identifiers" />
-      /// </summary>
-      UInt16? AdvertisedManufacturerCompanyId { get; }
-
-      /// <summary>
-      /// The broadcast advertisement lists a service that is contained in this list
-      /// </summary>
-      IEnumerable<Guid> AdvertisedServiceIsInList { get; }
-
-      /// <summary>
-      /// Each discovered device will be provided to your observer once, and any additional broadcasts detected during this scan
-      /// will be ignored.
-      /// </summary>
-      Boolean IgnoreRepeatBroadcasts { get; }
    }
 }
