@@ -7,8 +7,7 @@
                Title="{Binding PageTitle}"
                x:Class="ble.net.sampleapp.view.BleGattServicePage">
 
-   <StackLayout Style="{StaticResource LayoutStack}"
-                Orientation="Vertical">
+   <StackLayout Orientation="Vertical">
       <ListView ItemsSource="{Binding Characteristic}"
                 ItemSelected="OnItemSelected"
                 SeparatorVisibility="None"
@@ -34,12 +33,8 @@
                         <Label Text="{Binding Name}"
                                HorizontalOptions="StartAndExpand"
                                VerticalOptions="Start" />
-                        <Label Text="{Binding ValueAsHex}"
-                               HorizontalOptions="StartAndExpand" />
-                        <Label Text="{Binding ValueAsString}"
-                               HorizontalOptions="StartAndExpand" />
                         <StackLayout Orientation="Horizontal"
-                                     HorizontalOptions="FillAndExpand"
+                                     HorizontalOptions="StartAndExpand"
                                      VerticalOptions="CenterAndExpand">
                            <Button Command="{Binding RefreshValueCommand}"
                                    IsEnabled="{Binding IsBusy, Converter={StaticResource InvertBoolean}}"
@@ -62,6 +57,33 @@
                                    VerticalOptions="Center"
                                    IsVisible="{Binding CanNotify}" />
                         </StackLayout>
+                        <Grid>
+                           <Grid.ColumnDefinitions>
+                              <ColumnDefinition Width="Auto" />
+                              <ColumnDefinition Width="*" />
+                           </Grid.ColumnDefinitions>
+                           <Grid.RowDefinitions>
+                              <RowDefinition Height="Auto" />
+                              <RowDefinition Height="Auto" />
+                           </Grid.RowDefinitions>
+                           <Label Grid.Column="0"
+                                  Grid.Row="0"
+                                  Text="Hex:"
+                                  FontAttributes="Bold" />
+                           <Label Grid.Column="0"
+                                  Grid.Row="1"
+                                  Text="String:"
+                                  FontAttributes="Bold" />
+
+                           <Label Grid.Column="1"
+                                  Grid.Row="0"
+                                  Text="{Binding ValueAsHex}"
+                                  HorizontalOptions="StartAndExpand" />
+                           <Label Grid.Column="1"
+                                  Grid.Row="1"
+                                  Text="{Binding ValueAsString}"
+                                  HorizontalOptions="StartAndExpand" />
+                        </Grid>
                      </StackLayout>
                   </Frame>
                </ViewCell>

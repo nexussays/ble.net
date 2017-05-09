@@ -19,8 +19,8 @@ namespace ble.net.sampleapp.viewmodel
 {
    public class BleGattCharacteristicViewModel : BaseViewModel
    {
-      private readonly IBleGattServer m_gattServer;
       private readonly IUserDialogs m_dialogManager;
+      private readonly IBleGattServer m_gattServer;
       private readonly Guid m_serviceGuid;
       private Guid m_characteristicGuid;
       private Boolean m_isBusy;
@@ -48,25 +48,25 @@ namespace ble.net.sampleapp.viewmodel
          ValueAsString = String.Empty;
 
          m_gattServer.ReadCharacteristicProperties( m_serviceGuid, m_characteristicGuid ).ContinueWith(
-                    x =>
-                    {
-                       Device.BeginInvokeOnMainThread(
-                          () =>
-                          {
-                             if(x.IsFaulted)
-                             {
-                                m_dialogManager.Toast( x.Exception.GetBaseException().Message );
-                             }
-                             else
-                             {
-                                Log.Trace( "Reading properties for characteristic. id={0}", m_characteristicGuid );
-                                m_props = x.Result;
-                                RaisePropertyChanged( nameof( CanNotify ) );
-                                RaisePropertyChanged( nameof( CanRead ) );
-                                RaisePropertyChanged( nameof( CanWrite ) );
-                             }
-                          } );
-                    } );
+            x =>
+            {
+               Device.BeginInvokeOnMainThread(
+                  () =>
+                  {
+                     if(x.IsFaulted)
+                     {
+                        m_dialogManager.Toast( x.Exception.GetBaseException().Message );
+                     }
+                     else
+                     {
+                        Log.Trace( "Reading properties for characteristic. id={0}", m_characteristicGuid );
+                        m_props = x.Result;
+                        RaisePropertyChanged( nameof(CanNotify) );
+                        RaisePropertyChanged( nameof(CanRead) );
+                        RaisePropertyChanged( nameof(CanWrite) );
+                     }
+                  } );
+            } );
       }
 
       public Boolean CanNotify => m_props.CanNotify();
@@ -87,7 +87,7 @@ namespace ble.net.sampleapp.viewmodel
          protected set { Set( ref m_isBusy, value ); }
       }
 
-      public String Name => TiSensorTag.GetName( m_characteristicGuid ) ?? Id;
+      public String Name => RegisteredAttributes.GetName( m_characteristicGuid ) ?? Id;
 
       public Boolean NotifyEnabled
       {
@@ -144,7 +144,7 @@ namespace ble.net.sampleapp.viewmodel
          Log.Trace( "DisableNotifications" );
          m_notificationSubscription?.Dispose();
          m_notificationSubscription = null;
-         RaisePropertyChanged( nameof( NotifyEnabled ) );
+         RaisePropertyChanged( nameof(NotifyEnabled) );
       }
 
       private void EnableNotifications()
@@ -156,14 +156,14 @@ namespace ble.net.sampleapp.viewmodel
                m_notificationSubscription = m_gattServer.NotifyCharacteristicValue(
                   m_serviceGuid,
                   m_characteristicGuid,
-                  UpdateDisplayedValue);
+                  UpdateDisplayedValue );
             }
             catch(GattException ex)
             {
                m_dialogManager.Toast( ex.Message );
             }
          }
-         RaisePropertyChanged( nameof( NotifyEnabled ) );
+         RaisePropertyChanged( nameof(NotifyEnabled) );
       }
 
       private async Task ReadCharacteristicValue()

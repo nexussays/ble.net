@@ -4,13 +4,13 @@
 <util:BasePage xmlns="http://xamarin.com/schemas/2014/forms"
                xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
                xmlns:util="clr-namespace:ble.net.sampleapp.util;assembly=ble.net.sampleapp"
-               Title="{Binding PageTitle}"
+               Title="Device Scanner"
                x:Class="ble.net.sampleapp.view.BleDeviceScannerPage">
 
-   <StackLayout Style="{StaticResource LayoutStack}"
-                Orientation="Vertical">
+   <StackLayout Orientation="Vertical">
 
-      <StackLayout Orientation="Horizontal">
+      <StackLayout Orientation="Horizontal"
+                   Padding="{StaticResource GridPadding}">
          <StackLayout HorizontalOptions="Start"
                       Orientation="Horizontal">
             <Label Text="Scanning"
@@ -44,28 +44,24 @@
          </StackLayout>
       </StackLayout>
 
-      <Label Text="Discovered Devices"
-             FontSize="22"
-             HorizontalOptions="StartAndExpand" />
       <ListView ItemsSource="{Binding FoundDevices}"
-                ItemSelected="OnBleDeviceSelected"
+                ItemTapped="ListView_OnItemTapped"
+                ItemSelected="ListView_OnItemSelected"
                 HasUnevenRows="True"
                 SeparatorColor="#aaaaaa"
                 VerticalOptions="FillAndExpand"
                 HorizontalOptions="FillAndExpand">
-         <x:Arguments>
-            <ListViewCachingStrategy>RecycleElement</ListViewCachingStrategy>
-         </x:Arguments>
          <ListView.SeparatorVisibility>
             <OnPlatform x:TypeArguments="SeparatorVisibility"
                         Android="None"
                         iOS="Default"
-                        WinPhone="None" />
+                        WinPhone="Default" />
          </ListView.SeparatorVisibility>
          <ListView.ItemTemplate>
             <DataTemplate>
                <ViewCell>
-                  <Frame Padding="{StaticResource GridPadding}">
+                  <Frame Margin="{StaticResource GridPadding}"
+                         Padding="{StaticResource GridPadding}">
                      <StackLayout Orientation="Vertical"
                                   VerticalOptions="FillAndExpand"
                                   HorizontalOptions="FillAndExpand">
@@ -81,17 +77,31 @@
                                      HorizontalOptions="FillAndExpand">
                            <Label Text="{Binding Id}"
                                   HorizontalOptions="StartAndExpand"
-                                  LineBreakMode="TailTruncation" />
+                                  LineBreakMode="TailTruncation"
+                                  VerticalOptions="Center" />
                            <Label Text="{Binding Manufacturer}"
-                                  HorizontalOptions="End" />
+                                  HorizontalOptions="End"
+                                  VerticalOptions="Center" />
+                           <!--<Button Text="Connect"
+                                   TextColor="DarkOrange"
+                                   Command="ConnectCommand"
+                                   CommandParameter="{Binding .}"
+                                   VerticalOptions="Center">
+                              <Button.IsVisible>
+                                 <OnPlatform x:TypeArguments="x:Boolean"
+                                             Android="false"
+                                             iOS="false"
+                                             WinPhone="true" />
+                              </Button.IsVisible>
+                           </Button>-->
                         </StackLayout>
-
                      </StackLayout>
                   </Frame>
                </ViewCell>
             </DataTemplate>
          </ListView.ItemTemplate>
       </ListView>
+
    </StackLayout>
 
 </util:BasePage>

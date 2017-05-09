@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Linq;
-using Windows.ApplicationModel;
+using System.Threading.Tasks;
 using Windows.ApplicationModel.Activation;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Navigation;
@@ -18,7 +18,7 @@ namespace ble.net.sampleapp.uwp
    /// </summary>
    sealed partial class App : Application
    {
-      public const Boolean IS_DEBUG = 
+      public const Boolean IS_DEBUG =
 #if DEBUG
          true;
 #else
@@ -36,25 +36,25 @@ namespace ble.net.sampleapp.uwp
          {
             UnhandledException += ( sender, e ) =>
             {
-               Debug.WriteLine( e.Message );
-               Debug.WriteLine( e.ToString() );
-               e.Handled = true;
+               Debug.WriteLine( "UNHANDLED EXCEPTION: from={0} message={1}\n{2}", sender, e.Message, e.Exception?.ToString() );
+            };
+            TaskScheduler.UnobservedTaskException += ( sender, e ) =>
+            {
+               Debug.WriteLine("UNOBSERVED TASK EXCEPTION: from={0} {1}", sender, e.Exception?.ToString());
             };
 
             SystemLog.Instance.AddSink(
-                        entry =>
-                        {
-                           var entryData = entry.Data.ToList();
-                           Debug.WriteLine(
-                              entry.FormatMessageAndArguments() +
-                              (entryData.Count > 0
-                                 ? " --- " + entryData.Select( x => x?.ToString() + "" ).Join( " " )
-                                 : "") );
-                        } );
+               entry =>
+               {
+                  var entryData = entry.Data.ToList();
+                  Debug.WriteLine(
+                     entry.FormatMessageAndArguments() + (entryData.Count > 0
+                        ? " --- " + entryData.Select( x => x?.ToString() + "" ).Join( " " )
+                        : "") );
+               } );
          }
 
          InitializeComponent();
-         Suspending += OnSuspending;
       }
 
       /// <summary>
@@ -112,20 +112,6 @@ namespace ble.net.sampleapp.uwp
       void OnNavigationFailed( Object sender, NavigationFailedEventArgs e )
       {
          throw new Exception( "Failed to load Page " + e.SourcePageType.FullName );
-      }
-
-      /// <summary>
-      /// Invoked when application execution is being suspended.  Application state is saved
-      /// without knowing whether the application will be terminated or resumed with the contents
-      /// of memory still intact.
-      /// </summary>
-      /// <param name="sender">The source of the suspend request.</param>
-      /// <param name="e">Details about the suspend request.</param>
-      private void OnSuspending( Object sender, SuspendingEventArgs e )
-      {
-         var deferral = e.SuspendingOperation.GetDeferral();
-         //TODO: Save application state and stop any background activity
-         deferral.Complete();
       }
    }
 }

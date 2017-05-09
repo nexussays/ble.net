@@ -7,8 +7,7 @@
                Title="{Binding PageTitle}"
                x:Class="ble.net.sampleapp.view.BleGattServerPage">
 
-   <StackLayout Style="{StaticResource LayoutStack}"
-                VerticalOptions="FillAndExpand"
+   <StackLayout VerticalOptions="FillAndExpand"
                 HorizontalOptions="FillAndExpand"
                 Orientation="Vertical">
 

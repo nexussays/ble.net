@@ -72,15 +72,14 @@
       <HintPath>..\..\lib\packages\AndHUD.1.2.0\lib\MonoAndroid\AndHUD.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="ble.net, Version=0.12.7.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\lib\packages\ble.net.0.12.7\lib\portable45-net45+win8\ble.net.dll</HintPath>
+    <Reference Include="ble.net, Version=0.12.8.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\lib\packages\ble.net.0.12.8-alpha0002\lib\portable45-net45+win8\ble.net.dll</HintPath>
     </Reference>
-    <Reference Include="ble.net-android, Version=0.12.7.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\lib\packages\ble.net-android.0.12.7\lib\monoandroid44\ble.net-android.dll</HintPath>
+    <Reference Include="ble.net-android, Version=0.12.8.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\lib\packages\ble.net-android.0.12.8-alpha0002\lib\monoandroid44\ble.net-android.dll</HintPath>
     </Reference>
     <Reference Include="FormsViewGroup, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\lib\packages\Xamarin.Forms.2.3.3.180\lib\MonoAndroid10\FormsViewGroup.dll</HintPath>
-      <Private>True</Private>
+      <HintPath>..\..\lib\packages\Xamarin.Forms.2.3.4.231\lib\MonoAndroid10\FormsViewGroup.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Azure.Mobile, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\lib\packages\Microsoft.Azure.Mobile.0.7.0\lib\MonoAndroid403\Microsoft.Azure.Mobile.dll</HintPath>
@@ -113,8 +112,8 @@
       <HintPath>..\..\lib\packages\Newtonsoft.Json.9.0.1\lib\portable-net45+wp80+win8+wpa81\Newtonsoft.Json.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="nexus.core, Version=0.26.7.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\lib\packages\nexus.core.0.26.7\lib\portable45-net45+win8\nexus.core.dll</HintPath>
+    <Reference Include="nexus.core, Version=0.26.8.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\lib\packages\nexus.core.0.26.8\lib\portable45-net45+win8\nexus.core.dll</HintPath>
     </Reference>
     <Reference Include="Nito.AsyncEx, Version=3.0.1.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\lib\packages\Nito.AsyncEx.3.0.1\lib\MonoAndroid\Nito.AsyncEx.dll</HintPath>
@@ -169,20 +168,16 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="Xamarin.Forms.Core, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\lib\packages\Xamarin.Forms.2.3.3.180\lib\MonoAndroid10\Xamarin.Forms.Core.dll</HintPath>
-      <Private>True</Private>
+      <HintPath>..\..\lib\packages\Xamarin.Forms.2.3.4.231\lib\MonoAndroid10\Xamarin.Forms.Core.dll</HintPath>
     </Reference>
     <Reference Include="Xamarin.Forms.Platform, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\lib\packages\Xamarin.Forms.2.3.3.180\lib\MonoAndroid10\Xamarin.Forms.Platform.dll</HintPath>
-      <Private>True</Private>
+      <HintPath>..\..\lib\packages\Xamarin.Forms.2.3.4.231\lib\MonoAndroid10\Xamarin.Forms.Platform.dll</HintPath>
     </Reference>
     <Reference Include="Xamarin.Forms.Platform.Android, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\lib\packages\Xamarin.Forms.2.3.3.180\lib\MonoAndroid10\Xamarin.Forms.Platform.Android.dll</HintPath>
-      <Private>True</Private>
+      <HintPath>..\..\lib\packages\Xamarin.Forms.2.3.4.231\lib\MonoAndroid10\Xamarin.Forms.Platform.Android.dll</HintPath>
     </Reference>
     <Reference Include="Xamarin.Forms.Xaml, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\lib\packages\Xamarin.Forms.2.3.3.180\lib\MonoAndroid10\Xamarin.Forms.Xaml.dll</HintPath>
-      <Private>True</Private>
+      <HintPath>..\..\lib\packages\Xamarin.Forms.2.3.4.231\lib\MonoAndroid10\Xamarin.Forms.Xaml.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -191,7 +186,6 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include=".env" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
@@ -228,7 +222,7 @@
       <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
     </PropertyGroup>
     <Error Condition="!Exists('..\..\lib\packages\Xamarin.Android.Support.Vector.Drawable.23.3.0\build\Xamarin.Android.Support.Vector.Drawable.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\lib\packages\Xamarin.Android.Support.Vector.Drawable.23.3.0\build\Xamarin.Android.Support.Vector.Drawable.targets'))" />
-    <Error Condition="!Exists('..\..\lib\packages\Xamarin.Forms.2.3.3.180\build\portable-win+net45+wp80+win81+wpa81+MonoAndroid10+Xamarin.iOS10+xamarinmac20\Xamarin.Forms.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\lib\packages\Xamarin.Forms.2.3.3.180\build\portable-win+net45+wp80+win81+wpa81+MonoAndroid10+Xamarin.iOS10+xamarinmac20\Xamarin.Forms.targets'))" />
+    <Error Condition="!Exists('..\..\lib\packages\Xamarin.Forms.2.3.4.231\build\portable-win+net45+wp80+win81+wpa81+MonoAndroid10+Xamarin.iOS10+xamarinmac20\Xamarin.Forms.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\lib\packages\Xamarin.Forms.2.3.4.231\build\portable-win+net45+wp80+win81+wpa81+MonoAndroid10+Xamarin.iOS10+xamarinmac20\Xamarin.Forms.targets'))" />
   </Target>
-  <Import Project="..\..\lib\packages\Xamarin.Forms.2.3.3.180\build\portable-win+net45+wp80+win81+wpa81+MonoAndroid10+Xamarin.iOS10+xamarinmac20\Xamarin.Forms.targets" Condition="Exists('..\..\lib\packages\Xamarin.Forms.2.3.3.180\build\portable-win+net45+wp80+win81+wpa81+MonoAndroid10+Xamarin.iOS10+xamarinmac20\Xamarin.Forms.targets')" />
+  <Import Project="..\..\lib\packages\Xamarin.Forms.2.3.4.231\build\portable-win+net45+wp80+win81+wpa81+MonoAndroid10+Xamarin.iOS10+xamarinmac20\Xamarin.Forms.targets" Condition="Exists('..\..\lib\packages\Xamarin.Forms.2.3.4.231\build\portable-win+net45+wp80+win81+wpa81+MonoAndroid10+Xamarin.iOS10+xamarinmac20\Xamarin.Forms.targets')" />
 </Project>

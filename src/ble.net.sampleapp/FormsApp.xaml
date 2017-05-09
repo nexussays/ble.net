@@ -16,6 +16,13 @@
                      iOS="8,8,8,8"
                      WinPhone="10,10,10,10" />
 
+         <Style TargetType="Label">
+            <Setter Property="FontSize">
+               <OnPlatform x:TypeArguments="x:Double"
+                           iOS="12" />
+            </Setter>
+         </Style>
+
          <Style TargetType="Frame">
             <Setter Property="HasShadow">
                <OnPlatform x:TypeArguments="x:Boolean"

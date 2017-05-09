@@ -11,6 +11,8 @@ namespace nexus.protocols.ble.connection
    /// </summary>
    public struct BleDeviceConnection
    {
+      /// <summary>
+      /// </summary>
       public BleDeviceConnection( ConnectionResult connectionResult, IBleGattServer gattServer )
       {
          ConnectionResult = connectionResult;

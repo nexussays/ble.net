@@ -9,7 +9,6 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using Acr.UserDialogs;
 using ble.net.sampleapp.util;
-using nexus.protocols.ble;
 using nexus.protocols.ble.connection;
 
 namespace ble.net.sampleapp.viewmodel
@@ -41,7 +40,7 @@ namespace ble.net.sampleapp.viewmodel
          protected set { Set( ref m_isBusy, value ); }
       }
 
-      public String Name => TiSensorTag.GetName( m_serviceGuid ) ?? Id;
+      public String Name => RegisteredAttributes.GetName( m_serviceGuid ) ?? Id;
 
       public String PageTitle => Name;
 

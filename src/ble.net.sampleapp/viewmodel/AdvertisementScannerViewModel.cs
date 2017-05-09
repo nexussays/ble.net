@@ -1,10 +1,4 @@
-﻿// Copyright Malachi Griffie
-// 
-// This Source Code Form is subject to the terms of the Mozilla Public
-// License, v. 2.0. If a copy of the MPL was not distributed with this
-// file, You can obtain one at https://mozilla.org/MPL/2.0/.
-
-using System;
+﻿using System;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading;
@@ -15,18 +9,19 @@ using Xamarin.Forms;
 
 namespace ble.net.sampleapp.viewmodel
 {
-   public class BleDeviceScannerViewModel : AbstractScanViewModel
+   public class AdvertisementScannerViewModel : AbstractScanViewModel
    {
       private DateTime m_scanStopTime;
 
-      public BleDeviceScannerViewModel( IBluetoothLowEnergyAdapter bleAdapter, IUserDialogs dialogs )
+      /// <inheritdoc />
+      public AdvertisementScannerViewModel( IBluetoothLowEnergyAdapter bleAdapter, IUserDialogs dialogs )
          : base( bleAdapter, dialogs )
       {
-         FoundDevices = new ObservableCollection<BlePeripheralViewModel>();
+         Advertisements = new ObservableCollection<BlePeripheralViewModel>();
          ScanForDevicesCommand = new Command( x => { StartScan( x as Double? ?? SCAN_SECONDS_DEFAULT ); } );
       }
 
-      public ObservableCollection<BlePeripheralViewModel> FoundDevices { get; }
+      public ObservableCollection<BlePeripheralViewModel> Advertisements { get; }
 
       public ICommand ScanForDevicesCommand { get; }
 
@@ -63,21 +58,19 @@ namespace ble.net.sampleapp.viewmodel
             } );
 
          await m_bleAdapter.ScanForBroadcasts(
-            // NOTE: You can provide a scan filter to look for particular devices, e.g.:
-            //new ScanFilter.Factory {AdvertisedManufacturerCompanyId = BleSampleAppUtils.COMPANY_ID_GOOGLE}.CreateFilter(),
             peripheral =>
             {
                Device.BeginInvokeOnMainThread(
                   () =>
                   {
-                     var existing = FoundDevices.FirstOrDefault( d => d.Equals( peripheral ) );
+                     var existing = Advertisements.FirstOrDefault( d => d.Equals( peripheral ) );
                      if(existing != null)
                      {
                         existing.Update( peripheral );
                      }
                      else
                      {
-                        FoundDevices.Add( new BlePeripheralViewModel( peripheral ) );
+                        Advertisements.Add( new BlePeripheralViewModel( peripheral ) );
                      }
                   } );
             },

@@ -5,18 +5,21 @@
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
 using System;
-using System.Collections.Generic;
-using nexus.core;
+using nexus.protocols.ble.adopted;
 
 namespace ble.net.sampleapp.util
 {
-   internal static class TiSensorTag
+   internal static class RegisteredAttributes
    {
       private const String DEVICE = "TI  SensorTag";
-      private static readonly IDictionary<Guid, String> s_guids = new Dictionary<Guid, String>();
+      private static readonly KnownAttributes s_known = new KnownAttributes();
 
-      static TiSensorTag()
+      static RegisteredAttributes()
       {
+         s_known.AddAdoptedCharacteristics();
+         s_known.AddAdoptedDescriptors();
+         s_known.AddAdoptedServices();
+
          AddTiService( 0xaa00, "Infrared Thermometer" );
          AddTiService( 0xaa10, "Accelerometer" );
          AddTiService( 0xaa20, "Humidity" );
@@ -57,17 +60,17 @@ namespace ble.net.sampleapp.util
 
       private static void AddTiChar( UInt16 key, String name )
       {
-         s_guids[TiKey( key )] = DEVICE + " " + name;
+         s_known.AddCharacteristic( TiKey( key ), DEVICE + " " + name );
       }
 
       private static void AddTiService( UInt16 key, String name )
       {
-         s_guids[TiKey( key )] = DEVICE + " " + name;
+         s_known.AddService( TiKey( key ), DEVICE + " " + name );
       }
 
       public static String GetName( Guid id )
       {
-         return s_guids.TryGet( id ).ValueOr( null );
+         return s_known.Get( id )?.Description;
       }
 
       public static Guid TiKey( this UInt16 key )

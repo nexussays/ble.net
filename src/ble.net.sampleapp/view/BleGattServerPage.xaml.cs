@@ -5,6 +5,7 @@
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
 using System;
+using System.Threading.Tasks;
 using ble.net.sampleapp.viewmodel;
 using Xamarin.Forms;
 
@@ -12,11 +13,11 @@ namespace ble.net.sampleapp.view
 {
    public partial class BleGattServerPage
    {
-      private readonly Command m_bleServiceSelectedCommand;
+      private readonly Func<BleGattServiceViewModel, Task> m_bleServiceSelected;
 
-      public BleGattServerPage( BleGattServerViewModel model, Command bleServiceSelectedCommand )
+      public BleGattServerPage( BleGattServerViewModel model, Func<BleGattServiceViewModel, Task> bleServiceSelected )
       {
-         m_bleServiceSelectedCommand = bleServiceSelectedCommand;
+         m_bleServiceSelected = bleServiceSelected;
          InitializeComponent();
          BindingContext = model;
       }
@@ -31,10 +32,7 @@ namespace ble.net.sampleapp.view
       {
          if(e.SelectedItem != null)
          {
-            if(m_bleServiceSelectedCommand.CanExecute( e.SelectedItem ))
-            {
-               m_bleServiceSelectedCommand.Execute( e.SelectedItem );
-            }
+            m_bleServiceSelected( (BleGattServiceViewModel)e.SelectedItem );
             ((ListView)sender).SelectedItem = null;
          }
       }

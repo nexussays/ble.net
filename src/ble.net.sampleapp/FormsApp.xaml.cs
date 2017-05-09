@@ -13,6 +13,7 @@ using Xamarin.Forms;
 using Microsoft.Azure.Mobile;
 using Microsoft.Azure.Mobile.Analytics;
 using Microsoft.Azure.Mobile.Crashes;
+
 // ReSharper restore RedundantUsingDirective
 
 namespace ble.net.sampleapp
@@ -25,24 +26,28 @@ namespace ble.net.sampleapp
       {
          InitializeComponent();
          var bleGattServerViewModel = new BleGattServerViewModel( dialogs, adapter );
-         m_root =
-            new NavigationPage(
-               new BleDeviceScannerPage(
-                  model: new BleDeviceScannerViewModel( adapter, dialogs ),
-                  bleDeviceSelectedCommand: new Command(
-                     async p =>
+         m_root = new NavigationPage(
+            new TabbedPage
+            {
+               Title = "BLE.net Sample App",
+               Children =
+               {
+                  new BleDeviceScannerPage(
+                     model: new BleDeviceScannerViewModel( adapter, dialogs ),
+                     bleDeviceSelected: async p =>
                      {
-                        bleGattServerViewModel.Update( (BlePeripheralViewModel)p );
+                        bleGattServerViewModel.Update( p );
                         await m_root.PushAsync(
                            new BleGattServerPage(
                               model: bleGattServerViewModel,
-                              bleServiceSelectedCommand:
-                              new Command(
-                                 async s =>
-                                 {
-                                    await m_root.PushAsync( new BleGattServicePage( (BleGattServiceViewModel)s ) );
-                                 } ) ) );
-                     } ) ) );
+                              bleServiceSelected: async s =>
+                              {
+                                 await m_root.PushAsync( new BleGattServicePage( s ) );
+                              } ) );
+                     } ),
+                  new AdvertisementScannerPage(new AdvertisementScannerViewModel( adapter, dialogs ))
+               }
+            } );
          MainPage = m_root;
       }
 
