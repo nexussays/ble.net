@@ -44,6 +44,11 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="adopted\AdoptedCharacteristics.cs" />
+    <Compile Include="adopted\AdoptedDescriptors.cs" />
+    <Compile Include="adopted\AdoptedServices.cs" />
+    <Compile Include="adopted\KnownAttribute.cs" />
+    <Compile Include="adopted\KnownAttributes.cs" />
     <Compile Include="advertisement\AdvertisingManufacturerData.cs" />
     <Compile Include="advertisement\AdvertisingDataItem.cs" />
     <Compile Include="advertisement\AdvertisingDataType.cs" />
@@ -52,8 +57,10 @@
     <Compile Include="connection\BleDeviceConnection.cs" />
     <Compile Include="connection\ConnectionProgress.cs" />
     <Compile Include="connection\ConnectionResult.cs" />
+    <Compile Include="GattAttributeType.cs" />
     <Compile Include="IAdapterState.cs" />
     <Compile Include="IAdapterControl.cs" />
+    <Compile Include="IGattAttribute.cs" />
     <Compile Include="IScanFilter.cs" />
     <Compile Include="Properties\BaseAssemblyInfo.cs" />
     <Compile Include="BluetoothLowEnergyUtils.cs" />
