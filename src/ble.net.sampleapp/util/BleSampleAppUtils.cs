@@ -11,32 +11,22 @@ namespace ble.net.sampleapp.util
 {
    internal static class BleSampleAppUtils
    {
-      public enum BleCompanyId : ushort
-      {
-         Unknown = 0,
-         Microsoft = 6,
-         Apple = 76,
-         Samsumg = 117,
-         Google = 224,
-         Xiaomi = 343
-      }
+      public const Int32 COMPANY_ID_MICROSOFT = 6;
+      public const Int32 COMPANY_ID_APPLE = 76;
+      public const Int32 COMPANY_ID_SAMSUNG = 117;
+      public const Int32 COMPANY_ID_GOOGLE = 224;
+      public const Int32 COMPANY_ID_XIAOMI = 343;
 
       internal static String GetManufacturerName( Int32 key )
       {
          switch(key)
          {
-            case 117:
-               return "Samsung";
-            case 224:
-               return "Google";
-            case 76:
-               return "Apple";
-            case 6:
-               return "Microsoft";
-            case 343:
-               return "Xiaomi"; //"Anhui Huami";
-            default:
-               return key + "";
+            case COMPANY_ID_SAMSUNG: return "Samsung";
+            case COMPANY_ID_GOOGLE: return "Google";
+            case COMPANY_ID_APPLE: return "Apple";
+            case COMPANY_ID_MICROSOFT: return "Microsoft";
+            case COMPANY_ID_XIAOMI: return "Xiaomi"; //"Anhui Huami";
+            default: return key + "";
          }
       }
 

@@ -25,7 +25,7 @@ namespace nexus.protocols.ble.connection
       /// </summary>
       DeviceNotFound,
       /// <summary>
-      /// The connection attempt was cancelled (e.g., timeout) prior to the connection completing
+      /// The connection attempt was cancelled (e.g., cancellation token triggered) prior to the connection completing
       /// </summary>
       ConnectionAttemptCancelled,
       /// <summary>

@@ -10,12 +10,8 @@
    <StackLayout Style="{StaticResource LayoutStack}"
                 Orientation="Vertical">
 
-      <Grid>
-         <Grid.ColumnDefinitions>
-            <ColumnDefinition />
-            <ColumnDefinition />
-         </Grid.ColumnDefinitions>
-         <StackLayout HorizontalOptions="StartAndExpand"
+      <StackLayout Orientation="Horizontal">
+         <StackLayout HorizontalOptions="Start"
                       Orientation="Horizontal">
             <Label Text="Scanning"
                    IsVisible="{Binding IsScanning}"
@@ -38,8 +34,7 @@
                     Command="{Binding ScanForDevicesCommand}"
                     HorizontalOptions="Start" />
          </StackLayout>
-         <StackLayout Grid.Column="1"
-                      HorizontalOptions="EndAndExpand"
+         <StackLayout HorizontalOptions="EndAndExpand"
                       Orientation="Horizontal">
             <Label Text="Bluetooth"
                    VerticalOptions="Center" />
@@ -47,7 +42,7 @@
                     VerticalOptions="Center"
                     Toggled="Switch_OnToggled" />
          </StackLayout>
-      </Grid>
+      </StackLayout>
 
       <Label Text="Discovered Devices"
              FontSize="22"

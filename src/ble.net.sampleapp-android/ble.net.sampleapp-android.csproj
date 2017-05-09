@@ -72,11 +72,11 @@
       <HintPath>..\..\lib\packages\AndHUD.1.2.0\lib\MonoAndroid\AndHUD.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="ble.net, Version=0.12.4.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\lib\packages\ble.net.0.12.4\lib\portable45-net45+win8\ble.net.dll</HintPath>
+    <Reference Include="ble.net, Version=0.12.7.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\lib\packages\ble.net.0.12.7\lib\portable45-net45+win8\ble.net.dll</HintPath>
     </Reference>
-    <Reference Include="ble.net-android, Version=0.12.4.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\lib\packages\ble.net-android.0.12.4\lib\monoandroid44\ble.net-android.dll</HintPath>
+    <Reference Include="ble.net-android, Version=0.12.7.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\lib\packages\ble.net-android.0.12.7\lib\monoandroid44\ble.net-android.dll</HintPath>
     </Reference>
     <Reference Include="FormsViewGroup, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\lib\packages\Xamarin.Forms.2.3.3.180\lib\MonoAndroid10\FormsViewGroup.dll</HintPath>
@@ -191,6 +191,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include=".env" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>

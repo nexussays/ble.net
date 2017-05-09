@@ -67,19 +67,16 @@
     <Compile Include="ScanFilter.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Reference Include="nexus.core, Version=0.26.3.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\lib\packages\nexus.core.0.26.3\lib\portable45-net45+win8\nexus.core.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="nexus.core, Version=0.26.7.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\lib\packages\nexus.core.0.26.7\lib\portable45-net45+win8\nexus.core.dll</HintPath>
     </Reference>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
-  <Import Project="..\..\lib\packages\GitVersionTask.3.6.5\build\portable-net+sl+win+wpa+wp\GitVersionTask.targets" Condition="Exists('..\..\lib\packages\GitVersionTask.3.6.5\build\portable-net+sl+win+wpa+wp\GitVersionTask.targets')" />
+  <Import Project="..\..\lib\packages\nexus.utils.build.0.1.16\build\nexus.utils.build.targets" Condition="Exists('..\..\lib\packages\nexus.utils.build.0.1.16\build\nexus.utils.build.targets')" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>
       <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
     </PropertyGroup>
-    <Error Condition="!Exists('..\..\lib\packages\GitVersionTask.3.6.5\build\portable-net+sl+win+wpa+wp\GitVersionTask.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\lib\packages\GitVersionTask.3.6.5\build\portable-net+sl+win+wpa+wp\GitVersionTask.targets'))" />
-    <Error Condition="!Exists('..\..\lib\packages\nexus.utils.build.0.1.10\build\nexus.utils.build.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\lib\packages\nexus.utils.build.0.1.10\build\nexus.utils.build.targets'))" />
+    <Error Condition="!Exists('..\..\lib\packages\nexus.utils.build.0.1.16\build\nexus.utils.build.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\lib\packages\nexus.utils.build.0.1.16\build\nexus.utils.build.targets'))" />
   </Target>
-  <Import Project="..\..\lib\packages\nexus.utils.build.0.1.10\build\nexus.utils.build.targets" Condition="Exists('..\..\lib\packages\nexus.utils.build.0.1.10\build\nexus.utils.build.targets')" />
 </Project>

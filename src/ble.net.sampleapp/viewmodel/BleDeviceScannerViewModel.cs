@@ -41,7 +41,7 @@ namespace ble.net.sampleapp.viewmodel
          EnableAdapterCommand = new Command( async () => await ToggleAdapter( true ) );
          DisableAdapterCommand = new Command( async () => await ToggleAdapter( false ) );
 
-         m_bleAdapter.State.Subscribe( state => { RaisePropertyChanged( nameof( IsAdapterEnabled ) ); } );
+         m_bleAdapter.State.Subscribe( state => { RaisePropertyChanged( nameof(IsAdapterEnabled) ); } );
       }
 
       public ICommand DisableAdapterCommand { get; private set; }
@@ -50,10 +50,8 @@ namespace ble.net.sampleapp.viewmodel
 
       public ObservableCollection<BlePeripheralViewModel> FoundDevices { get; }
 
-      public Boolean IsAdapterEnabled
-         =>
-         m_bleAdapter.State.CurrentState == EnabledDisabledState.Enabled ||
-         m_bleAdapter.State.CurrentState == EnabledDisabledState.Unknown;
+      public Boolean IsAdapterEnabled => m_bleAdapter.State.CurrentState == EnabledDisabledState.Enabled ||
+                                         m_bleAdapter.State.CurrentState == EnabledDisabledState.Unknown;
 
       public Boolean IsScanning
       {
@@ -69,7 +67,7 @@ namespace ble.net.sampleapp.viewmodel
 
       public override void OnAppearing()
       {
-         RaisePropertyChanged( nameof( IsAdapterEnabled ) );
+         RaisePropertyChanged( nameof(IsAdapterEnabled) );
       }
 
       public override void OnDisappearing()
@@ -102,37 +100,36 @@ namespace ble.net.sampleapp.viewmodel
          m_scanCancel = new CancellationTokenSource( TimeSpan.FromSeconds( seconds ) );
          m_scanStopTime = DateTime.UtcNow.AddSeconds( seconds );
 
-         RaisePropertyChanged( nameof( ScanTimeRemaining ) );
+         RaisePropertyChanged( nameof(ScanTimeRemaining) );
          // RaisePropertyChanged of ScanTimeRemaining while scan is running
          Device.StartTimer(
             TimeSpan.FromSeconds( 1 ),
             () =>
             {
-               RaisePropertyChanged( nameof( ScanTimeRemaining ) );
+               RaisePropertyChanged( nameof(ScanTimeRemaining) );
                return IsScanning;
             } );
 
-         await
-            m_bleAdapter.ScanForBroadcasts(
-               //new ScanFilter.Factory { AdvertisedManufacturerCompanyId = (UInt16?)BleSampleAppUtils.BleCompanyId.Google }
-               //   .CreateFilter(),
-               peripheral =>
-               {
-                  Device.BeginInvokeOnMainThread(
-                     () =>
+         await m_bleAdapter.ScanForBroadcasts(
+            // NOTE: You can provide a scan filter to look for particular devices, e.g.:
+            //new ScanFilter.Factory {AdvertisedManufacturerCompanyId = BleSampleAppUtils.COMPANY_ID_GOOGLE}.CreateFilter(),
+            peripheral =>
+            {
+               Device.BeginInvokeOnMainThread(
+                  () =>
+                  {
+                     var existing = FoundDevices.FirstOrDefault( d => d.Equals( peripheral ) );
+                     if(existing != null)
                      {
-                        var existing = FoundDevices.FirstOrDefault( d => d.Equals( peripheral ) );
-                        if(existing != null)
-                        {
-                           existing.Update( peripheral );
-                        }
-                        else
-                        {
-                           FoundDevices.Add( new BlePeripheralViewModel( peripheral ) );
-                        }
-                     } );
-               },
-               m_scanCancel.Token );
+                        existing.Update( peripheral );
+                     }
+                     else
+                     {
+                        FoundDevices.Add( new BlePeripheralViewModel( peripheral ) );
+                     }
+                  } );
+            },
+            m_scanCancel.Token );
 
          IsScanning = false;
       }
@@ -147,9 +144,9 @@ namespace ble.net.sampleapp.viewmodel
          catch(SecurityException ex)
          {
             m_dialogs.Toast( ex.Message );
-            Log.Debug( ex, nameof( BleDeviceScannerViewModel ) );
+            Log.Debug( ex, nameof(BleDeviceScannerViewModel) );
          }
-         RaisePropertyChanged( nameof( IsAdapterEnabled ) );
+         RaisePropertyChanged( nameof(IsAdapterEnabled) );
       }
 
       private static Double ClampSeconds( Double seconds )

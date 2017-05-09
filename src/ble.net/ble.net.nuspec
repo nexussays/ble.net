@@ -11,9 +11,10 @@
       <summary></summary>
       <language>en-US</language>
       <projectUrl>https://github.com/nexussays/ble.net</projectUrl>
+      <iconUrl>http://public.nexussays.com/ble.net/logo_64x64.png</iconUrl>
       <requireLicenseAcceptance>false</requireLicenseAcceptance>
       <licenseUrl>https://www.mozilla.org/en-US/MPL/2.0/</licenseUrl>
       <copyright>Copyright Malachi Griffie</copyright>
-      <tags></tags>
+      <tags>ble bluetooth bluetooth-low-energy xamarin</tags>
    </metadata>
 </package>

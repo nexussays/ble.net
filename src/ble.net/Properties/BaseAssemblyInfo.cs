@@ -28,7 +28,7 @@ namespace nexus.protocols.ble
    {
       internal const String PROJECT_ID = "ble.net";
       internal const String PROJECT_DESCRIPTION =
-         "Cross-platform Bluetooth Low Energy (BLE) library for Android, iOS, and (partially) UWP";
+         "Cross-platform Bluetooth Low Energy (BLE) library for Android, iOS, and UWP";
       internal const String URL = "https://github.com/nexussays/ble.net";
       internal const Boolean IS_DEBUG = 
 #if DEBUG
