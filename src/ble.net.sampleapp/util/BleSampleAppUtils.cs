@@ -16,6 +16,10 @@ namespace ble.net.sampleapp.util
       public const Int32 COMPANY_ID_SAMSUNG = 117;
       public const Int32 COMPANY_ID_GOOGLE = 224;
       public const Int32 COMPANY_ID_XIAOMI = 343;
+      public const Int32 COMPANY_ID_LG = 196;
+
+      public const Int32 SCAN_SECONDS_DEFAULT = 10;
+      public const Int32 SCAN_SECONDS_MAX = 30;
 
       internal static String GetManufacturerName( Int32 key )
       {
@@ -26,6 +30,7 @@ namespace ble.net.sampleapp.util
             case COMPANY_ID_APPLE: return "Apple";
             case COMPANY_ID_MICROSOFT: return "Microsoft";
             case COMPANY_ID_XIAOMI: return "Xiaomi"; //"Anhui Huami";
+            case COMPANY_ID_LG: return "LG Electronics";
             default: return key + "";
          }
       }
@@ -33,6 +38,11 @@ namespace ble.net.sampleapp.util
       internal static T ValueOr<T>( this Option<T> opt, T alt )
       {
          return opt.HasValue ? opt.Value : alt;
+      }
+
+      public static Double ClampSeconds( Double seconds )
+      {
+         return Math.Max( Math.Min( seconds, SCAN_SECONDS_MAX ), 0 );
       }
    }
 }

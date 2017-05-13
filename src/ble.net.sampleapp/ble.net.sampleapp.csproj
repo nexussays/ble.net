@@ -43,7 +43,6 @@
     <Compile Include="util\InvertBooleanConverter.cs" />
     <Compile Include="util\BaseViewModel.cs" />
     <Compile Include="viewmodel\AbstractScanViewModel.cs" />
-    <Compile Include="viewmodel\AdvertisementScannerViewModel.cs" />
     <Compile Include="viewmodel\BleGattServerViewModel.cs" />
     <Compile Include="viewmodel\BleDeviceScannerViewModel.cs" />
     <Compile Include="viewmodel\BleGattCharacteristicViewModel.cs" />
@@ -51,6 +50,7 @@
     <Compile Include="viewmodel\BlePeripheralViewModel.cs" />
     <Compile Include="util\IBaseViewModel.cs" />
     <Compile Include="util\BleSampleAppUtils.cs" />
+    <Compile Include="viewmodel\LogsViewModel.cs" />
     <Compile Include="view\BleGattServerPage.xaml.cs">
       <DependentUpon>BleGattServerPage.xaml</DependentUpon>
     </Compile>
@@ -60,8 +60,8 @@
     <Compile Include="view\BleGattServicePage.xaml.cs">
       <DependentUpon>BleGattServicePage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="view\AdvertisementScannerPage.xaml.cs">
-      <DependentUpon>AdvertisementScannerPage.xaml</DependentUpon>
+    <Compile Include="view\LogsPage.xaml.cs">
+      <DependentUpon>LogsPage.xaml</DependentUpon>
     </Compile>
   </ItemGroup>
   <ItemGroup>
@@ -129,7 +129,7 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="view\AdvertisementScannerPage.xaml">
+    <EmbeddedResource Include="view\LogsPage.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
       <SubType>Designer</SubType>
     </EmbeddedResource>

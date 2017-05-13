@@ -6,7 +6,6 @@
                xmlns:util="clr-namespace:ble.net.sampleapp.util;assembly=ble.net.sampleapp"
                Title="Device Scanner"
                x:Class="ble.net.sampleapp.view.BleDeviceScannerPage">
-
    <StackLayout Orientation="Vertical">
 
       <StackLayout Orientation="Horizontal"
@@ -29,7 +28,7 @@
                       AbsoluteLayout.LayoutFlags="PositionProportional"
                       Text="{Binding ScanTimeRemaining}" />
             </AbsoluteLayout>
-            <Button Text="Scan For Devices"
+            <Button Text="Start Scan"
                     IsVisible="{Binding IsScanning, Converter={StaticResource InvertBoolean}}"
                     Command="{Binding ScanForDevicesCommand}"
                     HorizontalOptions="Start" />
@@ -62,7 +61,9 @@
                <ViewCell>
                   <Frame Margin="{StaticResource GridPadding}"
                          Padding="{StaticResource GridPadding}">
-                     <StackLayout Orientation="Vertical"
+
+                     <!--<StackLayout IsVisible="{Binding IsExpanded, Converter={StaticResource InvertBoolean}}"
+                                  Orientation="Vertical"
                                   VerticalOptions="FillAndExpand"
                                   HorizontalOptions="FillAndExpand">
                         <StackLayout Orientation="Horizontal"
@@ -82,20 +83,94 @@
                            <Label Text="{Binding Manufacturer}"
                                   HorizontalOptions="End"
                                   VerticalOptions="Center" />
-                           <!--<Button Text="Connect"
-                                   TextColor="DarkOrange"
-                                   Command="ConnectCommand"
-                                   CommandParameter="{Binding .}"
-                                   VerticalOptions="Center">
-                              <Button.IsVisible>
-                                 <OnPlatform x:TypeArguments="x:Boolean"
-                                             Android="false"
-                                             iOS="false"
-                                             WinPhone="true" />
-                              </Button.IsVisible>
-                           </Button>-->
+
                         </StackLayout>
-                     </StackLayout>
+                     </StackLayout>-->
+
+                     <Grid RowSpacing="5">
+                        <Grid.ColumnDefinitions>
+                           <ColumnDefinition Width="Auto" />
+                           <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                           <RowDefinition Height="Auto" />
+                           <RowDefinition Height="Auto" />
+                           <RowDefinition Height="Auto" />
+                           <RowDefinition Height="Auto" />
+                           <RowDefinition Height="Auto" />
+                           <RowDefinition Height="Auto" />
+                           <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+
+                        <Label Grid.Column="0"
+                               Grid.Row="0"
+                               Text="Address / Name"
+                               FontAttributes="Bold" />
+                        <Label Grid.Column="0"
+                               Grid.Row="1"
+                               Text="RSSI / Tx"
+                               FontAttributes="Bold" />
+                        <Label Grid.Column="0"
+                               Grid.Row="2"
+                               Text="Flags"
+                               FontAttributes="Bold" />
+                        <Label Grid.Column="0"
+                               Grid.Row="3"
+                               Text="Mfg. Data"
+                               FontAttributes="Bold" />
+                        <Label Grid.Column="0"
+                               Grid.Row="4"
+                               Text="Services"
+                               FontAttributes="Bold" />
+                        <Label Grid.Column="0"
+                               Grid.Row="5"
+                               Text="Service Data"
+                               FontAttributes="Bold" />
+
+                        <Label Grid.Column="1"
+                               Grid.Row="0"
+                               Text="{Binding AddressAndName}" />
+                        <Label Grid.Column="1"
+                               Grid.Row="1"
+                               Text="{Binding Signal}" />
+                        <Label Grid.Column="1"
+                               Grid.Row="2"
+                               Text="{Binding Flags}" />
+                        <Label Grid.Column="1"
+                               Grid.Row="3"
+                               Text="{Binding ManufacturerData}" />
+                        <Label Grid.Column="1"
+                               Grid.Row="4"
+                               Text="{Binding AdvertisedServices}" />
+                        <Label Grid.Column="1"
+                               Grid.Row="5"
+                               Text="{Binding ServiceData}" />
+
+                        <StackLayout Grid.Row="6"
+                                     Grid.Column="0"
+                                     Grid.ColumnSpan="2"
+                                     Orientation="Horizontal"
+                                     HorizontalOptions="FillAndExpand">
+                           <!-- TODO: implement the remember switch -->
+                           <Label IsVisible="false"
+                                  Text="Remember Device"
+                                  HorizontalOptions="Start"
+                                  VerticalOptions="Center" />
+                           <Switch IsVisible="false"
+                                   IsToggled="{Binding IsRemembered, Mode=OneWay}"
+                                   HorizontalOptions="Start"
+                                   IsEnabled="false"
+                                   VerticalOptions="Center" />
+                           <Button Text="Connect"
+                                   Command="{Binding ConnectToDeviceCommand}"
+                                   HorizontalOptions="EndAndExpand">
+                              <Button.TextColor>
+                                 <OnPlatform x:TypeArguments="Color"
+                                             WinPhone="DarkOrange" />
+                              </Button.TextColor>
+                           </Button>
+                        </StackLayout>
+                     </Grid>
                   </Frame>
                </ViewCell>
             </DataTemplate>

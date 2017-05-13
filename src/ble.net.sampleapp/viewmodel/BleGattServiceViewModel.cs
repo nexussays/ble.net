@@ -9,6 +9,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using Acr.UserDialogs;
 using ble.net.sampleapp.util;
+using nexus.core;
 using nexus.protocols.ble.connection;
 
 namespace ble.net.sampleapp.viewmodel
@@ -40,9 +41,9 @@ namespace ble.net.sampleapp.viewmodel
          protected set { Set( ref m_isBusy, value ); }
       }
 
-      public String Name => RegisteredAttributes.GetName( m_serviceGuid ) ?? Id;
+      public String Name => GetName( m_serviceGuid ) ?? "Unknown Service";
 
-      public String PageTitle => Name;
+      public String PageTitle => GetName( m_serviceGuid ) ?? Id;
 
       public override async void OnAppearing()
       {
@@ -58,11 +59,22 @@ namespace ble.net.sampleapp.viewmodel
             //Log.Trace( "Discovered chars={0}", list.Select( g => g.ToString() ).Join( "," ) );
             foreach(var c in list)
             {
-               Characteristic.Add(
-                  new BleGattCharacteristicViewModel( m_serviceGuid, c, m_gattServer, m_dialogManager ) );
+               var vm = new BleGattCharacteristicViewModel( m_serviceGuid, c, m_gattServer, m_dialogManager );
+               Characteristic.Add( vm );
+               //await vm.UpdateDescriptors();
             }
          }
          IsBusy = false;
+      }
+
+      private String GetName( Guid guid )
+      {
+         var known = RegisteredAttributes.GetName( guid );
+         if(!known.IsNullOrEmpty())
+         {
+            return known.EndsWith( "Service" ) ? known : known + " Service";
+         }
+         return null;
       }
    }
 }

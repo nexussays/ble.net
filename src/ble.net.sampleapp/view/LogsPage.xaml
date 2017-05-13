@@ -1,0 +1,34 @@
+﻿<?xml version="1.0"
+      encoding="utf-8"?>
+
+<util:BasePage xmlns="http://xamarin.com/schemas/2014/forms"
+               xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+               xmlns:util="clr-namespace:ble.net.sampleapp.util;assembly=ble.net.sampleapp"
+               x:Class="ble.net.sampleapp.view.LogsPage"
+               Title="{Binding PageTitle}">
+   <ScrollView x:Name="scrollView"
+               Orientation="Vertical"
+               VerticalOptions="FillAndExpand"
+               HorizontalOptions="FillAndExpand">
+      <Label x:Name="logsLabel"
+             VerticalOptions="FillAndExpand"
+             HorizontalOptions="FillAndExpand"
+             FontFamily="monospace"
+             Text="{Binding LogBuffer}"
+             Margin="{StaticResource GridPadding}"
+             LineBreakMode="CharacterWrap">
+         <Label.FontSize>
+            <OnPlatform x:TypeArguments="x:Double"
+                        Android="14"
+                        iOS="12"
+                        WinPhone="14" />
+         </Label.FontSize>
+         <Label.TextColor>
+            <OnPlatform x:TypeArguments="Color"
+                        Android="#222222"
+                        iOS="Black"
+                        WinPhone="Black" />
+         </Label.TextColor>
+      </Label>
+   </ScrollView>
+</util:BasePage>

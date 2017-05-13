@@ -20,6 +20,10 @@ namespace ble.net.sampleapp.util
          s_known.AddAdoptedDescriptors();
          s_known.AddAdoptedServices();
 
+         s_known.AddService(
+            new Guid( "00001530-1212-efde-1523-785feabcd123" ),
+            "Nordic Device Firmware Update Service" );
+
          AddTiService( 0xaa00, "Infrared Thermometer" );
          AddTiService( 0xaa10, "Accelerometer" );
          AddTiService( 0xaa20, "Humidity" );

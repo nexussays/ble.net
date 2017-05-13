@@ -7,6 +7,7 @@
 using Acr.UserDialogs;
 using ble.net.sampleapp.view;
 using ble.net.sampleapp.viewmodel;
+using nexus.core.logging;
 using nexus.protocols.ble;
 using Xamarin.Forms;
 // ReSharper disable RedundantUsingDirective
@@ -20,35 +21,37 @@ namespace ble.net.sampleapp
 {
    public partial class FormsApp
    {
-      private readonly NavigationPage m_root;
+      private readonly NavigationPage m_rootPage;
 
       public FormsApp( IBluetoothLowEnergyAdapter adapter, IUserDialogs dialogs )
       {
          InitializeComponent();
+
+         var logsVm = new LogsViewModel();
+         SystemLog.Instance.AddSink( logsVm );
+
          var bleGattServerViewModel = new BleGattServerViewModel( dialogs, adapter );
-         m_root = new NavigationPage(
+         var bleScanViewModel = new BleDeviceScannerViewModel(
+            adapter,
+            dialogs,
+            async p =>
+            {
+               bleGattServerViewModel.Update( p );
+               await m_rootPage.PushAsync(
+                  new BleGattServerPage(
+                     model: bleGattServerViewModel,
+                     bleServiceSelected: async s => { await m_rootPage.PushAsync( new BleGattServicePage( s ) ); } ) );
+               await bleGattServerViewModel.OpenConnection();
+            } );
+
+         m_rootPage = new NavigationPage(
             new TabbedPage
             {
                Title = "BLE.net Sample App",
-               Children =
-               {
-                  new BleDeviceScannerPage(
-                     model: new BleDeviceScannerViewModel( adapter, dialogs ),
-                     bleDeviceSelected: async p =>
-                     {
-                        bleGattServerViewModel.Update( p );
-                        await m_root.PushAsync(
-                           new BleGattServerPage(
-                              model: bleGattServerViewModel,
-                              bleServiceSelected: async s =>
-                              {
-                                 await m_root.PushAsync( new BleGattServicePage( s ) );
-                              } ) );
-                     } ),
-                  new AdvertisementScannerPage(new AdvertisementScannerViewModel( adapter, dialogs ))
-               }
+               Children = {new BleDeviceScannerPage( bleScanViewModel ), new LogsPage( logsVm )}
             } );
-         MainPage = m_root;
+
+         MainPage = m_rootPage;
       }
 
       /// <inheritdoc />

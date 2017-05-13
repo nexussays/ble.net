@@ -8,8 +8,11 @@ using System;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Windows.Input;
 using Acr.UserDialogs;
+using ble.net.sampleapp.util;
+using nexus.core.logging;
 using nexus.protocols.ble;
 using Xamarin.Forms;
 
@@ -17,20 +20,25 @@ namespace ble.net.sampleapp.viewmodel
 {
    public class BleDeviceScannerViewModel : AbstractScanViewModel
    {
+      private readonly Func<BlePeripheralViewModel, Task> m_connectionFunc;
       private DateTime m_scanStopTime;
 
-      public BleDeviceScannerViewModel( IBluetoothLowEnergyAdapter bleAdapter, IUserDialogs dialogs )
+      public BleDeviceScannerViewModel( IBluetoothLowEnergyAdapter bleAdapter, IUserDialogs dialogs,
+                                        Func<BlePeripheralViewModel, Task> connectionFunc )
          : base( bleAdapter, dialogs )
       {
+         m_connectionFunc = connectionFunc;
          FoundDevices = new ObservableCollection<BlePeripheralViewModel>();
-         ScanForDevicesCommand = new Command( x => { StartScan( x as Double? ?? SCAN_SECONDS_DEFAULT ); } );
+         ScanForDevicesCommand = new Command(
+            x => { StartScan( x as Double? ?? BleSampleAppUtils.SCAN_SECONDS_DEFAULT ); } );
       }
 
       public ObservableCollection<BlePeripheralViewModel> FoundDevices { get; }
 
       public ICommand ScanForDevicesCommand { get; }
 
-      public Int32 ScanTimeRemaining => (Int32)ClampSeconds( (m_scanStopTime - DateTime.UtcNow).TotalSeconds );
+      public Int32 ScanTimeRemaining => (Int32)BleSampleAppUtils.ClampSeconds(
+         (m_scanStopTime - DateTime.UtcNow).TotalSeconds );
 
       private async void StartScan( Double seconds )
       {
@@ -47,10 +55,11 @@ namespace ble.net.sampleapp.viewmodel
 
          StopScan();
          IsScanning = true;
-
-         seconds = ClampSeconds( seconds );
+         seconds = BleSampleAppUtils.ClampSeconds( seconds );
          m_scanCancel = new CancellationTokenSource( TimeSpan.FromSeconds( seconds ) );
          m_scanStopTime = DateTime.UtcNow.AddSeconds( seconds );
+
+         Log.Trace( "Beginning device scan. timeout={0} seconds", seconds );
 
          RaisePropertyChanged( nameof(ScanTimeRemaining) );
          // RaisePropertyChanged of ScanTimeRemaining while scan is running
@@ -77,7 +86,7 @@ namespace ble.net.sampleapp.viewmodel
                      }
                      else
                      {
-                        FoundDevices.Add( new BlePeripheralViewModel( peripheral ) );
+                        FoundDevices.Add( new BlePeripheralViewModel( peripheral, m_connectionFunc ) );
                      }
                   } );
             },

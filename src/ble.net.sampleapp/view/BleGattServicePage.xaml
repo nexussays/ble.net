@@ -7,14 +7,22 @@
                Title="{Binding PageTitle}"
                x:Class="ble.net.sampleapp.view.BleGattServicePage">
 
-   <StackLayout Orientation="Vertical">
+   <StackLayout Orientation="Vertical"
+                VerticalOptions="FillAndExpand"
+                HorizontalOptions="FillAndExpand">
+
+      <StackLayout Orientation="Horizontal"
+                   Padding="{StaticResource GridPadding}">
+         <Label Text="Characteristics"
+                FontSize="22" />
+      </StackLayout>
+
+
       <ListView ItemsSource="{Binding Characteristic}"
                 ItemSelected="OnItemSelected"
                 SeparatorVisibility="None"
                 HasUnevenRows="True"
-                SeparatorColor="#aaaaaa"
-                VerticalOptions="FillAndExpand"
-                HorizontalOptions="FillAndExpand">
+                SeparatorColor="#aaaaaa">
          <x:Arguments>
             <ListViewCachingStrategy>RecycleElement</ListViewCachingStrategy>
          </x:Arguments>
@@ -26,37 +34,65 @@
             <DataTemplate>
                <ViewCell>
                   <Frame Padding="{StaticResource GridPadding}"
-                         Margin="{StaticResource GridPadding}">
+                         Margin="{StaticResource GridPadding}"
+                         VerticalOptions="FillAndExpand"
+                         HorizontalOptions="FillAndExpand">
+
                      <StackLayout Orientation="Vertical"
                                   HorizontalOptions="StartAndExpand"
-                                  VerticalOptions="CenterAndExpand">
+                                  VerticalOptions="CenterAndExpand"
+                                  Padding="{StaticResource GridPadding}">
                         <Label Text="{Binding Name}"
                                HorizontalOptions="StartAndExpand"
                                VerticalOptions="Start" />
-                        <StackLayout Orientation="Horizontal"
-                                     HorizontalOptions="StartAndExpand"
-                                     VerticalOptions="CenterAndExpand">
-                           <Button Command="{Binding RefreshValueCommand}"
-                                   IsEnabled="{Binding IsBusy, Converter={StaticResource InvertBoolean}}"
-                                   IsVisible="{Binding CanRead}"
-                                   Text="Read" />
-                           <Button Command="{Binding WriteBytesCommand}"
-                                   IsEnabled="{Binding IsBusy, Converter={StaticResource InvertBoolean}}"
-                                   IsVisible="{Binding CanWrite}"
-                                   Text="Write" />
-                           <Entry HorizontalOptions="FillAndExpand"
-                                  WidthRequest="60"
-                                  IsEnabled="{Binding IsBusy, Converter={StaticResource InvertBoolean}}"
-                                  IsVisible="{Binding CanWrite}"
-                                  Text="{Binding WriteValue}" />
-                           <Label IsVisible="{Binding CanNotify}"
-                                  VerticalTextAlignment="Center"
-                                  VerticalOptions="CenterAndExpand"
-                                  Text="Notify:" />
-                           <Switch IsToggled="{Binding Path=NotifyEnabled, Mode=TwoWay}"
-                                   VerticalOptions="Center"
-                                   IsVisible="{Binding CanNotify}" />
-                        </StackLayout>
+                        <Label Text="{Binding Id}"
+                               HorizontalOptions="StartAndExpand"
+                               VerticalOptions="Start" />
+
+                        <Grid HorizontalOptions="FillAndExpand"
+                              VerticalOptions="CenterAndExpand">
+                           <Grid.ColumnDefinitions>
+                              <ColumnDefinition />
+                              <ColumnDefinition />
+                              <ColumnDefinition />
+                           </Grid.ColumnDefinitions>
+
+                           <StackLayout Grid.Column="0"
+                                        Orientation="Horizontal"
+                                        VerticalOptions="Center"
+                                        HorizontalOptions="Start">
+                              <Button Command="{Binding RefreshValueCommand}"
+                                      IsEnabled="{Binding CanRead}"
+                                      Text="Read" />
+                           </StackLayout>
+
+                           <StackLayout Orientation="Horizontal"
+                                        VerticalOptions="Center"
+                                        HorizontalOptions="Center"
+                                        Grid.Column="1">
+                              <Label IsEnabled="{Binding CanNotify}"
+                                     VerticalTextAlignment="Center"
+                                     VerticalOptions="CenterAndExpand"
+                                     Text="Notify:" />
+                              <Switch IsToggled="{Binding Path=NotifyEnabled, Mode=TwoWay}"
+                                      VerticalOptions="Center"
+                                      IsEnabled="{Binding CanNotify}" />
+                           </StackLayout>
+
+                           <StackLayout Orientation="Horizontal"
+                                        VerticalOptions="Center"
+                                        HorizontalOptions="EndAndExpand"
+                                        Grid.Column="2">
+                              <Entry HorizontalOptions="StartAndExpand"
+                                     Placeholder="Write Value"
+                                     Text="{Binding WriteValue}" />
+                              <Button Command="{Binding WriteBytesCommand}"
+                                      IsEnabled="{Binding CanWrite}"
+                                      Text="Write" />
+                           </StackLayout>
+
+                        </Grid>
+
                         <Grid>
                            <Grid.ColumnDefinitions>
                               <ColumnDefinition Width="Auto" />
@@ -65,31 +101,52 @@
                            <Grid.RowDefinitions>
                               <RowDefinition Height="Auto" />
                               <RowDefinition Height="Auto" />
+                              <!--<RowDefinition Height="Auto" />
+                              <RowDefinition Height="Auto" />-->
                            </Grid.RowDefinitions>
+
                            <Label Grid.Column="0"
                                   Grid.Row="0"
                                   Text="Hex:"
                                   FontAttributes="Bold" />
-                           <Label Grid.Column="0"
-                                  Grid.Row="1"
-                                  Text="String:"
-                                  FontAttributes="Bold" />
-
                            <Label Grid.Column="1"
                                   Grid.Row="0"
                                   Text="{Binding ValueAsHex}"
                                   HorizontalOptions="StartAndExpand" />
+
+                           <Label Grid.Column="0"
+                                  Grid.Row="1"
+                                  Text="UTF8:"
+                                  FontAttributes="Bold" />
+
                            <Label Grid.Column="1"
                                   Grid.Row="1"
                                   Text="{Binding ValueAsString}"
                                   HorizontalOptions="StartAndExpand" />
+
+                           <!--
+                           <Label Grid.Column="0"
+                                  Grid.Row="2"
+                                  Grid.ColumnSpan="2"
+                                  Text="Descriptors:"
+                                  FontAttributes="Bold" />
+                           <Label Grid.Column="0"
+                                  Grid.Row="3"
+                                  Grid.ColumnSpan="2"
+                                  Text="{Binding DescriptorValues}"
+                                  HorizontalOptions="StartAndExpand" />
+                           -->
+                           
                         </Grid>
+
                      </StackLayout>
                   </Frame>
                </ViewCell>
             </DataTemplate>
          </ListView.ItemTemplate>
       </ListView>
+
+
    </StackLayout>
 
 </util:BasePage>

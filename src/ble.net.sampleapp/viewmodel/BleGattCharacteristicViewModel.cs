@@ -5,6 +5,7 @@
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using Acr.UserDialogs;
@@ -23,6 +24,7 @@ namespace ble.net.sampleapp.viewmodel
       private readonly IBleGattServer m_gattServer;
       private readonly Guid m_serviceGuid;
       private Guid m_characteristicGuid;
+      private String m_descriptorValues;
       private Boolean m_isBusy;
       private IDisposable m_notificationSubscription;
       private CharacteristicProperty m_props;
@@ -69,11 +71,17 @@ namespace ble.net.sampleapp.viewmodel
             } );
       }
 
-      public Boolean CanNotify => m_props.CanNotify();
+      public Boolean CanNotify => m_props.CanNotify() && !IsBusy;
 
-      public Boolean CanRead => m_props.CanRead();
+      public Boolean CanRead => m_props.CanRead() && !IsBusy;
 
-      public Boolean CanWrite => m_props.CanWrite();
+      public Boolean CanWrite => m_props.CanWrite() && !IsBusy;
+
+      public String DescriptorValues
+      {
+         get { return m_descriptorValues; }
+         private set { Set( ref m_descriptorValues, value ); }
+      }
 
       public ICommand DisableNotificationsCommand { get; }
 
@@ -84,10 +92,20 @@ namespace ble.net.sampleapp.viewmodel
       public Boolean IsBusy
       {
          get { return m_isBusy; }
-         protected set { Set( ref m_isBusy, value ); }
+         protected set
+         {
+            if(value != m_isBusy)
+            {
+               m_isBusy = value;
+               RaiseCurrentPropertyChanged();
+               RaisePropertyChanged( nameof(CanRead) );
+               RaisePropertyChanged( nameof(CanNotify) );
+               RaisePropertyChanged( nameof(CanWrite) );
+            }
+         }
       }
 
-      public String Name => RegisteredAttributes.GetName( m_characteristicGuid ) ?? Id;
+      public String Name => RegisteredAttributes.GetName( m_characteristicGuid ) ?? "Unknown Characteristic";
 
       public Boolean NotifyEnabled
       {
@@ -139,9 +157,21 @@ namespace ble.net.sampleapp.viewmodel
          //m_notificationSubscription = null;
       }
 
+      public async Task UpdateDescriptors()
+      {
+         var descriptors = (await m_gattServer.ListCharacteristicDescriptors( m_serviceGuid, m_characteristicGuid )).ToList();
+         var vals = "";
+         foreach(var desc in descriptors)
+         {
+            vals += desc + ": " + await m_gattServer.ReadDescriptorValue( m_serviceGuid, m_characteristicGuid, desc ) +
+                    "\n";
+         }
+         DescriptorValues = vals;
+      }
+
       private void DisableNotifications()
       {
-         Log.Trace( "DisableNotifications" );
+         Log.Trace("Disabling notifications for characteristic. id={0}", m_characteristicGuid);
          m_notificationSubscription?.Dispose();
          m_notificationSubscription = null;
          RaisePropertyChanged( nameof(NotifyEnabled) );

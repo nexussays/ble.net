@@ -11,26 +11,76 @@
                 HorizontalOptions="FillAndExpand"
                 Orientation="Vertical">
 
-      <StackLayout Orientation="Vertical"
-                   HorizontalOptions="CenterAndExpand"
-                   VerticalOptions="CenterAndExpand"
-                   IsVisible="{Binding IsBusy}">
-         <ActivityIndicator IsRunning="{Binding IsBusy}"
-                            HeightRequest="40">
-            <ActivityIndicator.WidthRequest>
-               <OnPlatform x:TypeArguments="x:Double"
-                           Android="40"
-                           iOS="40"
-                           WinPhone="400" />
-            </ActivityIndicator.WidthRequest>
-         </ActivityIndicator>
-         <Label Text="{Binding Connection}"
-                HorizontalOptions="CenterAndExpand"
+      <Grid HorizontalOptions="FillAndExpand"
+            VerticalOptions="Center">
+         <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="Auto" />
+         </Grid.ColumnDefinitions>
+         <StackLayout Orientation="Vertical"
+                      VerticalOptions="Center"
+                      HorizontalOptions="StartAndExpand"
+                      Padding="{StaticResource GridPadding}">
+            <Label Text="{Binding AddressAndName, StringFormat='Address / Name: {0}'}"
+                   HorizontalOptions="Start"
+                   VerticalOptions="Center" />
+            <Label Text="{Binding Manufacturer, StringFormat='Manufacturer: {0}'}"
+                   HorizontalOptions="Start"
+                   VerticalOptions="Center" />
+         </StackLayout>
+         <!-- TODO: implement the remember switch
+         <StackLayout Orientation="Horizontal"
+                      VerticalOptions="Center"
+                      HorizontalOptions="StartAndExpand"
+                      Padding="{StaticResource GridPadding}">
+            
+            <Label IsVisible="false"
+                   Text="Remember Device"
+                   HorizontalOptions="Start"
+                   VerticalOptions="Center" />
+            <Switch IsVisible="false"
+                    IsToggled="{Binding IsRemembered, Mode=OneWay}"
+                    HorizontalOptions="Start"
+                    IsEnabled="false"
+                    VerticalOptions="Center" />
+         </StackLayout>
+         -->
+         <StackLayout Orientation="Horizontal"
+                      VerticalOptions="Center"
+                      HorizontalOptions="EndAndExpand"
+                      Grid.Column="1"
+                      Padding="{StaticResource GridPadding}">
+            <Button IsVisible="{Binding IsConnectedOrConnecting, Converter={StaticResource InvertBoolean}}"
+                    Text="Connect"
+                    Command="{Binding ConnectToDeviceCommand}"
+                    HorizontalOptions="EndAndExpand">
+               <Button.TextColor>
+                  <OnPlatform x:TypeArguments="Color"
+                              WinPhone="DarkOrange" />
+               </Button.TextColor>
+            </Button>
+            <Label IsVisible="{Binding IsConnectedOrConnecting}"
+                   Text="{Binding Connection}" />
+            <ActivityIndicator IsVisible="{Binding IsBusy}"
+                               IsRunning="{Binding IsBusy}"
+                               HeightRequest="20">
+               <ActivityIndicator.WidthRequest>
+                  <OnPlatform x:TypeArguments="x:Double"
+                              WinPhone="100"
+                              Android="20"
+                              iOS="20" />
+               </ActivityIndicator.WidthRequest>
+            </ActivityIndicator>
+         </StackLayout>
+      </Grid>
+
+      <StackLayout Orientation="Horizontal"
+                   Padding="{StaticResource GridPadding}">
+         <Label Text="Services"
                 FontSize="20" />
       </StackLayout>
 
       <ListView ItemsSource="{Binding Services}"
-                IsVisible="{Binding IsBusy, Converter={StaticResource InvertBoolean}}"
                 ItemSelected="OnServiceSelected"
                 VerticalOptions="FillAndExpand"
                 HorizontalOptions="FillAndExpand">
@@ -54,10 +104,13 @@
                <ViewCell>
                   <Frame Padding="{StaticResource GridPadding}"
                          Margin="{StaticResource GridPadding}">
-                     <StackLayout Orientation="Horizontal"
+                     <StackLayout Orientation="Vertical"
                                   VerticalOptions="FillAndExpand"
                                   HorizontalOptions="FillAndExpand">
                         <Label Text="{Binding Name}"
+                               HorizontalOptions="StartAndExpand"
+                               VerticalOptions="Start" />
+                        <Label Text="{Binding Id}"
                                HorizontalOptions="StartAndExpand"
                                VerticalOptions="Start" />
                      </StackLayout>

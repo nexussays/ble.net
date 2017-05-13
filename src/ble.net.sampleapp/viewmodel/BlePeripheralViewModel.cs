@@ -6,9 +6,12 @@
 
 using System;
 using System.Linq;
+using System.Threading.Tasks;
+using System.Windows.Input;
 using ble.net.sampleapp.util;
 using nexus.core;
 using nexus.protocols.ble;
+using Xamarin.Forms;
 
 namespace ble.net.sampleapp.viewmodel
 {
@@ -16,23 +19,17 @@ namespace ble.net.sampleapp.viewmodel
       : BaseViewModel,
         IEquatable<IBlePeripheral>
    {
-      private String m_advertisement;
+      private Boolean m_isExpanded;
 
-      public BlePeripheralViewModel( IBlePeripheral model )
+      public BlePeripheralViewModel( IBlePeripheral model, Func<BlePeripheralViewModel, Task> connectionFunc )
       {
          Model = model;
-         if(Model.Address != null && Model.Address.Length > 0)
-         {
-            Address = Model.Address.Select( b => b.EncodeToBase16String() ).Join( ":" );
-         }
-         else
-         {
-            Address = "";
-         }
-         Advertisement = Model.Advertisement.ToString();
+         ConnectToDeviceCommand = new Command( async () => { await connectionFunc( this ); } );
       }
 
-      public String Address { get; }
+      public String Address => Model.Address != null && Model.Address.Length > 0
+         ? Model.Address.Select( b => b.EncodeToBase16String() ).Join( ":" )
+         : Id;
 
       public String AddressAndName => Address + " / " + DeviceName;
 
@@ -47,17 +44,21 @@ namespace ble.net.sampleapp.viewmodel
             return x.ToString() + " (" + name + ")";
          } ).Join( ", " );
 
-      public String Advertisement
-      {
-         get { return m_advertisement; }
-         private set { Set( ref m_advertisement, value ); }
-      }
+      public String Advertisement => Model.Advertisement.ToString();
+
+      public ICommand ConnectToDeviceCommand { get; }
 
       public String DeviceName => Model.Advertisement.DeviceName;
 
       public String Flags => Model.Advertisement?.Flags.ToString( "G" );
 
       public String Id => Model.DeviceId.ToString();
+
+      public Boolean IsExpanded
+      {
+         get { return m_isExpanded; }
+         set { Set( ref m_isExpanded, value ); }
+      }
 
       public String Manufacturer => Model.Advertisement.ManufacturerSpecificData
                                          .Select( x => BleSampleAppUtils.GetManufacturerName( x.CompanyId ) )
@@ -104,7 +105,6 @@ namespace ble.net.sampleapp.viewmodel
          {
             Model = model;
          }
-         Advertisement = Model.Advertisement.ToString();
 
          RaisePropertyChanged( nameof(Address) );
          RaisePropertyChanged( nameof(AddressAndName) );

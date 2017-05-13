@@ -5,38 +5,30 @@
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
 using System;
-using System.Threading.Tasks;
 using ble.net.sampleapp.viewmodel;
-using nexus.core.logging;
 using Xamarin.Forms;
 
 namespace ble.net.sampleapp.view
 {
    public partial class BleDeviceScannerPage
    {
-      private readonly Func<BlePeripheralViewModel, Task> m_bleDeviceSelected;
-
-      public BleDeviceScannerPage( BleDeviceScannerViewModel model,
-                                   Func<BlePeripheralViewModel, Task> bleDeviceSelected )
+      public BleDeviceScannerPage( BleDeviceScannerViewModel vm )
       {
-         m_bleDeviceSelected = bleDeviceSelected;
          InitializeComponent();
-         BindingContext = model;
+         BindingContext = vm;
       }
 
       private void ListView_OnItemSelected( Object sender, SelectedItemChangedEventArgs e )
       {
-         Log.Debug( "OnSelected. item={0}", e.SelectedItem );
          if(e.SelectedItem != null)
          {
-            m_bleDeviceSelected( (BlePeripheralViewModel)e.SelectedItem );
+            //((BlePeripheralViewModel)e.SelectedItem).IsExpanded = !((BlePeripheralViewModel)e.SelectedItem).IsExpanded;
             ((ListView)sender).SelectedItem = null;
          }
       }
 
       private void ListView_OnItemTapped( Object sender, ItemTappedEventArgs e )
       {
-         Log.Debug( "OnTapped. item={0}", e.Item );
       }
 
       private void Switch_OnToggled( Object sender, ToggledEventArgs e )

@@ -7,12 +7,15 @@
 using System;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Threading.Tasks;
+using System.Windows.Input;
 using Acr.UserDialogs;
 using ble.net.sampleapp.util;
 using nexus.core;
 using nexus.core.logging;
 using nexus.protocols.ble;
 using nexus.protocols.ble.connection;
+using Xamarin.Forms;
 
 namespace ble.net.sampleapp.viewmodel
 {
@@ -33,25 +36,58 @@ namespace ble.net.sampleapp.viewmodel
          m_dialogManager = dialogsManager;
          m_connectionState = ConnectionState.Disconnected.ToString();
          Services = new ObservableCollection<BleGattServiceViewModel>();
+         DisconnectFromDeviceCommand = new Command( CloseConnection );
+         ConnectToDeviceCommand = new Command( async () => await OpenConnection() );
       }
+
+      public String Address => m_peripheral?.Address;
+
+      public String AddressAndName => m_peripheral?.AddressAndName;//Address + " / " + (DeviceName ?? "<no device name>");
 
       public String Connection
       {
          get { return m_connectionState; }
-         private set { Set( ref m_connectionState, value ); }
+         private set
+         {
+            if(value != m_connectionState)
+            {
+               m_connectionState = value;
+               RaiseCurrentPropertyChanged();
+               RaisePropertyChanged( nameof(IsConnectedOrConnecting) );
+            }
+         }
       }
+
+      public ICommand ConnectToDeviceCommand { get; }
+
+      public String DeviceName => m_peripheral?.DeviceName;
+
+      public ICommand DisconnectFromDeviceCommand { get; }
 
       public Boolean IsBusy
       {
          get { return m_isBusy; }
-         protected set { Set( ref m_isBusy, value ); }
+         protected set
+         {
+            if(value != m_isBusy)
+            {
+               m_isBusy = value;
+               RaiseCurrentPropertyChanged();
+               RaisePropertyChanged( nameof(IsConnectedOrConnecting) );
+            }
+         }
       }
+
+      public Boolean IsConnectedOrConnecting =>
+         m_isBusy || m_connectionState != ConnectionState.Disconnected.ToString();
 
       public String Manufacturer => m_peripheral?.Manufacturer;
 
       public String Name => m_peripheral?.Name;
 
-      public String PageTitle => Name + " (" + Manufacturer + ")";
+      public String PageTitle => "BLE Device GATT Server";
+
+      public Int32? Rssi => m_peripheral?.Rssi;
 
       public ObservableCollection<BleGattServiceViewModel> Services { get; }
 
@@ -66,12 +102,21 @@ namespace ble.net.sampleapp.viewmodel
          IsBusy = false;
       }
 
-      public override async void OnAppearing()
+      public void Update( BlePeripheralViewModel peripheral )
+      {
+         if(m_peripheral != null && !m_peripheral.Model.Equals( peripheral.Model ))
+         {
+            CloseConnection();
+         }
+         m_peripheral = peripheral;
+      }
+
+      public async Task OpenConnection()
       {
          // if we're busy or have a valid connection, then no-op
          if(IsBusy || m_gattServer != null && m_gattServer.State != ConnectionState.Disconnected)
          {
-            Log.Debug( "OnAppearing. state={0} isbusy={1}", m_gattServer?.State, IsBusy );
+            //Log.Debug( "OnAppearing. state={0} isbusy={1}", m_gattServer?.State, IsBusy );
             return;
          }
 
@@ -132,15 +177,6 @@ namespace ble.net.sampleapp.viewmodel
             m_dialogManager.Toast( errorMsg, TimeSpan.FromSeconds( 5 ) );
          }
          IsBusy = false;
-      }
-
-      public void Update( BlePeripheralViewModel peripheral )
-      {
-         if(m_peripheral != null && !m_peripheral.Model.Equals( peripheral.Model ))
-         {
-            CloseConnection();
-         }
-         m_peripheral = peripheral;
       }
    }
 }
