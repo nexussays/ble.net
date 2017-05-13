@@ -4,7 +4,9 @@
 
 `ble.net` is a Bluetooth Low Energy (aka BLE, aka Bluetooth LE, aka Bluetooth Smart) PCL to enable simple development of BLE clients on Android, iOS, and Windows 10.
 
-> Currently Windows 10 / UWP only supports observing broadcasts/advertisements.
+It provides a consistent API across all platforms and hides many of the horrible API decisions of each respective platform. You can make multiple simultaneous BLE requests on Android without worrying that some calls will silently fail; you can simply `await` all your calls without dealing with some kludgy disjoint event-based system; if you know which characteristics and services you wish to interact with then you don't have to query down into the attribute heirarchy and retain instance variables for these characteristics and services.
+
+> Note: Currently UWP only supports listening for broadcasts/advertisements, connecting to devices is incredibly obtuse in the UWP APIs.
 
 ## Setup
 
@@ -60,11 +62,11 @@ protected sealed override void OnActivityResult( Int32 requestCode, Result resul
 
 ## API
 
-> See [sample Xamarin Forms app](/src/ble.net.sampleapp/) included in the repo for a complete example.
+> See [sample Xamarin Forms app](/src/ble.net.sampleapp/) included in the repo for a complete app example.
 
 All the examples presume you have some `adapter` passed in as per the setup notes above:
 ```csharp
-IBluetoothLowEnergyAdapter adapter = /* platform provided adapter value */;
+IBluetoothLowEnergyAdapter adapter = /* platform-provided adapter from BluetoothLowEnergyAdapter.ObtainDefaultAdapter()*/;
 ```
 
 ### Scan for broadcast advertisements
@@ -82,16 +84,17 @@ await adapter.ScanForDevices(
          // ...or connect to the device (see next example)...
       },
       // scan for 30 seconds and then stop
+      // you can also provide a CancellationToken
       TimeSpan.FromSeconds( 30 ) );
 
-// scanning has completed
+// scanning has been stopped when code reached this point
 ```
 
 ### Connect to a BLE device
 
 ```csharp
-// If the connection isn't established before timeout (or a CancellationToken) is triggered, it will be stopped
-var connection = await adapter.ConnectToDevice( peripheral, TimeSpan.FromSeconds( 5 ));
+// If the connection isn't established before CancellationToken is triggered (a timeout in this example), it will be stopped.
+var connection = await adapter.ConnectToDevice( peripheral, TimeSpan.FromSeconds( 15 ));
 if(connection.IsSuccessful())
 {
    var gattServer = connection.GattServer;
@@ -151,7 +154,8 @@ try
    gattServer.NotifyCharacteristicValue(
       someServiceGuid,
       someCharacteristicGuid,
-      // Observer takes Tuple<Guid, Byte[]> or Byte[]
+      // provide IObserver<Tuple<Guid, Byte[]>> or IObserver<Byte[]>
+      // There are several extension methods to assist in creating the obvserver...
       bytes => {/* do something with notification bytes */} );
 }
 catch(GattException ex)
@@ -160,7 +164,7 @@ catch(GattException ex)
 }
 ```
 
-For stopping a notification listener, `NotifyCharacteristicValue` returns an `IDisposable` that removes your notification observer when called:
+For stopping a notification listener prior to disconnecting from the device, `NotifyCharacteristicValue` returns an `IDisposable` that removes your notification observer when called:
 ```csharp
 IDisposable notifier;
 
@@ -169,7 +173,8 @@ try
    notifier = gattServer.NotifyCharacteristicValue(
       someServiceGuid,
       someCharacteristicGuid,
-      // Observer takes Tuple<Guid, Byte[]> or Byte[]
+      // provide IObserver<Tuple<Guid, Byte[]>> or IObserver<Byte[]>
+      // There are several extension methods to assist in creating the obvserver...
       bytes => {/* do something with notification bytes */} );
 }
 catch(GattException ex)
@@ -187,7 +192,8 @@ notifier.Dispose();
 ```csharp
 try
 {
-   // the resulting value of the characteristic is returned
+   // The resulting value of the characteristic is returned. In nearly all cases this
+   // will be the same value that was provided to the write call (e.g. `byte[]{ 1, 2, 3 }`)
    var value = await gattServer.WriteCharacteristicValue(
       someServiceGuid,
       someCharacteristicGuid,
@@ -201,10 +207,14 @@ catch(GattException ex)
 
 ### Do a bunch of things
 
+> If you've used the native BLE APIs on Android or iOS, imagine the code you would have to write to achieve the same functionality as the following example.
+
 ```csharp
 try
 {
+   // dispatch a read characteristic request but don't await it yet
    var read = gattServer.ReadCharacteristicValue( /* arguments... */ );
+   // perform multiple write operations and await them all
    await
       Task.WhenAll(
          new Task[]
@@ -212,10 +222,9 @@ try
             gattServer.WriteCharacteristicValue( /* arguments... */ ),
             gattServer.WriteCharacteristicValue( /* arguments... */ ),
             gattServer.WriteCharacteristicValue( /* arguments... */ ),
-            gattServer.WriteCharacteristicValue( /* arguments... */ ),
-            read
+            gattServer.WriteCharacteristicValue( /* arguments... */ )
          } );
-
+   // now await the read to ensure completion and return the result
    return await read;
 }
 catch(GattException ex)
