@@ -13,6 +13,8 @@ namespace nexus.protocols.ble.advertisement
    /// </summary>
    public struct AdvertisingManufacturerData
    {
+      /// <summary>
+      /// </summary>
       public AdvertisingManufacturerData( UInt16 company, Byte[] data )
       {
          CompanyId = company;

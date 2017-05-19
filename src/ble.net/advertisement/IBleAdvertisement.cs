@@ -19,6 +19,9 @@ namespace nexus.protocols.ble.advertisement
       /// </summary>
       String DeviceName { get; }
 
+      /// <summary>
+      /// The advertisement flags
+      /// </summary>
       AdvertisingDataFlags Flags { get; }
 
       /// <summary>
@@ -31,6 +34,9 @@ namespace nexus.protocols.ble.advertisement
       /// </summary>
       IEnumerable<AdvertisingDataItem> RawData { get; }
 
+      /// <summary>
+      /// The service data in this advertisement
+      /// </summary>
       IEnumerable<KeyValuePair<Guid, Byte[]>> ServiceData { get; }
 
       /// <summary>

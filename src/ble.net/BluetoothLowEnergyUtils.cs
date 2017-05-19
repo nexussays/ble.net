@@ -22,18 +22,6 @@ namespace nexus.protocols.ble
    /// </summary>
    public static class BluetoothLowEnergyUtils
    {
-      public static readonly Guid CharacteristicExtendedPropertiesDescriptor = CreateGuidFromAdoptedKey( 0x2900 );
-      public static readonly Guid CharacteristicUserDescriptionDescriptor = CreateGuidFromAdoptedKey( 0x2901 );
-      /// <summary>
-      /// Client characteristic configuration descriptor GUID
-      /// </summary>
-      /// <see
-      ///    href="https://www.bluetooth.com/specifications/gatt/viewer?attributeXmlFile=org.bluetooth.descriptor.gatt.client_characteristic_configuration.xml" />
-      public static readonly Guid ClientCharacteristicConfigurationDescriptor = CreateGuidFromAdoptedKey( 0x2902 );
-      public static readonly Guid ServerCharacteristicConfigurationDescriptor = CreateGuidFromAdoptedKey( 0x2903 );
-      public static readonly Guid CharacteristicFormatDescriptor = CreateGuidFromAdoptedKey( 0x2904 );
-      public static readonly Guid CharacteristicAggregateFormatDescriptor = CreateGuidFromAdoptedKey( 0x2905 );
-
       /// <summary>
       /// The default connection timeout used if no timeout is provided, 5 seconds.
       /// </summary>
@@ -79,29 +67,28 @@ namespace nexus.protocols.ble
             throw new ArgumentException(
                "Address is invalid. expected=byte[6] got={0}".F(
                   address == null ? null : "byte[" + address.Length + "]" ),
-               nameof( address ) );
+               nameof(address) );
          }
-         return
-            new Guid(
-               new Byte[]
-               {
-                  0,
-                  0,
-                  0,
-                  0,
-                  0,
-                  0,
-                  0,
-                  0,
-                  0,
-                  0,
-                  address[0],
-                  address[1],
-                  address[2],
-                  address[3],
-                  address[4],
-                  address[5]
-               } );
+         return new Guid(
+            new Byte[]
+            {
+               0,
+               0,
+               0,
+               0,
+               0,
+               0,
+               0,
+               0,
+               0,
+               0,
+               address[0],
+               address[1],
+               address[2],
+               address[3],
+               address[4],
+               address[5]
+            } );
       }
 
       /// <summary>
@@ -264,7 +251,7 @@ namespace nexus.protocols.ble
          {
             throw new ArgumentException(
                "A Bluetooth adopted key must be a 4-character base16-encoded string",
-               nameof( adoptedKey ) );
+               nameof(adoptedKey) );
          }
          try
          {
@@ -275,11 +262,14 @@ namespace nexus.protocols.ble
          {
             throw new ArgumentException(
                "A Bluetooth adopted key must be a 4-character base16-encoded string",
-               nameof( adoptedKey ),
+               nameof(adoptedKey),
                ex );
          }
       }
 
+      /// <summary>
+      /// Returns <c>true</c> if <paramref name="id" /> is a Bluetooth SIG reserved GUID
+      /// </summary>
       public static Boolean IsReservedKey( this Guid id )
       {
          var bytes = id.ToByteArray();
@@ -299,8 +289,8 @@ namespace nexus.protocols.ble
       /// <summary>
       /// Listen for NOTIFY events on this characteristic.
       /// </summary>
-      public static IDisposable NotifyCharacteristicValue( this IBleGattServer server, Guid service, Guid characteristic,
-                                                           Action<Tuple<Guid, Byte[]>> onNotify,
+      public static IDisposable NotifyCharacteristicValue( this IBleGattServer server, Guid service,
+                                                           Guid characteristic, Action<Tuple<Guid, Byte[]>> onNotify,
                                                            Action<Exception> onError = null )
       {
          Contract.Requires<ArgumentNullException>( server != null );
@@ -311,8 +301,9 @@ namespace nexus.protocols.ble
       /// <summary>
       /// Listen for NOTIFY events on this characteristic.
       /// </summary>
-      public static IDisposable NotifyCharacteristicValue( this IBleGattServer server, Guid service, Guid characteristic,
-                                                           Action<Byte[]> onNotify, Action<Exception> onError = null )
+      public static IDisposable NotifyCharacteristicValue( this IBleGattServer server, Guid service,
+                                                           Guid characteristic, Action<Byte[]> onNotify,
+                                                           Action<Exception> onError = null )
       {
          Contract.Requires<ArgumentNullException>( server != null );
          // ReSharper disable once PossibleNullReferenceException
@@ -339,7 +330,8 @@ namespace nexus.protocols.ble
                if(!(advD.Length > index + length))
                {
                   throw new InvalidDataException(
-                     "Advertising data specifies length {0} but only has {1} bytes remaining".F( length, advD.Length ) );
+                     "Advertising data specifies length {0} but only has {1} bytes remaining"
+                        .F( length, advD.Length ) );
                }
                var type = advD[index];
                var data = advD.Slice( index + 1, index + length );
@@ -421,6 +413,7 @@ namespace nexus.protocols.ble
       /// </summary>
       /// <param name="adapter">The adapter to use for scanning</param>
       /// <param name="advertisementDiscovered">Callback to notify for each discovered advertisement</param>
+      /// <param name="token">Scan until this token is cancelled</param>
       public static Task ScanForBroadcasts( this IBluetoothLowEnergyAdapter adapter,
                                             Action<IBlePeripheral> advertisementDiscovered, CancellationToken token )
       {
@@ -462,7 +455,8 @@ namespace nexus.protocols.ble
       /// <param name="adapter">The adapter to use for scanning</param>
       /// <param name="advertisementDiscovered">Callback to notify for each discovered advertisement</param>
       /// <param name="filter">
-      /// Scan filter that will ignore broadcast advertisements that do not match. <c>new ScanFilter.Factory(){}.CreateFilter()</c>
+      /// Scan filter that will ignore broadcast advertisements that do not match.
+      /// <c>new ScanFilter.Factory(){}.CreateFilter()</c>
       /// </param>
       /// <param name="ct">Scan will run continuously until this token is cancelled</param>
       public static Task ScanForBroadcasts( this IBluetoothLowEnergyAdapter adapter, ScanFilter filter,
@@ -481,7 +475,8 @@ namespace nexus.protocols.ble
       /// <param name="advertisementDiscovered">Callback to notify for each discovered advertisement</param>
       /// <param name="timeout">cancel scan after this length of time</param>
       /// <param name="filter">
-      /// Scan filter that will ignore broadcast advertisements that do not match. <c>new ScanFilter.Factory(){}.CreateFilter()</c>
+      /// Scan filter that will ignore broadcast advertisements that do not match.
+      /// <c>new ScanFilter.Factory(){}.CreateFilter()</c>
       /// </param>
       public static Task ScanForBroadcasts( this IBluetoothLowEnergyAdapter adapter, ScanFilter filter,
                                             Action<IBlePeripheral> advertisementDiscovered, TimeSpan timeout )
@@ -501,7 +496,8 @@ namespace nexus.protocols.ble
       /// <param name="adapter">The adapter to use for scanning</param>
       /// <param name="advertisementDiscovered">Callback to notify for each discovered advertisement</param>
       /// <param name="filter">
-      /// Scan filter that will ignore broadcast advertisements that do not match. <c>new ScanFilter.Factory(){}.CreateFilter()</c>
+      /// Scan filter that will ignore broadcast advertisements that do not match.
+      /// <c>new ScanFilter.Factory(){}.CreateFilter()</c>
       /// </param>
       public static Task ScanForBroadcasts( this IBluetoothLowEnergyAdapter adapter, ScanFilter filter,
                                             Action<IBlePeripheral> advertisementDiscovered )

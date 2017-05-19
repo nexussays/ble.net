@@ -28,11 +28,6 @@ namespace nexus.protocols.ble.connection
       ConnectionState State { get; }
 
       /// <summary>
-      /// Be notified of changes to <see cref="State"/>
-      /// </summary>
-      new IDisposable Subscribe( IObserver<ConnectionState> observer );
-
-      /// <summary>
       /// Enumerate all services on this device
       /// </summary>
       Task<IEnumerable<Guid>> ListAllServices();
@@ -52,7 +47,8 @@ namespace nexus.protocols.ble.connection
       /// <summary>
       /// Listen for NOTIFY events on this characteristic.
       /// </summary>
-      IDisposable NotifyCharacteristicValue( Guid service, Guid characteristic, IObserver<Tuple<Guid, Byte[]>> observer );
+      IDisposable NotifyCharacteristicValue( Guid service, Guid characteristic,
+                                             IObserver<Tuple<Guid, Byte[]>> observer );
 
       /// <summary>
       /// Read the properties of a characteristic
@@ -75,14 +71,14 @@ namespace nexus.protocols.ble.connection
       Task<Boolean> ServiceExists( Guid service );
 
       /// <summary>
+      /// Be notified of changes to <see cref="State" />
+      /// </summary>
+      new IDisposable Subscribe( IObserver<ConnectionState> observer );
+
+      /// <summary>
       /// Write to this characteristic's value
       /// </summary>
       Task<Byte[]> WriteCharacteristicValue( Guid service, Guid characteristic, Byte[] data );
-
-      /// <summary>
-      /// Write to this characteristic's value using the BLE "write, no response" method
-      /// </summary>
-      //void WriteCharacteristicValueNoResponse( Guid service, Guid characteristic, Byte[] data );
 
       /// <summary>
       /// Write the given value to this descriptor

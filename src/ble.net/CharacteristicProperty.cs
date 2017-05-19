@@ -68,7 +68,13 @@ namespace nexus.protocols.ble
    [Flags]
    public enum CharacteristicExtendedProperty
    {
+      /// <summary>
+      /// NotifyEncryptionRequired
+      /// </summary>
       NotifyEncryptionRequired = 256,
+      /// <summary>
+      /// IndicateEncryptionRequired
+      /// </summary>
       IndicateEncryptionRequired = 512
    }
 }

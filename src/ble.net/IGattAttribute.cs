@@ -9,17 +9,22 @@ using System;
 namespace nexus.protocols.ble
 {
    /// <summary>
-   /// A GUID and type that tepresents a GATT attribute
+   /// A GUID and type that represents a GATT attribute
    /// </summary>
    public interface IGattAttribute : IEquatable<IGattAttribute>
    {
+      /// <summary>
+      /// A human-friendly description for this service, if available
+      /// </summary>
+      String Description { get; }
+
       /// <summary>
       /// The unique UUID for this attribute
       /// </summary>
       Guid Id { get; }
 
       /// <summary>
-      /// The type of attribute, service, characteristic, or descriptor
+      /// The GATT type of this ATT attribute: service, characteristic, or descriptor
       /// </summary>
       GattAttributeType Type { get; }
    }

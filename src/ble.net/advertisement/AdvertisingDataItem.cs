@@ -13,6 +13,8 @@ namespace nexus.protocols.ble.advertisement
    /// </summary>
    public struct AdvertisingDataItem
    {
+      /// <summary>
+      /// </summary>
       public AdvertisingDataItem( AdvertisingDataType type, Byte[] data )
       {
          Type = type;

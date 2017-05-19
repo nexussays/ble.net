@@ -80,11 +80,11 @@
     </Reference>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
-  <Import Project="..\..\lib\packages\nexus.utils.build.0.1.16\build\nexus.utils.build.targets" Condition="Exists('..\..\lib\packages\nexus.utils.build.0.1.16\build\nexus.utils.build.targets')" />
+  <Import Project="..\..\lib\packages\nexus.utils.build.0.1.18\build\nexus.utils.build.targets" Condition="Exists('..\..\lib\packages\nexus.utils.build.0.1.18\build\nexus.utils.build.targets')" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>
       <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
     </PropertyGroup>
-    <Error Condition="!Exists('..\..\lib\packages\nexus.utils.build.0.1.16\build\nexus.utils.build.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\lib\packages\nexus.utils.build.0.1.16\build\nexus.utils.build.targets'))" />
+    <Error Condition="!Exists('..\..\lib\packages\nexus.utils.build.0.1.18\build\nexus.utils.build.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\lib\packages\nexus.utils.build.0.1.18\build\nexus.utils.build.targets'))" />
   </Target>
 </Project>

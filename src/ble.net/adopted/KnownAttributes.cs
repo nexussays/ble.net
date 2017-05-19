@@ -12,24 +12,55 @@ using nexus.core.logging;
 namespace nexus.protocols.ble.adopted
 {
    /// <summary>
-   /// Stores known information about services, characteristics, and descriptors. Useful for lookup to get a name when you just have a GUID
+   /// Stores known information about services, characteristics, and descriptors. Useful for lookup to get a name when you
+   /// just have a GUID
    /// </summary>
    public class KnownAttributes
    {
-      protected readonly Dictionary<Guid, KnownAttribute> m_items;
+      /// <summary>
+      /// The dictionary of registered attributes
+      /// </summary>
+      protected readonly IDictionary<Guid, IGattAttribute> m_items;
 
       /// <summary>
       /// </summary>
       public KnownAttributes()
       {
-         m_items = new Dictionary<Guid, KnownAttribute>();
+         m_items = new Dictionary<Guid, IGattAttribute>();
+      }
+
+      /// <summary>
+      /// Add a <see cref="IGattAttribute" />
+      /// </summary>
+      public IGattAttribute Add( IGattAttribute item )
+      {
+         if(item == null)
+         {
+            return null;
+         }
+
+         try
+         {
+            m_items.Add( item.Id, item );
+         }
+         catch(Exception ex)
+         {
+            Log.Warn(
+               "Error adding BLE attribute. type={3} att-1=\"{0}\" att-2=\"{1}\" error=\"{2}\"",
+               item.Description,
+               m_items.Get( item.Id )?.Description,
+               ex.Message,
+               item.Type );
+            item = null;
+         }
+         return item;
       }
 
       /// <summary>
       /// Add the provided information to the known attributes so it can easily be looked up later. Returns an object
       /// representing the known information about this attribute or null of the information already exists.
       /// </summary>
-      public KnownAttribute AddCharacteristic( UInt16 reservedKey, String name )
+      public IGattAttribute AddCharacteristic( UInt16 reservedKey, String name )
       {
          return Add( GattAttributeType.Characteristic, reservedKey, name );
       }
@@ -38,7 +69,7 @@ namespace nexus.protocols.ble.adopted
       /// Add the provided information to the known attributes so it can easily be looked up later. Returns an object
       /// representing the known information about this attribute or null of the information already exists.
       /// </summary>
-      public KnownAttribute AddCharacteristic( Guid id, String name )
+      public IGattAttribute AddCharacteristic( Guid id, String name )
       {
          return Add( GattAttributeType.Characteristic, id, name );
       }
@@ -47,7 +78,7 @@ namespace nexus.protocols.ble.adopted
       /// Add the provided information to the known attributes so it can easily be looked up later. Returns an object
       /// representing the known information about this attribute or null of the information already exists.
       /// </summary>
-      public KnownAttribute AddCharacteristic( String id, String name )
+      public IGattAttribute AddCharacteristic( String id, String name )
       {
          return Add( GattAttributeType.Characteristic, id, name );
       }
@@ -56,7 +87,7 @@ namespace nexus.protocols.ble.adopted
       /// Add the provided information to the known attributes so it can easily be looked up later. Returns an object
       /// representing the known information about this attribute or null of the information already exists.
       /// </summary>
-      public KnownAttribute AddDescriptor( UInt16 reservedKey, String name )
+      public IGattAttribute AddDescriptor( UInt16 reservedKey, String name )
       {
          return Add( GattAttributeType.Descriptor, reservedKey, name );
       }
@@ -65,7 +96,7 @@ namespace nexus.protocols.ble.adopted
       /// Add the provided information to the known attributes so it can easily be looked up later. Returns an object
       /// representing the known information about this attribute or null of the information already exists.
       /// </summary>
-      public KnownAttribute AddDescriptor( Guid id, String name )
+      public IGattAttribute AddDescriptor( Guid id, String name )
       {
          return Add( GattAttributeType.Descriptor, id, name );
       }
@@ -74,7 +105,7 @@ namespace nexus.protocols.ble.adopted
       /// Add the provided information to the known attributes so it can easily be looked up later. Returns an object
       /// representing the known information about this attribute or null of the information already exists.
       /// </summary>
-      public KnownAttribute AddDescriptor( String id, String name )
+      public IGattAttribute AddDescriptor( String id, String name )
       {
          return Add( GattAttributeType.Descriptor, id, name );
       }
@@ -83,7 +114,7 @@ namespace nexus.protocols.ble.adopted
       /// Add the provided information to the known attributes so it can easily be looked up later. Returns an object
       /// representing the known information about this attribute or null of the information already exists.
       /// </summary>
-      public KnownAttribute AddService( UInt16 reservedKey, String name )
+      public IGattAttribute AddService( UInt16 reservedKey, String name )
       {
          return Add( GattAttributeType.Service, reservedKey, name );
       }
@@ -92,7 +123,7 @@ namespace nexus.protocols.ble.adopted
       /// Add the provided information to the known attributes so it can easily be looked up later. Returns an object
       /// representing the known information about this attribute or null of the information already exists.
       /// </summary>
-      public KnownAttribute AddService( Guid id, String name )
+      public IGattAttribute AddService( Guid id, String name )
       {
          return Add( GattAttributeType.Service, id, name );
       }
@@ -101,7 +132,7 @@ namespace nexus.protocols.ble.adopted
       /// Add the provided information to the known attributes so it can easily be looked up later. Returns an object
       /// representing the known information about this attribute or null of the information already exists.
       /// </summary>
-      public KnownAttribute AddService( String id, String name )
+      public IGattAttribute AddService( String id, String name )
       {
          return Add( GattAttributeType.Service, id, name );
       }
@@ -109,38 +140,24 @@ namespace nexus.protocols.ble.adopted
       /// <summary>
       /// Retrieve any known information about the attribute with the given GUID
       /// </summary>
-      public KnownAttribute Get( Guid id )
+      public IGattAttribute Get( Guid id )
       {
          return m_items.Get( id );
       }
 
-      private KnownAttribute Add( GattAttributeType type, Guid id, String name )
+      private IGattAttribute Add( GattAttributeType type, Guid id, String name )
       {
-         KnownAttribute item;
-         try
-         {
-            item = new KnownAttribute( id, name, type );
-            m_items.Add( id, item );
-         }
-         catch(Exception ex)
-         {
-            Log.Warn(
-               "Error adding BLE attribute. type={3} att-1=\"{0}\" att-2=\"{1}\" error=\"{2}\"",
-               name,
-               m_items.Get( id )?.Description,
-               ex.Message,
-               type );
-            item = null;
-         }
+         var item = new KnownAttribute( id, name, type );
+         Add( item );
          return item;
       }
 
-      private KnownAttribute Add( GattAttributeType type, String id, String name )
+      private IGattAttribute Add( GattAttributeType type, String id, String name )
       {
          return Add( type, Guid.Parse( id ), name );
       }
 
-      private KnownAttribute Add( GattAttributeType type, UInt16 reservedKey, String name )
+      private IGattAttribute Add( GattAttributeType type, UInt16 reservedKey, String name )
       {
          return Add( type, reservedKey.CreateGuidFromAdoptedKey(), name );
       }

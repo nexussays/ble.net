@@ -12,7 +12,7 @@ namespace nexus.protocols.ble.adopted
    /// Represents an ATT attribute (service, characteristic, or descriptor) that is of a known type and usage and has an
    /// associated name
    /// </summary>
-   public class KnownAttribute : IGattAttribute
+   internal class KnownAttribute : IGattAttribute
    {
       /// <summary>
       /// </summary>
@@ -23,17 +23,13 @@ namespace nexus.protocols.ble.adopted
          Type = type;
       }
 
-      /// <summary>
-      /// A human-friendly description for this service
-      /// </summary>
+      /// <inheritdoc />
       public String Description { get; }
 
       /// <inheritdoc />
       public Guid Id { get; }
 
-      /// <summary>
-      /// The GATT type of this ATT attribute
-      /// </summary>
+      /// <inheritdoc />
       public GattAttributeType Type { get; }
 
       /// <inheritdoc />

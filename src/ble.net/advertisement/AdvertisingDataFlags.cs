@@ -17,12 +17,12 @@ namespace nexus.protocols.ble.advertisement
       /// <summary>
       /// LE Limited Discoverable Mode.
       /// </summary>
-      LimitedDiscoverableMode = 1,
+      LimitedDiscoverable = 1,
 
       /// <summary>
       /// LE General Discoverable Mode.
       /// </summary>
-      GeneralDiscoverableMode = 2,
+      GeneralDiscoverable = 2,
 
       /// <summary>
       /// Basic Rate/Enhanced Data Rate (BR/EDR) not supported.

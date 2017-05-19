@@ -11,9 +11,21 @@ namespace nexus.protocols.ble.connection
    /// </summary>
    public enum ConnectionState
    {
+      /// <summary>
+      /// Disconnected
+      /// </summary>
       Disconnected = 0,
+      /// <summary>
+      /// Disconnecting
+      /// </summary>
       Disconnecting = 1,
+      /// <summary>
+      /// Connecting
+      /// </summary>
       Connecting = 2,
+      /// <summary>
+      /// Connected
+      /// </summary>
       Connected = 3
    }
 }

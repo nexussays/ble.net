@@ -13,21 +13,29 @@ namespace nexus.protocols.ble
    /// </summary>
    public sealed class GattException : Exception
    {
+      /// <summary>
+      /// </summary>
       public GattException( String message, Exception inner = null )
          : base( message, inner )
       {
       }
 
+      /// <summary>
+      /// </summary>
       public GattException( String message, Guid service )
          : this( message, service, Guid.Empty, Guid.Empty )
       {
       }
 
+      /// <summary>
+      /// </summary>
       public GattException( String message, Guid service, Guid characteristic )
          : this( message, service, characteristic, Guid.Empty )
       {
       }
 
+      /// <summary>
+      /// </summary>
       public GattException( String message, Guid service, Guid characteristic, Guid descriptor )
          : this( message )
       {
@@ -36,10 +44,19 @@ namespace nexus.protocols.ble
          Descriptor = descriptor;
       }
 
+      /// <summary>
+      /// The characteristic involved in the exception, if there was one.
+      /// </summary>
       public Guid Characteristic { get; }
 
+      /// <summary>
+      /// The descriptor involved in the exception, if there was one.
+      /// </summary>
       public Guid Descriptor { get; }
 
+      /// <summary>
+      /// The service involved in the exception, if there was one.
+      /// </summary>
       public Guid Service { get; }
    }
 }
