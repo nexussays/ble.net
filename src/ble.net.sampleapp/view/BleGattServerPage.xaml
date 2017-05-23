@@ -82,6 +82,7 @@
 
       <ListView ItemsSource="{Binding Services}"
                 ItemSelected="OnServiceSelected"
+                HasUnevenRows="True"
                 VerticalOptions="FillAndExpand"
                 HorizontalOptions="FillAndExpand">
          <x:Arguments>
@@ -93,12 +94,6 @@
                         iOS="Default"
                         WinPhone="None" />
          </ListView.SeparatorVisibility>
-         <ListView.HasUnevenRows>
-            <OnPlatform x:TypeArguments="x:Boolean"
-                        Android="True"
-                        iOS="False"
-                        WinPhone="True" />
-         </ListView.HasUnevenRows>
          <ListView.ItemTemplate>
             <DataTemplate>
                <ViewCell>

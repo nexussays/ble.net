@@ -4,6 +4,7 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
+using System.Reflection;
 using Acr.UserDialogs;
 using ble.net.sampleapp.view;
 using ble.net.sampleapp.viewmodel;
@@ -29,6 +30,9 @@ namespace ble.net.sampleapp
 
          var logsVm = new LogsViewModel();
          SystemLog.Instance.AddSink( logsVm );
+
+         var bleAssembly = adapter.GetType().GetTypeInfo().Assembly.GetName();
+         Log.Info( bleAssembly.Name + "@" + bleAssembly.Version );
 
          var bleGattServerViewModel = new BleGattServerViewModel( dialogs, adapter );
          var bleScanViewModel = new BleDeviceScannerViewModel(
