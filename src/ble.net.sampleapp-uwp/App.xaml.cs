@@ -31,18 +31,23 @@ namespace ble.net.sampleapp.uwp
       /// </summary>
       public App()
       {
+         UnhandledException += ( sender, e ) =>
+         {
+            SystemLog.Instance.Error(
+               "UNHANDLED EXCEPTION: from={0} message={1}\n{2}",
+               sender,
+               e.Message,
+               e.Exception?.ToString() );
+         };
+         TaskScheduler.UnobservedTaskException += ( sender, e ) =>
+         {
+            SystemLog.Instance.Error( "UNOBSERVED TASK EXCEPTION: from={0} {1}", sender, e.Exception?.ToString() );
+         };
+
+#pragma warning disable 162
          // ReSharper disable once ConditionIsAlwaysTrueOrFalse
          if(IS_DEBUG)
          {
-            UnhandledException += ( sender, e ) =>
-            {
-               Debug.WriteLine( "UNHANDLED EXCEPTION: from={0} message={1}\n{2}", sender, e.Message, e.Exception?.ToString() );
-            };
-            TaskScheduler.UnobservedTaskException += ( sender, e ) =>
-            {
-               Debug.WriteLine("UNOBSERVED TASK EXCEPTION: from={0} {1}", sender, e.Exception?.ToString());
-            };
-
             SystemLog.Instance.AddSink(
                entry =>
                {
@@ -53,6 +58,7 @@ namespace ble.net.sampleapp.uwp
                         : "") );
                } );
          }
+#pragma warning restore 162
 
          InitializeComponent();
       }

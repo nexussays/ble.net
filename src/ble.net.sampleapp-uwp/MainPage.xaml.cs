@@ -9,7 +9,7 @@ namespace ble.net.sampleapp.uwp
       {
          InitializeComponent();
 
-         LoadApplication( new FormsApp( BluetoothLowEnergyAdapter.ObtainDefaultAdapter(), UserDialogs.Instance) );
+         LoadApplication( new FormsApp( BluetoothLowEnergyAdapter.ObtainDefaultAdapter(), UserDialogs.Instance ) );
       }
    }
 }

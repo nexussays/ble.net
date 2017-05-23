@@ -4,6 +4,7 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
+using System;
 using System.Reflection;
 using Acr.UserDialogs;
 using ble.net.sampleapp.view;
@@ -11,6 +12,7 @@ using ble.net.sampleapp.viewmodel;
 using nexus.core.logging;
 using nexus.protocols.ble;
 using Xamarin.Forms;
+using Device = Xamarin.Forms.Device;
 // ReSharper disable RedundantUsingDirective
 using Microsoft.Azure.Mobile;
 using Microsoft.Azure.Mobile.Analytics;
@@ -23,11 +25,13 @@ namespace ble.net.sampleapp
    public partial class FormsApp
    {
       private readonly NavigationPage m_rootPage;
+      private IUserDialogs m_dialogs;
 
       public FormsApp( IBluetoothLowEnergyAdapter adapter, IUserDialogs dialogs )
       {
          InitializeComponent();
 
+         m_dialogs = dialogs;
          var logsVm = new LogsViewModel();
          SystemLog.Instance.AddSink( logsVm );
 
@@ -68,6 +72,19 @@ namespace ble.net.sampleapp
             typeof(Analytics),
             typeof(Crashes) );
 #endif
+         if(Device.RuntimePlatform == Device.Windows)
+         {
+            Device.StartTimer(
+               TimeSpan.FromSeconds( 1 ),
+               () =>
+               {
+                  m_dialogs.Alert(
+                     "The UWP API can listen for advertisements but is not yet able to connect to devices.",
+                     "Quick Note",
+                     "Aww, ok" );
+                  return false;
+               } );
+         }
       }
    }
 }
