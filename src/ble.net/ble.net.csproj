@@ -75,8 +75,8 @@
     <Compile Include="ScanFilter.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Reference Include="nexus.core, Version=0.26.7.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\lib\packages\nexus.core.0.26.7\lib\portable45-net45+win8\nexus.core.dll</HintPath>
+    <Reference Include="nexus.core, Version=0.29.4.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\lib\packages\nexus.core.0.29.4\lib\portable45-net45+win8\nexus.core.dll</HintPath>
     </Reference>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />

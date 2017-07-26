@@ -29,7 +29,7 @@ namespace nexus.protocols.ble
       UInt16? AdvertisedManufacturerCompanyId { get; }
 
       /// <summary>
-      /// The broadcast advertisement lists a service that is contained in this list
+      /// The broadcast advertisement lists a service that is contained in this list.
       /// </summary>
       IEnumerable<Guid> AdvertisedServiceIsInList { get; }
 

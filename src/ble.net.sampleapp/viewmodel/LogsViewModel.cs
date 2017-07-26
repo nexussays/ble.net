@@ -6,7 +6,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using ble.net.sampleapp.util;
 using nexus.core;
 using nexus.core.logging;
@@ -45,18 +44,19 @@ namespace ble.net.sampleapp.viewmodel
       public String PageTitle => "Logs";
 
       /// <inheritdoc />
-      public void Handle( ILogEntry entry, Int32 sequenceNumber )
+      public void Handle( params ILogEntry[] entries )
       {
          lock(m_lock)
          {
-            while(m_logEntries.Count >= LOG_BUFFER_MAX_SIZE)
+            foreach(var entry in entries)
+            {
+               m_logEntries.Enqueue( entry.SequenceId + " " + entry.FormatAsString() );
+            }
+
+            while(m_logEntries.Count > LOG_BUFFER_MAX_SIZE)
             {
                m_logEntries.Dequeue();
             }
-
-            m_logEntries.Enqueue(
-               sequenceNumber + " [" + entry.Severity.ToString().ToUpperInvariant() + "] " +
-               entry.FormatMessageAndArguments() + " " + entry.Data.Select( x => x?.ToString() + "" ).Join( " " ) );
          }
          Device.BeginInvokeOnMainThread( () => RaisePropertyChanged( nameof(LogBuffer) ) );
       }

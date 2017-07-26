@@ -90,10 +90,35 @@ await adapter.ScanForDevices(
 // scanning has been stopped when code reached this point
 ```
 
+You can also use a scan filter which will ensure that your callback only receives peripherals that pass the filter.
+
+```csharp
+// create the filter using an object initalizer...
+await adapter.ScanForDevices(
+      new ScanFilter.Factory()
+      {
+         AdvertisedDeviceName = "foo",
+         AdvertisedManufacturerCompanyId = 76,
+         AdvertisedServiceIsInList = new List<Guid>(){ guid },
+         IgnoreRepeatBroadcasts = true
+      },
+      p => { /* do stuff with found peripheral */ } );
+// ...or create the filter using a builder pattern
+await adapter.ScanForDevices(
+      new ScanFilter.Factory()
+         .SetAdvertisedDeviceName( "foo" )
+         .SetAdvertisedManufacturerCompanyId( 76 )
+         .AddAdvertisedService( guid )
+         .SetIgnoreRepeatBroadcasts( true ),
+      p => { /* do stuff with found peripheral */ } );
+```
+
+For the common case of ignoring duplicate advertisements (i.e., repeated advertisements from the same device), there is a static `ScanFilter.UniqueBroadcastsOnly` you can use as the scan filter.
+
 ### Connect to a BLE device
 
 ```csharp
-// If the connection isn't established before CancellationToken is triggered (a timeout in this example), it will be stopped.
+// If the connection isn't established before CancellationToken or timeout is triggered, it will be stopped.
 var connection = await adapter.ConnectToDevice( peripheral, TimeSpan.FromSeconds( 15 ));
 if(connection.IsSuccessful())
 {

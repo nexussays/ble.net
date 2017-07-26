@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using System.Windows.Input;
 using ble.net.sampleapp.util;
 using nexus.core;
+using nexus.core.text;
 using nexus.protocols.ble;
 using Xamarin.Forms;
 
@@ -21,10 +22,10 @@ namespace ble.net.sampleapp.viewmodel
    {
       private Boolean m_isExpanded;
 
-      public BlePeripheralViewModel( IBlePeripheral model, Func<BlePeripheralViewModel, Task> connectionFunc )
+      public BlePeripheralViewModel( IBlePeripheral model, Func<BlePeripheralViewModel, Task> onSelectDevice )
       {
          Model = model;
-         ConnectToDeviceCommand = new Command( async () => { await connectionFunc( this ); } );
+         ConnectToDeviceCommand = new Command( async () => { await onSelectDevice( this ); } );
       }
 
       public String Address => Model.Address != null && Model.Address.Length > 0

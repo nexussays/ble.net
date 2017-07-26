@@ -5,7 +5,6 @@
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
 using System;
-using System.Linq;
 using System.Reflection;
 using Acr.UserDialogs;
 using Android.App;
@@ -13,7 +12,6 @@ using Android.Content;
 using Android.Content.PM;
 using Android.OS;
 using Android.Runtime;
-using nexus.core;
 using nexus.core.logging;
 using nexus.protocols.ble;
 using Xamarin.Forms;
@@ -26,7 +24,7 @@ namespace ble.net.sampleapp.android
    [Application( Debuggable = IS_DEBUG, AllowBackup = true, AllowClearUserData = true )]
    public class MyApplication : Application
    {
-      public const Boolean IS_DEBUG = 
+      public const Boolean IS_DEBUG =
 #if DEBUG
          true;
 #else
@@ -47,26 +45,24 @@ namespace ble.net.sampleapp.android
             //
             // dump all entries to Android system log in debug mode
             //
-            SystemLog.Instance.Id = Assembly.GetAssembly( GetType() ).GetName().Name;
+            var logId = Assembly.GetAssembly( GetType() ).GetName().Name;
             SystemLog.Instance.AddSink(
                entry =>
                {
-                  var message = entry.FormatMessageAndArguments() + " " +
-                                entry.Data.Select( x => x?.ToString() + "" ).Join( " " );
+                  var message = entry.FormatAsString();
                   switch(entry.Severity)
                   {
                      case LogLevel.Error:
-
-                        Log.Error( entry.LogId, message );
+                        Log.Error( logId, message );
                         break;
                      case LogLevel.Warn:
-                        Log.Warn( entry.LogId, message );
+                        Log.Warn( logId, message );
                         break;
                      case LogLevel.Info:
-                        Log.Info( entry.LogId, message );
+                        Log.Info( logId, message );
                         break;
                      default:
-                        Log.Debug( entry.LogId, message );
+                        Log.Debug( logId, message );
                         break;
                   }
                } );
@@ -74,7 +70,11 @@ namespace ble.net.sampleapp.android
       }
    }
 
-   [Activity( Label = "BLE.net Sample App", Theme = "@style/MainTheme", MainLauncher = false, Icon = "@drawable/icon",
+   [Activity(
+      Label = "BLE.net Sample App",
+      Theme = "@style/MainTheme",
+      MainLauncher = false,
+      Icon = "@drawable/icon",
       ConfigurationChanges = ConfigChanges.ScreenSize | ConfigChanges.Orientation )]
    public class MainActivity : FormsAppCompatActivity
    {
@@ -95,11 +95,13 @@ namespace ble.net.sampleapp.android
          Forms.Init( this, bundle );
 
          LoadApplication(
-            new FormsApp( BluetoothLowEnergyAdapter.ObtainDefaultAdapter( ApplicationContext ), UserDialogs.Instance ) );
+            new FormsApp(
+               BluetoothLowEnergyAdapter.ObtainDefaultAdapter( ApplicationContext ),
+               UserDialogs.Instance ) );
       }
    }
 
-   [Activity(Theme = "@style/AppTheme.Splash", MainLauncher = true, NoHistory = true)]
+   [Activity( Theme = "@style/AppTheme.Splash", MainLauncher = true, NoHistory = true )]
    public class SplashActivity : Activity
    {
       protected override void OnCreate( Bundle bundle )

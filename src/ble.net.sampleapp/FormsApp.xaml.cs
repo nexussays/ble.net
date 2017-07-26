@@ -24,8 +24,8 @@ namespace ble.net.sampleapp
 {
    public partial class FormsApp
    {
+      private readonly IUserDialogs m_dialogs;
       private readonly NavigationPage m_rootPage;
-      private IUserDialogs m_dialogs;
 
       public FormsApp( IBluetoothLowEnergyAdapter adapter, IUserDialogs dialogs )
       {
@@ -40,9 +40,9 @@ namespace ble.net.sampleapp
 
          var bleGattServerViewModel = new BleGattServerViewModel( dialogs, adapter );
          var bleScanViewModel = new BleDeviceScannerViewModel(
-            adapter,
-            dialogs,
-            async p =>
+            bleAdapter: adapter,
+            dialogs: dialogs,
+            onSelectDevice: async p =>
             {
                bleGattServerViewModel.Update( p );
                await m_rootPage.PushAsync(

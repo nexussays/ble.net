@@ -28,3 +28,4 @@ Resource.Designer.cs
 *.nupkg
 *.bak
 project.lock.json
+artifacts/

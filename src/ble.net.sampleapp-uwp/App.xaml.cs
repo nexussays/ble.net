@@ -1,11 +1,9 @@
 ﻿using System;
 using System.Diagnostics;
-using System.Linq;
 using System.Threading.Tasks;
 using Windows.ApplicationModel.Activation;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Navigation;
-using nexus.core;
 using nexus.core.logging;
 using Xamarin.Forms;
 using Application = Windows.UI.Xaml.Application;
@@ -48,15 +46,7 @@ namespace ble.net.sampleapp.uwp
          // ReSharper disable once ConditionIsAlwaysTrueOrFalse
          if(IS_DEBUG)
          {
-            SystemLog.Instance.AddSink(
-               entry =>
-               {
-                  var entryData = entry.Data.ToList();
-                  Debug.WriteLine(
-                     entry.FormatMessageAndArguments() + (entryData.Count > 0
-                        ? " --- " + entryData.Select( x => x?.ToString() + "" ).Join( " " )
-                        : "") );
-               } );
+            SystemLog.Instance.AddSink( entry => { Debug.WriteLine( entry.FormatAsString() ); } );
          }
 #pragma warning restore 162
 

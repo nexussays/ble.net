@@ -20,14 +20,14 @@ namespace ble.net.sampleapp.viewmodel
 {
    public class BleDeviceScannerViewModel : AbstractScanViewModel
    {
-      private readonly Func<BlePeripheralViewModel, Task> m_connectionFunc;
+      private readonly Func<BlePeripheralViewModel, Task> m_onSelectDevice;
       private DateTime m_scanStopTime;
 
       public BleDeviceScannerViewModel( IBluetoothLowEnergyAdapter bleAdapter, IUserDialogs dialogs,
-                                        Func<BlePeripheralViewModel, Task> connectionFunc )
+                                        Func<BlePeripheralViewModel, Task> onSelectDevice )
          : base( bleAdapter, dialogs )
       {
-         m_connectionFunc = connectionFunc;
+         m_onSelectDevice = onSelectDevice;
          FoundDevices = new ObservableCollection<BlePeripheralViewModel>();
          ScanForDevicesCommand = new Command(
             x => { StartScan( x as Double? ?? BleSampleAppUtils.SCAN_SECONDS_DEFAULT ); } );
@@ -73,7 +73,7 @@ namespace ble.net.sampleapp.viewmodel
 
          await m_bleAdapter.ScanForBroadcasts(
             // NOTE: You can provide a scan filter to look for particular devices, e.g.:
-            //new ScanFilter.Factory {AdvertisedManufacturerCompanyId = BleSampleAppUtils.COMPANY_ID_GOOGLE}.CreateFilter(),
+            //new ScanFilter.Factory() { AdvertisedManufacturerCompanyId = BleSampleAppUtils.COMPANY_ID_GOOGLE },
             peripheral =>
             {
                Device.BeginInvokeOnMainThread(
@@ -86,7 +86,7 @@ namespace ble.net.sampleapp.viewmodel
                      }
                      else
                      {
-                        FoundDevices.Add( new BlePeripheralViewModel( peripheral, m_connectionFunc ) );
+                        FoundDevices.Add( new BlePeripheralViewModel( peripheral, m_onSelectDevice ) );
                      }
                   } );
             },

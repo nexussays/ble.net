@@ -13,7 +13,7 @@ namespace nexus.protocols.ble.adopted
 {
    /// <summary>
    /// Stores known information about services, characteristics, and descriptors. Useful for lookup to get a name when you
-   /// just have a GUID
+   /// just have a GUID (see <see cref="Get"/>)
    /// </summary>
    public class KnownAttributes
    {

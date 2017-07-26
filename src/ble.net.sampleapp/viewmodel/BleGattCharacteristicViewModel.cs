@@ -12,6 +12,7 @@ using Acr.UserDialogs;
 using ble.net.sampleapp.util;
 using nexus.core;
 using nexus.core.logging;
+using nexus.core.text;
 using nexus.protocols.ble;
 using nexus.protocols.ble.connection;
 using Xamarin.Forms;
@@ -159,7 +160,8 @@ namespace ble.net.sampleapp.viewmodel
 
       public async Task UpdateDescriptors()
       {
-         var descriptors = (await m_gattServer.ListCharacteristicDescriptors( m_serviceGuid, m_characteristicGuid )).ToList();
+         var descriptors = (await m_gattServer.ListCharacteristicDescriptors( m_serviceGuid, m_characteristicGuid ))
+            .ToList();
          var vals = "";
          foreach(var desc in descriptors)
          {
@@ -171,7 +173,7 @@ namespace ble.net.sampleapp.viewmodel
 
       private void DisableNotifications()
       {
-         Log.Trace("Disabling notifications for characteristic. id={0}", m_characteristicGuid);
+         Log.Trace( "Disabling notifications for characteristic. id={0}", m_characteristicGuid );
          m_notificationSubscription?.Dispose();
          m_notificationSubscription = null;
          RaisePropertyChanged( nameof(NotifyEnabled) );

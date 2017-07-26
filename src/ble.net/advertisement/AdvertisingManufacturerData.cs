@@ -22,14 +22,13 @@ namespace nexus.protocols.ble.advertisement
       }
 
       /// <summary>
-      /// The type of an entry in the 31-byte advertising PDU payload.
-      /// Assigned numbers are used in GAP for inquiry response, EIR data type values, manufacturer-specific data, advertising
-      /// data, low energy UUIDs and appearance characteristics, and class of device.
+      /// Company identifiers are unique numbers assigned by the Bluetooth SIG to member companies requesting one.
+      /// <see href="https://www.bluetooth.com/specifications/assigned-numbers/company-identifiers" />
       /// </summary>
       public UInt16 CompanyId { get; }
 
       /// <summary>
-      /// The content of this advertising payload
+      /// The manufacturer data being advertised
       /// </summary>
       public Byte[] Data { get; }
    }

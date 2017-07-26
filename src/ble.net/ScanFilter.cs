@@ -25,13 +25,13 @@ namespace nexus.protocols.ble
       public static readonly ScanFilter UniqueBroadcastsOnly =
          new Factory {IgnoreRepeatBroadcasts = true}.CreateFilter();
 
-      private readonly List<Guid> m_advertisedServiceIsInList;
+      private readonly HashSet<Guid> m_advertisedServiceIsInList;
 
-      private ScanFilter( IScanFilter factory )
+      private ScanFilter( Factory factory )
       {
          m_advertisedServiceIsInList = factory.AdvertisedServiceIsInList == null
             ? null
-            : new List<Guid>( factory.AdvertisedServiceIsInList );
+            : new HashSet<Guid>( factory.AdvertisedServiceIsInList );
          AdvertisedDeviceName = factory.AdvertisedDeviceName;
          IgnoreRepeatBroadcasts = factory.IgnoreRepeatBroadcasts;
          AdvertisedManufacturerCompanyId = factory.AdvertisedManufacturerCompanyId;
@@ -56,21 +56,10 @@ namespace nexus.protocols.ble
       /// <returns></returns>
       public Boolean Passes( IBleAdvertisement advertisement )
       {
-         if(m_advertisedServiceIsInList != null && m_advertisedServiceIsInList.Count > 0)
+         if(m_advertisedServiceIsInList != null && m_advertisedServiceIsInList.Count > 0 &&
+            !m_advertisedServiceIsInList.Any( guid => advertisement.Services.Contains( guid ) ))
          {
-            var passes = false;
-            foreach(var guid in m_advertisedServiceIsInList)
-            {
-               if(advertisement.Services.Contains( guid ))
-               {
-                  passes = true;
-                  break;
-               }
-            }
-            if(!passes)
-            {
-               return false;
-            }
+            return false;
          }
 
          if(AdvertisedDeviceName != null && advertisement.DeviceName != AdvertisedDeviceName)
@@ -90,19 +79,30 @@ namespace nexus.protocols.ble
       /// <summary>
       /// Factory to create a new <see cref="ScanFilter" />
       /// </summary>
-      public class Factory : IScanFilter
+      public class Factory
       {
-         /// <inheritdoc />
+         /// <inheritdoc cref="IScanFilter.AdvertisedDeviceName" />
          public String AdvertisedDeviceName { get; set; }
 
-         /// <inheritdoc />
+         /// <inheritdoc cref="IScanFilter.AdvertisedManufacturerCompanyId" />
          public UInt16? AdvertisedManufacturerCompanyId { get; set; }
 
-         /// <inheritdoc />
-         public IEnumerable<Guid> AdvertisedServiceIsInList { get; set; }
+         /// <inheritdoc cref="IScanFilter.AdvertisedServiceIsInList" />
+         public IList<Guid> AdvertisedServiceIsInList { get; set; }
 
-         /// <inheritdoc />
+         /// <inheritdoc cref="IScanFilter.IgnoreRepeatBroadcasts" />
          public Boolean IgnoreRepeatBroadcasts { get; set; }
+
+         /// <inheritdoc cref="IScanFilter.AdvertisedServiceIsInList" />
+         public Factory AddAdvertisedService( Guid guid )
+         {
+            if(AdvertisedServiceIsInList == null)
+            {
+               AdvertisedServiceIsInList = new List<Guid>();
+            }
+            AdvertisedServiceIsInList.Add( guid );
+            return this;
+         }
 
          /// <summary>
          /// Create a new <see cref="ScanFilter" /> with the provided <see cref="Factory" />
@@ -112,25 +112,33 @@ namespace nexus.protocols.ble
             return new ScanFilter( this );
          }
 
-         /// <inheritdoc cref="AdvertisedDeviceName" />
+         /// <inheritdoc cref="IScanFilter.AdvertisedDeviceName" />
          public Factory SetAdvertisedDeviceName( String value )
          {
             AdvertisedDeviceName = value;
             return this;
          }
 
-         /// <inheritdoc cref="AdvertisedManufacturerCompanyId" />
+         /// <inheritdoc cref="IScanFilter.AdvertisedManufacturerCompanyId" />
          public Factory SetAdvertisedManufacturerCompanyId( UInt16? value )
          {
             AdvertisedManufacturerCompanyId = value;
             return this;
          }
 
-         /// <inheritdoc cref="IgnoreRepeatBroadcasts" />
+         /// <inheritdoc cref="IScanFilter.IgnoreRepeatBroadcasts" />
          public Factory SetIgnoreRepeatBroadcasts( Boolean value )
          {
             IgnoreRepeatBroadcasts = value;
             return this;
+         }
+
+         /// <summary>
+         /// Create scan filter from factory so we can pass it in without requiring consumers to call CreateFilter
+         /// </summary>
+         public static implicit operator ScanFilter( Factory factory )
+         {
+            return factory?.CreateFilter();
          }
       }
    }
