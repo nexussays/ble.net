@@ -22,7 +22,6 @@ namespace ble.net.sampleapp.viewmodel
    public class BleGattServerViewModel : BaseViewModel
    {
       private const Int32 CONNECTION_TIMEOUT_SECONDS = 15;
-
       private readonly IBluetoothLowEnergyAdapter m_bleAdapter;
       private readonly IUserDialogs m_dialogManager;
       private String m_connectionState;
@@ -42,7 +41,8 @@ namespace ble.net.sampleapp.viewmodel
 
       public String Address => m_peripheral?.Address;
 
-      public String AddressAndName => m_peripheral?.AddressAndName;//Address + " / " + (DeviceName ?? "<no device name>");
+      public String AddressAndName =>
+         m_peripheral?.AddressAndName; //Address + " / " + (DeviceName ?? "<no device name>");
 
       public String Connection
       {
@@ -102,15 +102,6 @@ namespace ble.net.sampleapp.viewmodel
          IsBusy = false;
       }
 
-      public void Update( BlePeripheralViewModel peripheral )
-      {
-         if(m_peripheral != null && !m_peripheral.Model.Equals( peripheral.Model ))
-         {
-            CloseConnection();
-         }
-         m_peripheral = peripheral;
-      }
-
       public async Task OpenConnection()
       {
          // if we're busy or have a valid connection, then no-op
@@ -144,21 +135,29 @@ namespace ble.net.sampleapp.viewmodel
                   Connection = c.ToString();
                } );
 
-            // small possibility the device could disconnect between connecting and getting services and throw somewhere along here
-            var services = (await m_gattServer.ListAllServices()).ToList();
-            foreach(var serviceId in services)
+            try
             {
-               if(Services.Any( viewModel => viewModel.Guid.Equals( serviceId ) ))
+               var services = (await m_gattServer.ListAllServices()).ToList();
+
+               foreach(var serviceId in services)
                {
-                  continue;
+                  if(Services.Any( viewModel => viewModel.Guid.Equals( serviceId ) ))
+                  {
+                     continue;
+                  }
+                  Services.Add( new BleGattServiceViewModel(  serviceId, m_gattServer, m_dialogManager ) );
                }
-               Services.Add( new BleGattServiceViewModel( serviceId, m_gattServer, m_dialogManager ) );
+               if(Services.Count == 0)
+               {
+                  m_dialogManager.Toast( "No services found" );
+               }
+               Connection = m_gattServer.State.ToString();
             }
-            if(Services.Count == 0)
+            catch(GattException ex)
             {
-               m_dialogManager.Toast( "No services found" );
+               Log.Warn( ex );
+               m_dialogManager.Toast( ex.Message, TimeSpan.FromSeconds( 3 ) );
             }
-            Connection = m_gattServer.State.ToString();
          }
          else
          {
@@ -177,6 +176,15 @@ namespace ble.net.sampleapp.viewmodel
             m_dialogManager.Toast( errorMsg, TimeSpan.FromSeconds( 5 ) );
          }
          IsBusy = false;
+      }
+
+      public void Update( BlePeripheralViewModel peripheral )
+      {
+         if(m_peripheral != null && !m_peripheral.Model.Equals( peripheral.Model ))
+         {
+            CloseConnection();
+         }
+         m_peripheral = peripheral;
       }
    }
 }

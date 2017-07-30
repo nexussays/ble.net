@@ -160,15 +160,23 @@ namespace ble.net.sampleapp.viewmodel
 
       public async Task UpdateDescriptors()
       {
-         var descriptors = (await m_gattServer.ListCharacteristicDescriptors( m_serviceGuid, m_characteristicGuid ))
-            .ToList();
-         var vals = "";
-         foreach(var desc in descriptors)
+         try
          {
-            vals += desc + ": " + await m_gattServer.ReadDescriptorValue( m_serviceGuid, m_characteristicGuid, desc ) +
-                    "\n";
+            var descriptors = (await m_gattServer.ListCharacteristicDescriptors( m_serviceGuid, m_characteristicGuid ))
+               .ToList();
+            var vals = "";
+            foreach(var desc in descriptors)
+            {
+               vals += desc + ": " +
+                       await m_gattServer.ReadDescriptorValue( m_serviceGuid, m_characteristicGuid, desc ) + "\n";
+            }
+            DescriptorValues = vals;
          }
-         DescriptorValues = vals;
+         catch(GattException ex)
+         {
+            Log.Warn( ex );
+            m_dialogManager.Toast( ex.Message, TimeSpan.FromSeconds( 3 ) );
+         }
       }
 
       private void DisableNotifications()

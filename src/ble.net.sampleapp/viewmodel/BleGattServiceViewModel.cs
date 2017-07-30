@@ -10,6 +10,8 @@ using System.Linq;
 using Acr.UserDialogs;
 using ble.net.sampleapp.util;
 using nexus.core;
+using nexus.core.logging;
+using nexus.protocols.ble;
 using nexus.protocols.ble.connection;
 
 namespace ble.net.sampleapp.viewmodel
@@ -52,17 +54,24 @@ namespace ble.net.sampleapp.viewmodel
             return;
          }
          IsBusy = true;
-         var services = await m_gattServer.ListServiceCharacteristics( m_serviceGuid );
-         var list = services?.ToList();
-         if(list != null)
+         try
          {
-            //Log.Trace( "Discovered chars={0}", list.Select( g => g.ToString() ).Join( "," ) );
-            foreach(var c in list)
+            var services = await m_gattServer.ListServiceCharacteristics( m_serviceGuid );
+            var list = services?.ToList();
+            if(list != null)
             {
-               var vm = new BleGattCharacteristicViewModel( m_serviceGuid, c, m_gattServer, m_dialogManager );
-               Characteristic.Add( vm );
-               //await vm.UpdateDescriptors();
+               //Log.Trace( "Discovered chars={0}", list.Select( g => g.ToString() ).Join( "," ) );
+               foreach(var c in list)
+               {
+                  var vm = new BleGattCharacteristicViewModel( m_serviceGuid, c, m_gattServer, m_dialogManager );
+                  Characteristic.Add( vm );
+                  //await vm.UpdateDescriptors();
+               }
             }
+         }
+         catch(GattException ex)
+         {
+            Log.Warn( ex );
          }
          IsBusy = false;
       }

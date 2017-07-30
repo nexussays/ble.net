@@ -12,13 +12,12 @@ using ble.net.sampleapp.viewmodel;
 using nexus.core.logging;
 using nexus.protocols.ble;
 using Xamarin.Forms;
-using Device = Xamarin.Forms.Device;
-// ReSharper disable RedundantUsingDirective
+
+#if RELEASE
 using Microsoft.Azure.Mobile;
 using Microsoft.Azure.Mobile.Analytics;
 using Microsoft.Azure.Mobile.Crashes;
-
-// ReSharper restore RedundantUsingDirective
+#endif
 
 namespace ble.net.sampleapp
 {
@@ -75,7 +74,7 @@ namespace ble.net.sampleapp
          if(Device.RuntimePlatform == Device.Windows)
          {
             Device.StartTimer(
-               TimeSpan.FromSeconds( 1 ),
+               TimeSpan.FromSeconds( 3 ),
                () =>
                {
                   m_dialogs.Alert(
