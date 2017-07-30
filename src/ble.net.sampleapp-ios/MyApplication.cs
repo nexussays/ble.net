@@ -5,11 +5,8 @@
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
 using System;
-using System.Linq;
-using System.Reflection;
 using Acr.UserDialogs;
 using Foundation;
-using nexus.core;
 using nexus.core.logging;
 using nexus.protocols.ble;
 using UIKit;
@@ -20,7 +17,7 @@ namespace ble.net.sampleapp.ios
 {
    public class MyApplication
    {
-      public const Boolean IS_DEBUG = 
+      public const Boolean IS_DEBUG =
 #if DEBUG
          true;
 #else
@@ -33,12 +30,10 @@ namespace ble.net.sampleapp.ios
          if(IS_DEBUG)
          {
 #pragma warning disable 162
-            SystemLog.Instance.Id = Assembly.GetAssembly( typeof(MyApplication) ).GetName().Name;
             SystemLog.Instance.AddSink(
                entry =>
                {
-                  var message = entry.FormatMessageAndArguments() + " " +
-                                entry.Data.Select( x => x?.ToString() + "" ).Join( " " );
+                  var message = entry.FormatAsString();
                   if(entry.Severity == LogLevel.Error)
                   {
                      Console.Error.WriteLine( message );
@@ -51,7 +46,7 @@ namespace ble.net.sampleapp.ios
 #pragma warning restore 162
          }
 
-         UIApplication.Main( args, null, nameof( AppDelegate ) );
+         UIApplication.Main( args, null, nameof(AppDelegate) );
       }
    }
 
