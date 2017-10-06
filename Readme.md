@@ -72,7 +72,7 @@ IBluetoothLowEnergyAdapter adapter = /* platform-provided adapter from Bluetooth
 ### Scan for broadcast advertisements
 
 ```csharp
-await adapter.ScanForDevices(
+await adapter.ScanForBroadcasts(
       ( IBlePeripheral peripheral ) =>
       {
          // read the advertising data...
@@ -94,7 +94,7 @@ You can also use a scan filter which will ensure that your callback only receive
 
 ```csharp
 // create the filter using an object initalizer...
-await adapter.ScanForDevices(
+await adapter.ScanForBroadcasts(
       new ScanFilter.Factory()
       {
          AdvertisedDeviceName = "foo",
@@ -103,8 +103,8 @@ await adapter.ScanForDevices(
          IgnoreRepeatBroadcasts = true
       },
       p => { /* do stuff with found peripheral */ } );
-// ...or create the filter using a builder pattern
-await adapter.ScanForDevices(
+// ...or create the filter using a fluent builder pattern
+await adapter.ScanForBroadcasts(
       new ScanFilter.Factory()
          .SetAdvertisedDeviceName( "foo" )
          .SetAdvertisedManufacturerCompanyId( 76 )
