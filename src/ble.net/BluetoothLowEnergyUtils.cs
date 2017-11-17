@@ -1,17 +1,12 @@
-// Copyright Malachi Griffie
+// Copyright M. Griffie <nexus@nexussays.com>
 // 
 // This Source Code Form is subject to the terms of the Mozilla Public
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
 using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Diagnostics.Contracts;
-using System.IO;
 using nexus.core;
-using nexus.protocols.ble.advertisement;
-using nexus.protocols.ble.connection;
+using nexus.core.resharper;
 
 namespace nexus.protocols.ble
 {
@@ -90,39 +85,6 @@ namespace nexus.protocols.ble
       }
 
       /// <summary>
-      /// Return true if <see cref="CharacteristicProperty.Indicate" /> is set on this characteristic
-      /// </summary>
-      public static Boolean CanIndicate( this CharacteristicProperty properties )
-      {
-         return (properties & CharacteristicProperty.Indicate) != 0;
-      }
-
-      /// <summary>
-      /// Return true if <see cref="CharacteristicProperty.Notify" /> is set on this characteristic
-      /// </summary>
-      public static Boolean CanNotify( this CharacteristicProperty properties )
-      {
-         return (properties & CharacteristicProperty.Notify) != 0;
-      }
-
-      /// <summary>
-      /// Return true if <see cref="CharacteristicProperty.Read" /> is set on this characteristic
-      /// </summary>
-      public static Boolean CanRead( this CharacteristicProperty properties )
-      {
-         return (properties & CharacteristicProperty.Read) != 0;
-      }
-
-      /// <summary>
-      /// Return true if <see cref="CharacteristicProperty.Write" /> or <see cref="CharacteristicProperty.WriteNoResponse" /> are
-      /// set on this characteristic
-      /// </summary>
-      public static Boolean CanWrite( this CharacteristicProperty properties )
-      {
-         return (properties & (CharacteristicProperty.Write | CharacteristicProperty.WriteNoResponse)) != 0;
-      }
-
-      /// <summary>
       /// Create a <see cref="Guid" /> from a Bluetooth Special Interest Group adopted key
       /// </summary>
       public static Guid CreateGuidFromAdoptedKey( this Int16 adoptedKey )
@@ -146,10 +108,12 @@ namespace nexus.protocols.ble
       /// <exception cref="ArgumentNullException">If the provided value is null</exception>
       /// <exception cref="ArgumentException">If the provided value is not 4 characters in length</exception>
       /// <exception cref="FormatException">If the provided value cannot be parsed to a Guid</exception>
-      public static Guid CreateGuidFromAdoptedKey( this String adoptedKey )
+      public static Guid CreateGuidFromAdoptedKey( [NotNull] this String adoptedKey )
       {
-         Contract.Requires<ArgumentNullException>( adoptedKey != null );
-         Debug.Assert( adoptedKey != null, "adoptedKey != null" );
+         if(adoptedKey == null)
+         {
+            throw new ArgumentNullException( nameof(adoptedKey) );
+         }
          if(adoptedKey.Length != 4)
          {
             throw new ArgumentException(
@@ -179,70 +143,6 @@ namespace nexus.protocols.ble
          bytes[2] = 0;
          bytes[3] = 0;
          return s_adoptedKeyBase.Equals( id );
-      }
-
-      /// <summary>
-      /// True if this <see cref="BleDeviceConnection" /> resulted in <see cref="ConnectionResult.Success" />
-      /// </summary>
-      public static Boolean IsSuccessful( this BleDeviceConnection device )
-      {
-         return device.ConnectionResult == ConnectionResult.Success;
-      }
-
-      /// <summary>
-      /// Listen for NOTIFY events on this characteristic.
-      /// </summary>
-      public static IDisposable NotifyCharacteristicValue( this IBleGattServer server, Guid service,
-                                                           Guid characteristic, Action<Tuple<Guid, Byte[]>> onNotify,
-                                                           Action<Exception> onError = null )
-      {
-         Contract.Requires<ArgumentNullException>( server != null );
-         // ReSharper disable once PossibleNullReferenceException
-         return server.NotifyCharacteristicValue( service, characteristic, Observer.Create( onNotify, null, onError ) );
-      }
-
-      /// <summary>
-      /// Listen for NOTIFY events on this characteristic.
-      /// </summary>
-      public static IDisposable NotifyCharacteristicValue( this IBleGattServer server, Guid service,
-                                                           Guid characteristic, Action<Byte[]> onNotify,
-                                                           Action<Exception> onError = null )
-      {
-         Contract.Requires<ArgumentNullException>( server != null );
-         // ReSharper disable once PossibleNullReferenceException
-         return server.NotifyCharacteristicValue(
-            service,
-            characteristic,
-            Observer.Create( ( Tuple<Guid, Byte[]> tuple ) => onNotify( tuple.Item2 ), null, onError ) );
-      }
-
-      /// <summary>
-      /// Parse <c>advD</c> payload data from advertising packet. You should never need to call this from client code, platform
-      /// libraries should handle it.
-      /// </summary>
-      public static IEnumerable<AdvertisingDataItem> ParseAdvertisingPayloadData( Byte[] advD )
-      {
-         var records = new List<AdvertisingDataItem>();
-         var index = 0;
-         while(index < advD?.Length)
-         {
-            var length = advD[index];
-            index++;
-            if(length > 0)
-            {
-               if(!(advD.Length > index + length))
-               {
-                  throw new InvalidDataException(
-                     "Advertising data specifies length {0} but only has {1} bytes remaining"
-                        .F( length, advD.Length ) );
-               }
-               var type = advD[index];
-               var data = advD.Slice( index + 1, index + length );
-               index += length;
-               records.Add( new AdvertisingDataItem( (AdvertisingDataType)type, data ) );
-            }
-         }
-         return records;
       }
    }
 }

@@ -1,4 +1,4 @@
-// Copyright Malachi Griffie
+// Copyright M. Griffie <nexus@nexussays.com>
 // 
 // This Source Code Form is subject to the terms of the Mozilla Public
 // License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 namespace nexus.protocols.ble
 {
    /// <summary>
-   /// The state of an adapter and controls to enable or disable it
+   /// The state of an adapter and controls to enable or disable it.
    /// </summary>
    public interface IAdapterControl : IAdapterState
    {

@@ -2,22 +2,24 @@
 
 # ble.net ![Build status](https://img.shields.io/vso/build/nexussays/ebc6aafa-2931-41dc-b030-7f1eff5a28e5/7.svg?style=flat-square) [![NuGet](https://img.shields.io/nuget/v/ble.net.svg?style=flat-square)](https://www.nuget.org/packages/ble.net) [![MPLv2 License](https://img.shields.io/badge/license-MPLv2-blue.svg?style=flat-square)](https://www.mozilla.org/MPL/2.0/) [![API docs](https://img.shields.io/badge/apidocs-DotNetApis-blue.svg?style=flat-square)](http://dotnetapis.com/pkg/ble.net)
 
-`ble.net` is a Bluetooth Low Energy (aka BLE, aka Bluetooth LE, aka Bluetooth Smart) PCL to enable simple development of BLE clients on Android, iOS, and Windows 10.
+`ble.net` is a Bluetooth Low Energy (aka BLE, aka Bluetooth LE, aka Bluetooth Smart) cross-platform library to enable simple development of BLE clients on Android, iOS, and UWP/Windows.
 
-It provides a consistent API across all platforms and hides many of the horrible API decisions of each respective platform. You can make multiple simultaneous BLE requests on Android without worrying that some calls will silently fail; you can simply `await` all your calls without dealing with some kludgy disjoint event-based system; if you know which characteristics and services you wish to interact with then you don't have to query down into the attribute heirarchy and retain instance variables for these characteristics and services.
+It provides a consistent API across all supported platforms and hides many of the poor API decisions of each respective platform.
 
-> Note: Currently UWP only supports listening for broadcasts/advertisements, connecting to devices is incredibly obtuse in the UWP APIs.
+For example, you can make multiple simultaneous BLE requests on Android without worrying that some calls will silently fail. You can simply `await` all your calls without dealing with the book-keeping of an `event`-based system. If you know which characteristics and services you wish to interact with, then you can just read/write to them without having to query down into the device's attribute heirarchy and retain references to these characteristics and services. And so on...
+
+> Note: Currently UWP only supports listening for broadcasts/advertisements, not connecting... the UWP BLE API is... proving difficult.
 
 ## Setup
 
 ### 1. Install NuGet packages
 
-Install `ble.net` in your PCL
+Install the `ble.net.api` package in your (PCL/NetStandard) shared library
 ```powershell
-Install-Package ble.net
+Install-Package ble.net.api
 ```
 
-In each platform project, install the relevant package:
+For each platform you are supporting, install the relevant package:
 
 ```powershell
 Install-Package ble.net-android
@@ -31,7 +33,7 @@ Install-Package ble.net-uwp
 
 ### 2. Obtain a reference to `BluetoothLowEnergyAdapter`
 
-Each platform project has a static method `BluetoothLowEnergyAdapter.ObtainDefaultAdapter()`. Obtain this reference and then provide it to your application code using whatever dependency injector or manual reference passing you are using in your project.
+Each platform project has a static method `BluetoothLowEnergyAdapter.ObtainDefaultAdapter()` with various overloads. Obtain this reference and then provide it to your application code using your dependency injector, or manual reference passing, or a singleton, or whatever strategy you are using in your project.
 
 Examples:
 * [Android Xamarin.Forms](src/ble.net.sampleapp-android/MyApplication.cs#L98)
@@ -40,19 +42,17 @@ Examples:
 
 #### Android-specific setup
 
-If you want the adapter enable/disable functions to work, in your main `Activity`:
+If you want `IBluetoothLowEnergyAdapter.State.DisableAdapter()` and `EnableAdapter()` to work, in your main `Activity`:
 ```csharp
 protected override void OnCreate( Bundle bundle )
 {
    // ...
-
    BluetoothLowEnergyAdapter.InitActivity( this );
-
    // ...
 }
 ```
 
-If you want `IBluetoothLowEnergyAdapter.OnStateChanged` to work, in your calling `Activity`:
+If you want `IBluetoothLowEnergyAdapter.State.Subscribe()` to work, in your calling `Activity`:
 ```csharp
 protected sealed override void OnActivityResult( Int32 requestCode, Result resultCode, Intent data )
 {
@@ -92,10 +92,13 @@ await adapter.ScanForBroadcasts(
 
 You can also use a scan filter which will ensure that your callback only receives peripherals that pass the filter.
 
+For the common case of ignoring duplicate advertisements (i.e., repeated advertisements from the same device), there is a static `ScanFilter.UniqueBroadcastsOnly` you can use as the scan filter.
+
+Or write your own custom filter:
 ```csharp
 // create the filter using an object initalizer...
 await adapter.ScanForBroadcasts(
-      new ScanFilter.Factory()
+      new ScanFilter()
       {
          AdvertisedDeviceName = "foo",
          AdvertisedManufacturerCompanyId = 76,
@@ -105,7 +108,7 @@ await adapter.ScanForBroadcasts(
       p => { /* do stuff with found peripheral */ } );
 // ...or create the filter using a fluent builder pattern
 await adapter.ScanForBroadcasts(
-      new ScanFilter.Factory()
+      new ScanFilter()
          .SetAdvertisedDeviceName( "foo" )
          .SetAdvertisedManufacturerCompanyId( 76 )
          .AddAdvertisedService( guid )
@@ -113,14 +116,12 @@ await adapter.ScanForBroadcasts(
       p => { /* do stuff with found peripheral */ } );
 ```
 
-For the common case of ignoring duplicate advertisements (i.e., repeated advertisements from the same device), there is a static `ScanFilter.UniqueBroadcastsOnly` you can use as the scan filter.
-
 ### Connect to a BLE device
 
 ```csharp
 // If the connection isn't established before CancellationToken or timeout is triggered, it will be stopped.
 var connection = await adapter.ConnectToDevice( peripheral, TimeSpan.FromSeconds( 15 ));
-if(connection.IsSuccessful())
+if(connection.IsSuccessful()) // syntax sugar for: connection.ConnectionResult == ConnectionResult.Success
 {
    var gattServer = connection.GattServer;
    // do things with gattServer here... (see further examples...)
@@ -207,8 +208,7 @@ catch(GattException ex)
    Debug.WriteLine( ex.ToString() );
 }
 
-// ... later ...
-// done listening for notifications
+// ... later, once done listening for notifications ...
 notifier.Dispose();
 ```
 
@@ -232,7 +232,7 @@ catch(GattException ex)
 
 ### Do a bunch of things
 
-> If you've used the native BLE APIs on Android or iOS, imagine the code you would have to write to achieve the same functionality as the following example.
+> (If you've used the native BLE APIs on Android or iOS, imagine the code you would have to write to achieve the same functionality as the following example.)
 
 ```csharp
 try

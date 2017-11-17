@@ -7,29 +7,29 @@
 namespace nexus.protocols.ble
 {
    /// <summary>
-   /// Represents the state of some entity that can be enabled and disabled
+   /// The progress of a remote connection attempt
    /// </summary>
-   public enum EnabledDisabledState
+   public enum ConnectionProgress
    {
       /// <summary>
-      /// The state of this entity is unknown
+      /// SearchingForDevice
       /// </summary>
-      Unknown,
+      SearchingForDevice = -2,
       /// <summary>
-      /// The entity is disabled and unavailable for use
+      /// Disconnected
       /// </summary>
-      Disabled,
+      Disconnected = 0,
       /// <summary>
-      /// The entity is currently transitioning to <see cref="Disabled" />
+      /// Disconnecting
       /// </summary>
-      Disabling,
+      Disconnecting = 1,
       /// <summary>
-      /// The entity is currently transitioning to <see cref="Enabled" />
+      /// Connecting
       /// </summary>
-      Enabling,
+      Connecting = 2,
       /// <summary>
-      /// The entity is enabled and ready for use
+      /// Connected
       /// </summary>
-      Enabled
+      Connected = 3
    }
 }
