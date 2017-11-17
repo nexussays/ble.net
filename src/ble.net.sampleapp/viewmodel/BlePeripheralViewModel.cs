@@ -11,7 +11,8 @@ using System.Windows.Input;
 using ble.net.sampleapp.util;
 using nexus.core;
 using nexus.core.text;
-using nexus.protocols.ble;
+using nexus.protocols.ble.scan;
+using nexus.protocols.ble.scan.advertisement;
 using Xamarin.Forms;
 
 namespace ble.net.sampleapp.viewmodel
@@ -38,11 +39,9 @@ namespace ble.net.sampleapp.viewmodel
          x =>
          {
             var name = RegisteredAttributes.GetName( x );
-            if(name.IsNullOrEmpty())
-            {
-               return x.ToString();
-            }
-            return x.ToString() + " (" + name + ")";
+            return name.IsNullOrEmpty()
+               ? x.ToString()
+               : x.ToString() + " (" + name + ")";
          } ).Join( ", " );
 
       public String Advertisement => Model.Advertisement.ToString();
@@ -61,13 +60,12 @@ namespace ble.net.sampleapp.viewmodel
          set { Set( ref m_isExpanded, value ); }
       }
 
-      public String Manufacturer => Model.Advertisement.ManufacturerSpecificData
-                                         .Select( x => BleSampleAppUtils.GetManufacturerName( x.CompanyId ) )
-                                         .Join( ", " );
+      public String Manufacturer =>
+         Model.Advertisement.ManufacturerSpecificData.Select( x => x.CompanyName() ).Join( ", " );
 
       public String ManufacturerData => Model.Advertisement.ManufacturerSpecificData
                                              .Select(
-                                                x => BleSampleAppUtils.GetManufacturerName( x.CompanyId ) + "=0x" +
+                                                x => x.CompanyName() + "=0x" +
                                                      x.Data?.ToArray()?.EncodeToBase16String() ).Join( ", " );
 
       public IBlePeripheral Model { get; private set; }

@@ -14,7 +14,7 @@ using ble.net.sampleapp.util;
 using nexus.core;
 using nexus.core.logging;
 using nexus.protocols.ble;
-using nexus.protocols.ble.connection;
+using nexus.protocols.ble.gatt;
 using Xamarin.Forms;
 
 namespace ble.net.sampleapp.viewmodel
@@ -25,7 +25,7 @@ namespace ble.net.sampleapp.viewmodel
       private readonly IBluetoothLowEnergyAdapter m_bleAdapter;
       private readonly IUserDialogs m_dialogManager;
       private String m_connectionState;
-      private IBleGattServer m_gattServer;
+      private IBleGattServerConnection m_gattServer;
       private Boolean m_isBusy;
       private BlePeripheralViewModel m_peripheral;
 
@@ -97,6 +97,7 @@ namespace ble.net.sampleapp.viewmodel
          {
             Log.Trace( "Closing connection to GATT Server. state={0:g}", m_gattServer?.State );
             m_gattServer.Dispose();
+            m_gattServer = null;
          }
          Services.Clear();
          IsBusy = false;
@@ -121,7 +122,6 @@ namespace ble.net.sampleapp.viewmodel
          if(connection.IsSuccessful())
          {
             m_gattServer = connection.GattServer;
-            Connection = "Reading Services";
             Log.Debug( "Connected to device. id={0} status={1}", m_peripheral.Id, m_gattServer.State );
 
             m_gattServer.Subscribe(
@@ -135,17 +135,17 @@ namespace ble.net.sampleapp.viewmodel
                   Connection = c.ToString();
                } );
 
+            Connection = "Reading Services";
             try
             {
                var services = (await m_gattServer.ListAllServices()).ToList();
-
                foreach(var serviceId in services)
                {
                   if(Services.Any( viewModel => viewModel.Guid.Equals( serviceId ) ))
                   {
                      continue;
                   }
-                  Services.Add( new BleGattServiceViewModel(  serviceId, m_gattServer, m_dialogManager ) );
+                  Services.Add( new BleGattServiceViewModel( serviceId, m_gattServer, m_dialogManager ) );
                }
                if(Services.Count == 0)
                {

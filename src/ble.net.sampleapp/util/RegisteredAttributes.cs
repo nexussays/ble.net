@@ -5,10 +5,14 @@
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
 using System;
-using nexus.protocols.ble.adopted;
+using nexus.protocols.ble.gatt.adopted;
 
 namespace ble.net.sampleapp.util
 {
+   /// <summary>
+   /// Static instance of <see cref="KnownAttributes" /> for the application to use, with additional attributes added for a TI
+   /// SensorTag. You can take a similar approach with your own custom BLE device & attributes.
+   /// </summary>
    internal static class RegisteredAttributes
    {
       private const String DEVICE = "TI  SensorTag";

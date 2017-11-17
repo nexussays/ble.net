@@ -5,40 +5,13 @@
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
 using System;
-using nexus.core;
 
 namespace ble.net.sampleapp.util
 {
    internal static class BleSampleAppUtils
    {
-      public const Int32 COMPANY_ID_MICROSOFT = 6;
-      public const Int32 COMPANY_ID_APPLE = 76;
-      public const Int32 COMPANY_ID_SAMSUNG = 117;
-      public const Int32 COMPANY_ID_GOOGLE = 224;
-      public const Int32 COMPANY_ID_XIAOMI = 343;
-      public const Int32 COMPANY_ID_LG = 196;
-
       public const Int32 SCAN_SECONDS_DEFAULT = 10;
       public const Int32 SCAN_SECONDS_MAX = 30;
-
-      internal static String GetManufacturerName( Int32 key )
-      {
-         switch(key)
-         {
-            case COMPANY_ID_SAMSUNG: return "Samsung";
-            case COMPANY_ID_GOOGLE: return "Google";
-            case COMPANY_ID_APPLE: return "Apple";
-            case COMPANY_ID_MICROSOFT: return "Microsoft";
-            case COMPANY_ID_XIAOMI: return "Xiaomi"; //"Anhui Huami";
-            case COMPANY_ID_LG: return "LG Electronics";
-            default: return key + "";
-         }
-      }
-
-      internal static T ValueOr<T>( this Option<T> opt, T alt )
-      {
-         return opt.HasValue ? opt.Value : alt;
-      }
 
       public static Double ClampSeconds( Double seconds )
       {

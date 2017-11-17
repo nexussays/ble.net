@@ -12,18 +12,18 @@ using ble.net.sampleapp.util;
 using nexus.core;
 using nexus.core.logging;
 using nexus.protocols.ble;
-using nexus.protocols.ble.connection;
+using nexus.protocols.ble.gatt;
 
 namespace ble.net.sampleapp.viewmodel
 {
    public class BleGattServiceViewModel : BaseViewModel
    {
       private readonly IUserDialogs m_dialogManager;
-      private readonly IBleGattServer m_gattServer;
+      private readonly IBleGattServerConnection m_gattServer;
       private Boolean m_isBusy;
       private Guid m_serviceGuid;
 
-      public BleGattServiceViewModel( Guid service, IBleGattServer gattServer, IUserDialogs dialogManager )
+      public BleGattServiceViewModel( Guid service, IBleGattServerConnection gattServer, IUserDialogs dialogManager )
       {
          m_serviceGuid = service;
          Characteristic = new ObservableCollection<BleGattCharacteristicViewModel>();
@@ -43,9 +43,9 @@ namespace ble.net.sampleapp.viewmodel
          protected set { Set( ref m_isBusy, value ); }
       }
 
-      public String Name => GetName( m_serviceGuid ) ?? "Unknown Service";
+      public String Name => GetServiceName( m_serviceGuid ) ?? "Unknown Service";
 
-      public String PageTitle => GetName( m_serviceGuid ) ?? Id;
+      public String PageTitle => GetServiceName( m_serviceGuid ) ?? Id;
 
       public override async void OnAppearing()
       {
@@ -76,14 +76,10 @@ namespace ble.net.sampleapp.viewmodel
          IsBusy = false;
       }
 
-      private String GetName( Guid guid )
+      private String GetServiceName( Guid guid )
       {
          var known = RegisteredAttributes.GetName( guid );
-         if(!known.IsNullOrEmpty())
-         {
-            return known.EndsWith( "Service" ) ? known : known + " Service";
-         }
-         return null;
+         return known.IsNullOrEmpty() ? null : (known.EndsWith( "Service" ) ? known : known + " Service");
       }
    }
 }

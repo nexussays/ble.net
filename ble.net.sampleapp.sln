@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.26430.6
+VisualStudioVersion = 15.0.27004.2008
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "project", "project", "{89014F7A-2A01-4A85-9F3C-737316A7B0D2}"
 	ProjectSection(SolutionItems) = preProject
@@ -86,7 +86,6 @@ Global
 		{B2A84EFF-67DA-4F94-A9D7-EB0F30315EF7}.AppStore|x86.Deploy.0 = Release|x86
 		{B2A84EFF-67DA-4F94-A9D7-EB0F30315EF7}.Debug|Any CPU.ActiveCfg = Debug|x86
 		{B2A84EFF-67DA-4F94-A9D7-EB0F30315EF7}.Debug|Any CPU.Build.0 = Debug|x86
-		{B2A84EFF-67DA-4F94-A9D7-EB0F30315EF7}.Debug|Any CPU.Deploy.0 = Debug|x86
 		{B2A84EFF-67DA-4F94-A9D7-EB0F30315EF7}.Debug|ARM.ActiveCfg = Debug|ARM
 		{B2A84EFF-67DA-4F94-A9D7-EB0F30315EF7}.Debug|ARM.Build.0 = Debug|ARM
 		{B2A84EFF-67DA-4F94-A9D7-EB0F30315EF7}.Debug|ARM.Deploy.0 = Debug|ARM
@@ -129,6 +128,7 @@ Global
 		{128789BA-1A1D-4765-9FDD-C66806F11DC7}.AppStore|x64.ActiveCfg = AppStore|iPhone
 		{128789BA-1A1D-4765-9FDD-C66806F11DC7}.AppStore|x86.ActiveCfg = AppStore|iPhone
 		{128789BA-1A1D-4765-9FDD-C66806F11DC7}.Debug|Any CPU.ActiveCfg = Debug|iPhone
+		{128789BA-1A1D-4765-9FDD-C66806F11DC7}.Debug|Any CPU.Build.0 = Debug|iPhone
 		{128789BA-1A1D-4765-9FDD-C66806F11DC7}.Debug|ARM.ActiveCfg = Debug|iPhone
 		{128789BA-1A1D-4765-9FDD-C66806F11DC7}.Debug|iPhone.ActiveCfg = Debug|iPhone
 		{128789BA-1A1D-4765-9FDD-C66806F11DC7}.Debug|iPhone.Build.0 = Debug|iPhone
@@ -271,5 +271,8 @@ Global
 		{128789BA-1A1D-4765-9FDD-C66806F11DC7} = {82730EF9-EF62-43D7-A0DF-B5622588D9CA}
 		{94E7B6A9-6E4C-44F7-B570-4AD75EEE87C3} = {82730EF9-EF62-43D7-A0DF-B5622588D9CA}
 		{9E4D7784-B138-4CD6-9B55-2BA70648AC93} = {82730EF9-EF62-43D7-A0DF-B5622588D9CA}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {2BF8F902-1D2F-45DD-BB30-47FE63C0631F}
 	EndGlobalSection
 EndGlobal

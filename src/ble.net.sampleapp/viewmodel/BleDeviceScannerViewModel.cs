@@ -29,16 +29,16 @@ namespace ble.net.sampleapp.viewmodel
       {
          m_onSelectDevice = onSelectDevice;
          FoundDevices = new ObservableCollection<BlePeripheralViewModel>();
-         ScanForDevicesCommand = new Command(
-            x => { StartScan( x as Double? ?? BleSampleAppUtils.SCAN_SECONDS_DEFAULT ); } );
+         ScanForDevicesCommand =
+            new Command( x => { StartScan( x as Double? ?? BleSampleAppUtils.SCAN_SECONDS_DEFAULT ); } );
       }
 
       public ObservableCollection<BlePeripheralViewModel> FoundDevices { get; }
 
       public ICommand ScanForDevicesCommand { get; }
 
-      public Int32 ScanTimeRemaining => (Int32)BleSampleAppUtils.ClampSeconds(
-         (m_scanStopTime - DateTime.UtcNow).TotalSeconds );
+      public Int32 ScanTimeRemaining =>
+         (Int32)BleSampleAppUtils.ClampSeconds( (m_scanStopTime - DateTime.UtcNow).TotalSeconds );
 
       private async void StartScan( Double seconds )
       {
@@ -72,8 +72,9 @@ namespace ble.net.sampleapp.viewmodel
             } );
 
          await m_bleAdapter.ScanForBroadcasts(
-            // NOTE: You can provide a scan filter to look for particular devices, e.g.:
-            //new ScanFilter.Factory() { AdvertisedManufacturerCompanyId = BleSampleAppUtils.COMPANY_ID_GOOGLE },
+            // NOTE: You can provide a scan filter to look for particular devices. See Readme.md for more information
+            // e.g.:
+            //    new ScanFilter().SetAdvertisedManufacturerCompanyId( 224 /*Google*/ ),
             peripheral =>
             {
                Device.BeginInvokeOnMainThread(

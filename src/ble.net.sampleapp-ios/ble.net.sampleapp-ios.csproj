@@ -50,6 +50,8 @@
     <CodesignEntitlements>Entitlements.plist</CodesignEntitlements>
     <IOSDebugOverWiFi>False</IOSDebugOverWiFi>
     <IOSDebuggerPort>10000</IOSDebuggerPort>
+    <MtouchLink>SdkOnly</MtouchLink>
+    <MtouchFastDev>true</MtouchFastDev>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|iPhone' ">
     <DebugType>none</DebugType>
@@ -109,11 +111,11 @@
       <HintPath>..\..\lib\packages\Acr.UserDialogs.6.3.7\lib\Xamarin.iOS10\Acr.UserDialogs.Interface.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="ble.net, Version=0.12.14.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\lib\packages\ble.net.0.12.14\lib\portable45-net45+win8\ble.net.dll</HintPath>
+    <Reference Include="ble.net, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\lib\packages\ble.net.1.0.0-beta0007\lib\portable45-net45+win8\ble.net.dll</HintPath>
     </Reference>
-    <Reference Include="ble.net-ios, Version=0.12.14.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\lib\packages\ble.net-ios.0.12.14\lib\xamarinios10\ble.net-ios.dll</HintPath>
+    <Reference Include="ble.net-ios, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\lib\packages\ble.net-ios.1.0.0-beta0007\lib\Xamarin.iOS10\ble.net-ios.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Azure.Mobile, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\lib\packages\Microsoft.Azure.Mobile.0.7.0\lib\Xamarin.iOS10\Microsoft.Azure.Mobile.dll</HintPath>
@@ -139,8 +141,8 @@
       <HintPath>..\..\lib\packages\Microsoft.Azure.Mobile.0.7.0\lib\Xamarin.iOS10\Microsoft.Azure.Mobile.iOS.Bindings.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="nexus.core, Version=0.29.4.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\lib\packages\nexus.core.0.29.4\lib\portable45-net45+win8\nexus.core.dll</HintPath>
+    <Reference Include="nexus.core, Version=0.30.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\lib\packages\nexus.core.0.30.0\lib\portable45-net45+win8\nexus.core.dll</HintPath>
     </Reference>
     <Reference Include="Splat, Version=1.6.2.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\lib\packages\Splat.1.6.2\lib\Xamarin.iOS10\Splat.dll</HintPath>

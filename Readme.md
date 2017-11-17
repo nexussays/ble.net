@@ -14,9 +14,9 @@ For example, you can make multiple simultaneous BLE requests on Android without 
 
 ### 1. Install NuGet packages
 
-Install the `ble.net.api` package in your (PCL/NetStandard) shared library
+Install the `ble.net (API)` package in your (PCL/NetStandard) shared library
 ```powershell
-Install-Package ble.net.api
+Install-Package ble.net
 ```
 
 For each platform you are supporting, install the relevant package:

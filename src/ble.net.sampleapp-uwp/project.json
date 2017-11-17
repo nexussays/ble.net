@@ -1,14 +1,14 @@
 ﻿{
   "dependencies": {
     "Acr.UserDialogs": "6.3.7",
-    "ble.net": "0.12.14",
-    "ble.net-uwp": "0.12.14",
-    "Microsoft.NETCore.UniversalWindowsPlatform": "5.3.3",
-    "nexus.core": "0.29.4",
+    "ble.net": "1.0.0-beta0007",
+    "ble.net-uwp": "1.0.0-beta0007",
+    "Microsoft.NETCore.UniversalWindowsPlatform": "5.4.0",
+    "nexus.core": "0.30.0",
     "Xamarin.Forms": "2.3.4.231"
   },
   "frameworks": {
-    "uap10.0": {}
+    "uap10.0.14393": {}
   },
   "runtimes": {
     "win10-arm": {},

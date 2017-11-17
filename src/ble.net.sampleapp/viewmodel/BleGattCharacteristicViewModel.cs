@@ -14,7 +14,7 @@ using nexus.core;
 using nexus.core.logging;
 using nexus.core.text;
 using nexus.protocols.ble;
-using nexus.protocols.ble.connection;
+using nexus.protocols.ble.gatt;
 using Xamarin.Forms;
 
 namespace ble.net.sampleapp.viewmodel
@@ -22,7 +22,7 @@ namespace ble.net.sampleapp.viewmodel
    public class BleGattCharacteristicViewModel : BaseViewModel
    {
       private readonly IUserDialogs m_dialogManager;
-      private readonly IBleGattServer m_gattServer;
+      private readonly IBleGattServerConnection m_gattServer;
       private readonly Guid m_serviceGuid;
       private Guid m_characteristicGuid;
       private String m_descriptorValues;
@@ -33,8 +33,8 @@ namespace ble.net.sampleapp.viewmodel
       private String m_valueAsString;
       private String m_writeValue;
 
-      public BleGattCharacteristicViewModel( Guid serviceGuid, Guid characteristicGuid, IBleGattServer gattServer,
-                                             IUserDialogs dialogManager )
+      public BleGattCharacteristicViewModel( Guid serviceGuid, Guid characteristicGuid,
+                                             IBleGattServerConnection gattServer, IUserDialogs dialogManager )
       {
          m_gattServer = gattServer;
          m_dialogManager = dialogManager;
