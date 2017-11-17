@@ -10,28 +10,69 @@ For example, you can make multiple simultaneous BLE requests on Android without 
 
 > Note: Currently UWP only supports listening for broadcasts/advertisements, not connecting... the UWP BLE API is... proving difficult.
 
-## Setup
+## Getting Started
 
 ### 1. Install NuGet packages
 
 Install the `ble.net (API)` package in your (PCL/NetStandard) shared library
 ```powershell
-Install-Package ble.net
+Install-Package ble.net -Version 1.0.0-beta0007 
 ```
 
 For each platform you are supporting, install the relevant package:
 
 ```powershell
-Install-Package ble.net-android
+Install-Package ble.net-android -Version 1.0.0-beta0007 
 ```
 ```powershell
-Install-Package ble.net-ios
+Install-Package ble.net-ios -Version 1.0.0-beta0007 
 ```
 ```powershell
-Install-Package ble.net-uwp
+Install-Package ble.net-uwp -Version 1.0.0-beta0007 
 ```
 
-### 2. Obtain a reference to `BluetoothLowEnergyAdapter`
+### 2. Add relevant permissions
+
+#### Android
+
+```csharp
+[assembly: UsesPermission( Manifest.Permission.Bluetooth )]
+[assembly: UsesPermission( Manifest.Permission.BluetoothAdmin )]
+```
+
+If you are having issues discovering devices when scanning, try adding coarse location permissions.
+```csharp
+[assembly: UsesPermission( Manifest.Permission.AccessCoarseLocation )]
+```
+
+#### iOS
+
+```xml
+<!-- Info.plist -->
+<key>NSBluetoothPeripheralUsageDescription</key>
+<string>MyApp would like to use bluetooth.</string>
+```
+
+If you want to connect to peripherals in the background, add the [`bluetooth-central`](https://developer.apple.com/library/content/documentation/NetworkingInternetWeb/Conceptual/CoreBluetooth_concepts/CoreBluetoothBackgroundProcessingForIOSApps/PerformingTasksWhileYourAppIsInTheBackground.html#//apple_ref/doc/uid/TP40013257-CH7-SW6) background mode.
+
+```xml
+<!-- Info.plist -->
+<key>UIBackgroundModes</key>
+<array>
+   <string>bluetooth-central</string>
+</array>
+```
+
+#### UWP
+
+```xml
+<!-- Package.appxmanifest -->
+<Capabilities>
+   <DeviceCapability Name="bluetooth" />
+</Capabilities>
+```
+
+### 3. Obtain a reference to `BluetoothLowEnergyAdapter`
 
 Each platform project has a static method `BluetoothLowEnergyAdapter.ObtainDefaultAdapter()` with various overloads. Obtain this reference and then provide it to your application code using your dependency injector, or manual reference passing, or a singleton, or whatever strategy you are using in your project.
 
@@ -76,10 +117,11 @@ await adapter.ScanForBroadcasts(
       ( IBlePeripheral peripheral ) =>
       {
          // read the advertising data...
-         //peripheral.Advertisement.DeviceName
-         //peripheral.Advertisement.Services
-         //peripheral.Advertisement.ManufacturerSpecificData
-         //peripheral.Advertisement.ServiceData
+         var ad = peripheral.Advertisement;
+         Debug.WriteLine( ad.DeviceName );
+         Debug.WriteLine( ad.Services.Select( x => x.ToString() ).Join( "," ) );
+         Debug.WriteLine( ad.ManufacturerSpecificData.FirstOrDefault().CompanyName() );
+         Debug.WriteLine( ad.ServiceData );
 
          // ...or connect to the device (see next example)...
       },
@@ -118,10 +160,28 @@ await adapter.ScanForBroadcasts(
 
 ### Connect to a BLE device
 
+If you just want to connect to a specific device, you can do so without scanning:
+```csharp
+var connection = await adapter.FindAndConnectToDevice(
+   new ScanFilter()
+      .SetAdvertisedDeviceName( "foo" )
+      .SetAdvertisedManufacturerCompanyId( 0xffff )
+      .AddAdvertisedService( guid ),
+   TimeSpan.FromSeconds( 30 ) );
+```
+
+And if you have already scanned and discovered the peripheral you want to connect to:
 ```csharp
 // If the connection isn't established before CancellationToken or timeout is triggered, it will be stopped.
-var connection = await adapter.ConnectToDevice( peripheral, TimeSpan.FromSeconds( 15 ));
-if(connection.IsSuccessful()) // syntax sugar for: connection.ConnectionResult == ConnectionResult.Success
+var connection = await adapter.ConnectToDevice(
+   peripheral,
+   TimeSpan.FromSeconds( 15 ),
+   progress => Debug.WriteLine(progress) );
+```
+
+Once you have `await`ed the connection result:
+```csharp
+if(connection.IsSuccessful())
 {
    var gattServer = connection.GattServer;
    // do things with gattServer here... (see further examples...)
@@ -134,9 +194,19 @@ else
 }
 ```
 
-Connection also optionally takes an `IProgress` argument and has several utility overloads, e.g.:
+### Get descriptions for GATT GUIDs
+
+The names of all services, characteristics, and descriptors that have been adopted by the Bluetooth SIG can be stored in a `KnownAttributes` instance.
+
 ```csharp
-var connection = await adapter.ConnectToDevice( peripheral, ct, progress => Debug.WriteLine(progress) );
+var known = KnownAttributes.CreateWithAdoptedAttributes();
+```
+
+You can also add descriptions for custom attributes for GATT attributes you are using that aren't officially adopted:
+```csharp
+known.AddService( guid, "this is a service foo" );
+//known.AddCharacteristic(...)
+//known.AddDescriptor(...)
 ```
 
 ### Enumerate all services on the GATT Server
@@ -144,7 +214,7 @@ var connection = await adapter.ConnectToDevice( peripheral, ct, progress => Debu
 ```csharp
 foreach(var guid in await gattServer.ListAllServices())
 {
-   Debug.WriteLine( $"service: {guid}" );
+   Debug.WriteLine( $"service: {guid} \"{known.Get(guid)?.Description}\"" );
 }
 ```
 
@@ -154,7 +224,7 @@ foreach(var guid in await gattServer.ListAllServices())
 Debug.WriteLine( $"service: {serviceGuid}" );
 foreach(var guid in await gattServer.ListServiceCharacteristics( serviceGuid ))
 {
-   Debug.WriteLine( $"characteristic: {guid}" );
+   Debug.WriteLine( $"characteristic: {guid} \"{known.Get(guid)?.Description}\"" );
 }
 ```
 
