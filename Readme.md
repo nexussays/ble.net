@@ -6,9 +6,11 @@
 
 It provides a consistent API across all supported platforms and hides many of the poor API decisions of each respective platform.
 
-For example, you can make multiple simultaneous BLE requests on Android without worrying that some calls will silently fail. You can simply `await` all your calls without dealing with the book-keeping of an `event`-based system. If you know which characteristics and services you wish to interact with, then you can just read/write to them without having to query down into the device's attribute heirarchy and retain references to these characteristics and services. And so on...
+You can make multiple simultaneous BLE requests on Android without worrying that some calls will silently fail. You can simply `await` all your calls without dealing with the book-keeping of an event-based system. If you know which characteristics and services you wish to interact with, then you can just read/write to them without having to query down into the device's attribute heirarchy and retain references to these characteristics and services. And so on, and so on...
 
 > Note: Currently UWP only supports listening for broadcasts/advertisements, not connecting... the UWP BLE API is... proving difficult.
+
+### [These projects are using BLE.net](https://github.com/nexussays/ble.net/wiki/Showcase)
 
 ## Getting Started
 
