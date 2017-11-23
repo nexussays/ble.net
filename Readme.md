@@ -21,7 +21,9 @@ Install the `ble.net (API)` package in your (PCL/NetStandard) shared library
 Install-Package ble.net -Version 1.0.0-beta0007 
 ```
 
-For each platform you are supporting, install the relevant package:
+If you are making a library or are implementing support for a new platform, you are done.
+
+If you are making an app, then install the relevant package in each platform project:
 
 ```powershell
 Install-Package ble.net-android -Version 1.0.0-beta0007 
@@ -33,7 +35,7 @@ Install-Package ble.net-ios -Version 1.0.0-beta0007
 Install-Package ble.net-uwp -Version 1.0.0-beta0007 
 ```
 
-### 2. Add relevant permissions
+### 2. Add relevant app permissions
 
 #### Android
 
@@ -42,10 +44,10 @@ Install-Package ble.net-uwp -Version 1.0.0-beta0007
 [assembly: UsesPermission( Manifest.Permission.BluetoothAdmin )]
 ```
 
-If you are having issues discovering devices when scanning, try adding coarse location permissions.
-```csharp
-[assembly: UsesPermission( Manifest.Permission.AccessCoarseLocation )]
-```
+> If you are having issues discovering devices when scanning, try adding coarse location permissions.
+> ```csharp
+> [assembly: UsesPermission( Manifest.Permission.AccessCoarseLocation )]
+> ```
 
 #### iOS
 
@@ -79,8 +81,8 @@ If you want to connect to peripherals in the background, add the [`bluetooth-cen
 Each platform project has a static method `BluetoothLowEnergyAdapter.ObtainDefaultAdapter()` with various overloads. Obtain this reference and then provide it to your application code using your dependency injector, or manual reference passing, or a singleton, or whatever strategy you are using in your project.
 
 Examples:
-* [Android Xamarin.Forms](src/ble.net.sampleapp-android/MyApplication.cs#L98)
-* [iOS Xamarin.Forms](src/ble.net.sampleapp-ios/MyApplication.cs#L64)
+* [Android Xamarin.Forms](src/ble.net.sampleapp-android/MyApplication.cs#L108)
+* [iOS Xamarin.Forms](src/ble.net.sampleapp-ios/MyApplication.cs#L59)
 * [UWP Xamarin.Forms](src/ble.net.sampleapp-uwp/MainPage.xaml.cs#L12)
 
 #### Android-specific setup
@@ -116,53 +118,56 @@ IBluetoothLowEnergyAdapter adapter = /* platform-provided adapter from Bluetooth
 
 ```csharp
 await adapter.ScanForBroadcasts(
-      ( IBlePeripheral peripheral ) =>
-      {
-         // read the advertising data...
-         var ad = peripheral.Advertisement;
-         Debug.WriteLine( ad.DeviceName );
-         Debug.WriteLine( ad.Services.Select( x => x.ToString() ).Join( "," ) );
-         Debug.WriteLine( ad.ManufacturerSpecificData.FirstOrDefault().CompanyName() );
-         Debug.WriteLine( ad.ServiceData );
+   // Optional scan filter to ensure that the
+   // observer will only receive peripherals
+   // that pass the filter. If you want to scan
+   // for everything around, omit this argument.
+   new ScanFilter()
+      .SetAdvertisedDeviceName( "foobar" )
+      .SetAdvertisedManufacturerCompanyId( 76 )
+      // Discovered peripherals must advertise at-least-one
+      // of any GUIDs added by AddAdvertisedService()
+      .AddAdvertisedService( guid )
+      .SetIgnoreRepeatBroadcasts( false ),
+   // IObserver<IBlePeripheral> or Action<IBlePeripheral>
+   // will be triggered for each discovered peripheral
+   // that passes the scan filter (if provided).
+   ( IBlePeripheral peripheral ) =>
+   {
+      // read the advertising data...
+      var adv = peripheral.Advertisement;
+      Debug.WriteLine( adv.DeviceName );
+      Debug.WriteLine( adv.Services.Select( x => x.ToString() ).Join( "," ) );
+      Debug.WriteLine( adv.ManufacturerSpecificData.FirstOrDefault().CompanyName() );
+      Debug.WriteLine( adv.ServiceData );
 
-         // ...or connect to the device (see next example)...
-      },
-      // scan for 30 seconds and then stop
-      // you can also provide a CancellationToken
-      TimeSpan.FromSeconds( 30 ) );
+      // ...or connect to the device (see next example)...
+   },
+   // TimeSpan or CancellationToken to stop the scan
+   TimeSpan.FromSeconds( 30 )
+   // If you omit this argument, it will use
+   // BluetoothLowEnergyUtils.DefaultScanTimeout
+);
 
 // scanning has been stopped when code reached this point
 ```
 
-You can also use a scan filter which will ensure that your callback only receives peripherals that pass the filter.
-
 For the common case of ignoring duplicate advertisements (i.e., repeated advertisements from the same device), there is a static `ScanFilter.UniqueBroadcastsOnly` you can use as the scan filter.
 
-Or write your own custom filter:
+You can also create a `ScanFilter` using an object initializer if you prefer that syntax:
 ```csharp
-// create the filter using an object initalizer...
-await adapter.ScanForBroadcasts(
-      new ScanFilter()
-      {
-         AdvertisedDeviceName = "foo",
-         AdvertisedManufacturerCompanyId = 76,
-         AdvertisedServiceIsInList = new List<Guid>(){ guid },
-         IgnoreRepeatBroadcasts = true
-      },
-      p => { /* do stuff with found peripheral */ } );
-// ...or create the filter using a fluent builder pattern
-await adapter.ScanForBroadcasts(
-      new ScanFilter()
-         .SetAdvertisedDeviceName( "foo" )
-         .SetAdvertisedManufacturerCompanyId( 76 )
-         .AddAdvertisedService( guid )
-         .SetIgnoreRepeatBroadcasts( true ),
-      p => { /* do stuff with found peripheral */ } );
+new ScanFilter()
+{
+   AdvertisedDeviceName = "foobar",
+   AdvertisedManufacturerCompanyId = 76,
+   AdvertisedServiceIsInList = new List<Guid>(){ guid },
+   IgnoreRepeatBroadcasts = true
+}
 ```
 
 ### Connect to a BLE device
 
-If you just want to connect to a specific device, you can do so without scanning:
+If you just want to connect to a specific device, you can do so without manually scanning:
 ```csharp
 var connection = await adapter.FindAndConnectToDevice(
    new ScanFilter()
@@ -172,21 +177,24 @@ var connection = await adapter.FindAndConnectToDevice(
    TimeSpan.FromSeconds( 30 ) );
 ```
 
-And if you have already scanned and discovered the peripheral you want to connect to:
+If you have already scanned and discovered a peripheral you want to connect to:
 ```csharp
-// If the connection isn't established before CancellationToken or timeout is triggered, it will be stopped.
 var connection = await adapter.ConnectToDevice(
+   // The IBlePeripheral to connect to
    peripheral,
+   // TimeSpan or CancellationToken to stop the
+   // connection attempt.
+   // If you omit this argument, it will use
+   // BluetoothLowEnergyUtils.DefaultConnectionTimeout
    TimeSpan.FromSeconds( 15 ),
-   progress => Debug.WriteLine(progress) );
-```
+   // Optional IProgress<ConnectionProgress>
+   progress => Debug.WriteLine(progress)
+);
 
-Once you have `await`ed the connection result:
-```csharp
 if(connection.IsSuccessful())
 {
    var gattServer = connection.GattServer;
-   // do things with gattServer here... (see further examples...)
+   // do things with gattServer here... (see later examples...)
 }
 else
 {
@@ -198,17 +206,20 @@ else
 
 ### Get descriptions for GATT GUIDs
 
-The names of all services, characteristics, and descriptors that have been adopted by the Bluetooth SIG can be stored in a `KnownAttributes` instance.
+You can provide information for the GUIDs representing services, characteristics, and descriptors with `KnownAttributes`.
 
 ```csharp
-var known = KnownAttributes.CreateWithAdoptedAttributes();
-```
-
-You can also add descriptions for custom attributes for GATT attributes you are using that aren't officially adopted:
-```csharp
-known.AddService( guid, "this is a service foo" );
-//known.AddCharacteristic(...)
-//known.AddDescriptor(...)
+var known = new KnownAttributes();
+// You can include attributes that have
+// been adopted by the Bluetooth SIG.
+known.AddAdoptedServices();
+known.AddAdoptedCharacteristics();
+known.AddAdoptedDescriptors();
+// You can add descriptions for attributes
+// that aren't officially adopted.
+known.AddService( guid1, "foo" );
+known.AddCharacteristic( guid2, "bar" );
+known.AddDescriptor( guid3, "baz" );
 ```
 
 ### Enumerate all services on the GATT Server
@@ -246,33 +257,18 @@ catch(GattException ex)
 ### Listen for notifications on a characteristic
 
 ```csharp
-try
-{
-   // will stop listening when gattServer is disconnected
-   gattServer.NotifyCharacteristicValue(
-      someServiceGuid,
-      someCharacteristicGuid,
-      // provide IObserver<Tuple<Guid, Byte[]>> or IObserver<Byte[]>
-      // There are several extension methods to assist in creating the obvserver...
-      bytes => {/* do something with notification bytes */} );
-}
-catch(GattException ex)
-{
-   Debug.WriteLine( ex.ToString() );
-}
-```
-
-For stopping a notification listener prior to disconnecting from the device, `NotifyCharacteristicValue` returns an `IDisposable` that removes your notification observer when called:
-```csharp
 IDisposable notifier;
 
 try
 {
+   // Will also stop listening when gattServer
+   // is disconnected, so if that is acceptable,
+   // you don't need to store this disposable.
    notifier = gattServer.NotifyCharacteristicValue(
       someServiceGuid,
       someCharacteristicGuid,
-      // provide IObserver<Tuple<Guid, Byte[]>> or IObserver<Byte[]>
-      // There are several extension methods to assist in creating the obvserver...
+      // IObserver<Tuple<Guid, Byte[]>> or IObserver<Byte[]> or
+      // Action<Tuple<Guid, Byte[]>> or Action<Byte[]>
       bytes => {/* do something with notification bytes */} );
 }
 catch(GattException ex)
@@ -304,24 +300,31 @@ catch(GattException ex)
 
 ### Do a bunch of things
 
-> (If you've used the native BLE APIs on Android or iOS, imagine the code you would have to write to achieve the same functionality as the following example.)
+> If you've used the native BLE APIs on Android or iOS, hopefully you appreciate the simplicity here :)
 
 ```csharp
 try
 {
-   // dispatch a read characteristic request but don't await it yet
-   var read = gattServer.ReadCharacteristicValue( /* arguments... */ );
-   // perform multiple write operations and await them all
+   var read = gattServer.ReadCharacteristicValue( service, char1 );
    await
       Task.WhenAll(
          new Task[]
          {
-            gattServer.WriteCharacteristicValue( /* arguments... */ ),
-            gattServer.WriteCharacteristicValue( /* arguments... */ ),
-            gattServer.WriteCharacteristicValue( /* arguments... */ ),
-            gattServer.WriteCharacteristicValue( /* arguments... */ )
+            gattServer.WriteCharacteristicValue(
+               service, char1, new Byte[]{/* bytes */}
+            ),
+            gattServer.WriteCharacteristicValue(
+               service, char2, new Byte[]{/* bytes */}
+            ),
+            gattServer.WriteCharacteristicValue(
+               service2, char3, new Byte[]{/* bytes */}
+            ),
+            gattServer.WriteCharacteristicValue(
+               service2, char4, new Byte[]{/* bytes */}
+            ),
          } );
-   // now await the read to ensure completion and return the result
+   // Our read will have executed first, so we will
+   // have the value prior to the write.
    return await read;
 }
 catch(GattException ex)
