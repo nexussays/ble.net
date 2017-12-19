@@ -26,7 +26,7 @@ namespace nexus.protocols.ble.scan.advertisement
       /// Company identifiers are unique numbers assigned by the Bluetooth SIG to member companies requesting one.
       /// <see href="https://www.bluetooth.com/specifications/assigned-numbers/company-identifiers" />
       /// </summary>
-      public UInt16 CompanyId { get; }
+      public UInt16? CompanyId { get; }
 
       /// <summary>
       /// The manufacturer data being advertised

@@ -9,18 +9,18 @@ using System;
 namespace nexus.protocols.ble
 {
    /// <summary>
-   /// The state of an adapter. Read <see cref="CurrentState" /> or <see cref="Subscribe" /> to listen for changes to the
+   /// The state of an adapter. Read <see cref="Value" /> or <see cref="Subscribe" /> to listen for changes to the
    /// adapter state.
    /// </summary>
    public interface IAdapterState : IObservable<EnabledDisabledState>
    {
       /// <summary>
-      /// The current state of the adapter either enabled, disabled, or transitioning to one of them.
+      /// The state of the adapter.
       /// </summary>
-      EnabledDisabledState CurrentState { get; }
+      EnabledDisabledState Value { get; }
 
       /// <summary>
-      /// Register an observer to be notified when <see cref="CurrentState" /> has changed and to receive the new value. This is
+      /// Register an observer to be notified when <see cref="Value" /> has changed and to receive the new value. This is
       /// triggered both by external changes, and by calls made to <see cref="IAdapterControl.EnableAdapter" /> or
       /// <see cref="IAdapterControl.DisableAdapter" />.
       /// </summary>

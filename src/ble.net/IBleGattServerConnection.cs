@@ -37,6 +37,11 @@ namespace nexus.protocols.ble
       ConnectionState State { get; }
 
       /// <summary>
+      /// Disconnect from the device and dispose of this connection
+      /// </summary>
+      new void Dispose();
+
+      /// <summary>
       /// Enumerate all services on this device
       /// </summary>
       Task<IEnumerable<Guid>> ListAllServices();
@@ -54,8 +59,12 @@ namespace nexus.protocols.ble
       Task<IEnumerable<Guid>> ListServiceCharacteristics( Guid service );
 
       /// <summary>
-      /// Listen for NOTIFY events on this characteristic. Returns an <see cref="IDisposable" /> that removes the notify when
-      /// <see cref="IDisposable.Dispose" /> is called
+      /// Listen for NOTIFY or INDICATE events on this characteristic. Returns an <see cref="IDisposable" /> that removes the
+      /// notify when <see cref="IDisposable.Dispose" /> is called
+      /// <remarks>
+      /// The choice of INDICATE or NOTIFY is determined by the properties the device reports for
+      /// <paramref name="characteristic" />
+      /// </remarks>
       /// </summary>
       IDisposable NotifyCharacteristicValue( Guid service, Guid characteristic,
                                              IObserver<Tuple<Guid, Byte[]>> observer );

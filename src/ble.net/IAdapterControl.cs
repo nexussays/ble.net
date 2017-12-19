@@ -12,7 +12,7 @@ namespace nexus.protocols.ble
    /// <summary>
    /// The state of an adapter and controls to enable or disable it.
    /// </summary>
-   public interface IAdapterControl : IAdapterState
+   public interface IAdapterControl
    {
       /// <summary>
       /// <c>true</c> if the current platform allows disabling this adapter
@@ -23,6 +23,11 @@ namespace nexus.protocols.ble
       /// <c>true</c> if the current platform allows enabling this adapter
       /// </summary>
       Boolean AdapterCanBeEnabled { get; }
+
+      /// <summary>
+      /// The current state of the adapter: either enabled, disabled, or transitioning to one or the other.
+      /// </summary>
+      IAdapterState CurrentState { get; }
 
       /// <summary>
       /// Disable this adapter system-wide

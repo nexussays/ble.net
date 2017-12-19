@@ -1375,9 +1375,9 @@ namespace nexus.protocols.ble
       /// <summary>
       /// Return the name of the company registered for this identifier, with corporate nomenclature like "Inc." stripping out
       /// </summary>
-      public static String GetCommonName( UInt16 companyId )
+      public static String GetCommonName( UInt16? companyId )
       {
-         return s_values.TryGetValue( companyId, out var result )
+         return companyId != null && s_values.TryGetValue( companyId.Value, out var result )
             ? s_stripNee.Replace( s_stripCorpTerms.Replace( result, "" ), "" )
             : null;
       }
@@ -1385,9 +1385,13 @@ namespace nexus.protocols.ble
       /// <summary>
       /// Return the full name of the company registered for this identifier
       /// </summary>
-      public static String GetFullName( UInt16 companyId )
+      public static String GetFullName( UInt16? companyId )
       {
-         s_values.TryGetValue( companyId, out var result );
+         if(companyId == null)
+         {
+            return null;
+         }
+         s_values.TryGetValue( companyId.Value, out var result );
          return result;
       }
    }

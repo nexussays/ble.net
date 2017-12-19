@@ -25,7 +25,7 @@ namespace nexus.protocols.ble
    /// <see cref="BluetoothLowEnergyAdapterExtensions" /> if you're reading this via API docs.
    /// </remarks>
    /// </summary>
-   public interface IBluetoothLowEnergyAdapter
+   public interface IBluetoothLowEnergyAdapter : IAdapterControl
    {
       /// <summary>
       /// A list of all devices that have been discovered after
@@ -38,11 +38,6 @@ namespace nexus.protocols.ble
       /// </remarks>
       /// </summary>
       IEnumerable<IBlePeripheral> DiscoveredPeripherals { get; }
-
-      /// <summary>
-      /// The state of this BLE adapter and controls to enable or disable it
-      /// </summary>
-      IAdapterControl State { get; }
 
       /// <summary>
       /// Attempt to connect to the provided <paramref name="device" />, and continue the attempt until <paramref name="ct" /> is
