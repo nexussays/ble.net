@@ -33,15 +33,15 @@ namespace ble.net.sampleapp.viewmodel
          EnableAdapterCommand = new Command( async () => await ToggleAdapter( true ) );
          DisableAdapterCommand = new Command( async () => await ToggleAdapter( false ) );
 
-         m_bleAdapter.State.Subscribe( state => { RaisePropertyChanged( nameof(IsAdapterEnabled) ); } );
+         m_bleAdapter.CurrentState.Subscribe( state => { RaisePropertyChanged( nameof(IsAdapterEnabled) ); } );
       }
 
       public ICommand DisableAdapterCommand { get; }
 
       public ICommand EnableAdapterCommand { get; }
 
-      public Boolean IsAdapterEnabled => m_bleAdapter.State.CurrentState == EnabledDisabledState.Enabled ||
-                                         m_bleAdapter.State.CurrentState == EnabledDisabledState.Unknown;
+      public Boolean IsAdapterEnabled => m_bleAdapter.CurrentState.Value == EnabledDisabledState.Enabled ||
+                                         m_bleAdapter.CurrentState.Value == EnabledDisabledState.Unknown;
 
       public Boolean IsScanning
       {
@@ -69,7 +69,7 @@ namespace ble.net.sampleapp.viewmodel
          StopScan();
          try
          {
-            await (enable ? m_bleAdapter.State.EnableAdapter() : m_bleAdapter.State.DisableAdapter());
+            await (enable ? m_bleAdapter.EnableAdapter() : m_bleAdapter.DisableAdapter());
          }
          catch(SecurityException ex)
          {

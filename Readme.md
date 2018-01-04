@@ -8,7 +8,7 @@ It provides a consistent API across all supported platforms and hides many of th
 
 You can make multiple simultaneous BLE requests on Android without worrying that some calls will silently fail. You can simply `await` all your calls without dealing with the book-keeping of an event-based system. If you know which characteristics and services you wish to interact with, then you can just read/write to them without having to query down into the device's attribute heirarchy and retain references to these characteristics and services. And so on, and so on...
 
-> Note: Currently UWP only supports listening for broadcasts/advertisements, not connecting... the UWP BLE API is... proving difficult.
+> Note: Currently UWP only supports listening for broadcasts/advertisements, not connecting to devices. The UWP BLE API is... proving difficult.
 
 ### [These projects are using BLE.net](https://github.com/nexussays/ble.net/wiki/Showcase)
 
@@ -18,7 +18,7 @@ You can make multiple simultaneous BLE requests on Android without worrying that
 
 Install the `ble.net (API)` package in your (PCL/NetStandard) shared library
 ```powershell
-Install-Package ble.net -Version 1.0.0-beta0007 
+Install-Package ble.net -Version 1.0.0-beta0008 
 ```
 
 If you are making a library or are implementing support for a new platform, you are done.
@@ -26,13 +26,13 @@ If you are making a library or are implementing support for a new platform, you 
 If you are making an app, then install the relevant package in each platform project:
 
 ```powershell
-Install-Package ble.net-android -Version 1.0.0-beta0007 
+Install-Package ble.net-android -Version 1.0.0-beta0008 
 ```
 ```powershell
-Install-Package ble.net-ios -Version 1.0.0-beta0007 
+Install-Package ble.net-ios -Version 1.0.0-beta0008 
 ```
 ```powershell
-Install-Package ble.net-uwp -Version 1.0.0-beta0007 
+Install-Package ble.net-uwp -Version 1.0.0-beta0008 
 ```
 
 ### 2. Add relevant app permissions
@@ -51,10 +51,12 @@ Install-Package ble.net-uwp -Version 1.0.0-beta0007
 
 #### iOS
 
+Add a description string to display to the user indicating you want to use Bluetooth.
+
 ```xml
 <!-- Info.plist -->
 <key>NSBluetoothPeripheralUsageDescription</key>
-<string>MyApp would like to use bluetooth.</string>
+<string>[MyAppNameHere] would like to use bluetooth.</string>
 ```
 
 If you want to connect to peripherals in the background, add the [`bluetooth-central`](https://developer.apple.com/library/content/documentation/NetworkingInternetWeb/Conceptual/CoreBluetooth_concepts/CoreBluetoothBackgroundProcessingForIOSApps/PerformingTasksWhileYourAppIsInTheBackground.html#//apple_ref/doc/uid/TP40013257-CH7-SW6) background mode.
@@ -114,6 +116,25 @@ All the examples presume you have some `adapter` passed in as per the setup note
 IBluetoothLowEnergyAdapter adapter = /* platform-provided adapter from BluetoothLowEnergyAdapter.ObtainDefaultAdapter()*/;
 ```
 
+### Control the Bluetooth Adapter on the device
+
+#### Enable Bluetooth
+
+> There are corresponding methods to disable the adapter.
+
+```csharp
+if(adapter.AdapterCanBeEnabled && adapter.CurrentState.Value == EnabledDisabledState.Disabled) {
+   await adapter.EnableAdapter();
+}
+```
+
+#### See/Watch Adapter Status
+
+```csharp
+Debug.WriteLine(adapter.CurrentState.Value); // EnabledDisabledState.Enabled
+adapter.CurrentState.Subscribe( state => Debug.WriteLine("New State: {0}", state) );
+```
+
 ### Scan for broadcast advertisements
 
 ```csharp
@@ -131,7 +152,7 @@ await adapter.ScanForBroadcasts(
       .SetIgnoreRepeatBroadcasts( false ),
    // IObserver<IBlePeripheral> or Action<IBlePeripheral>
    // will be triggered for each discovered peripheral
-   // that passes the scan filter (if provided).
+   // that passes the above can filter (if provided).
    ( IBlePeripheral peripheral ) =>
    {
       // read the advertising data...
