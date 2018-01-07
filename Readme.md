@@ -18,7 +18,7 @@ You can make multiple simultaneous BLE requests on Android without worrying that
 
 Install the `ble.net (API)` package in your (PCL/NetStandard) shared library
 ```powershell
-Install-Package ble.net -Version 1.0.0-beta0008 
+Install-Package ble.net -Version 1.0.0-beta0009 
 ```
 
 If you are making a library or are implementing support for a new platform, you are done.
@@ -26,13 +26,13 @@ If you are making a library or are implementing support for a new platform, you 
 If you are making an app, then install the relevant package in each platform project:
 
 ```powershell
-Install-Package ble.net-android -Version 1.0.0-beta0008 
+Install-Package ble.net-android -Version 1.0.0-beta0009 
 ```
 ```powershell
-Install-Package ble.net-ios -Version 1.0.0-beta0008 
+Install-Package ble.net-ios -Version 1.0.0-beta0009 
 ```
 ```powershell
-Install-Package ble.net-uwp -Version 1.0.0-beta0008 
+Install-Package ble.net-uwp -Version 1.0.0-beta0009 
 ```
 
 ### 2. Add relevant app permissions
