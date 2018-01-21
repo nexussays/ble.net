@@ -39,6 +39,7 @@
     <Compile Include="gatt\adopted\KnownAttributes.cs" />
     <Compile Include="RegisteredCompanyIds.cs" />
     <Compile Include="gatt\BleGattUtils.cs" />
+    <Compile Include="ScanSettings.cs" />
     <Compile Include="scan\advertisement\AdvertisingManufacturerData.cs" />
     <Compile Include="scan\advertisement\AdvertisingDataItem.cs" />
     <Compile Include="scan\advertisement\AdvertisingDataType.cs" />
@@ -49,7 +50,7 @@
     <Compile Include="scan\advertisement\link\BlePacket.cs" />
     <Compile Include="scan\AbstractBlePeripheral.cs" />
     <Compile Include="EnabledDisabledState.cs" />
-    <Compile Include="BleDeviceConnection.cs" />
+    <Compile Include="BlePeripheralConnectionRequest.cs" />
     <Compile Include="ConnectionProgress.cs" />
     <Compile Include="ConnectionResult.cs" />
     <Compile Include="gatt\GattAttributeType.cs" />

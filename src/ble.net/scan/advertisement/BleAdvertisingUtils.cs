@@ -39,6 +39,7 @@ namespace nexus.protocols.ble.scan.advertisement
                   pdu.payload.Length > 6 ? pdu.payload.Slice( 7 ) : new Byte[] { } ),
                rssi: rssi );
          }
+
          return null;
       }
 
@@ -73,12 +74,14 @@ namespace nexus.protocols.ble.scan.advertisement
                         length,
                         advD.Length ) );
                }
+
                var type = advD[index];
                var data = advD.Slice( index + 1, index + length );
                index += length;
                records.Add( new AdvertisingDataItem( (AdvertisingDataType)type, data ) );
             }
          }
+
          return records;
       }
 

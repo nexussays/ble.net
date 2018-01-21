@@ -30,13 +30,14 @@ namespace nexus.protocols.ble
       IAdapterState CurrentState { get; }
 
       /// <summary>
-      /// Disable this adapter system-wide
+      /// Disable this adapter system-wide.
+      /// <remarks>Take care when using this as it affects other processes and apps running on the host device.</remarks>
       /// </summary>
       /// <returns><c>true</c> if the operation succeeded in disabling the adapter</returns>
       Task<Boolean> DisableAdapter();
 
       /// <summary>
-      /// Enable this adapter system-wide
+      /// Enable this adapter system-wide.
       /// </summary>
       /// <returns><c>true</c> if the operation succeeded in enabling the adapter</returns>
       Task<Boolean> EnableAdapter();

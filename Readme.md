@@ -20,20 +20,20 @@ You can make multiple simultaneous BLE requests on Android without worrying that
 
 Install the `ble.net (API)` package.
 ```
-dotnet add package ble.net --version 1.0.0-beta0010
+dotnet add package ble.net --version 1.0.0-beta0011
 ```
 
 #### In your Android or iOS or Windows (UWP) project
 
 Install the relevant platform package.
 ```
-dotnet add package ble.net-android --version 1.0.0-beta0010
+dotnet add package ble.net-android --version 1.0.0-beta0011
 ```
 ```
-dotnet add package ble.net-ios --version 1.0.0-beta0010
+dotnet add package ble.net-ios --version 1.0.0-beta0011
 ```
 ```
-dotnet add package ble.net-uwp --version 1.0.0-beta0010
+dotnet add package ble.net-uwp --version 1.0.0-beta0011
 ```
 
 ### 2. Add relevant app permissions

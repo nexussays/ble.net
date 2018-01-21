@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 using nexus.core;
 using nexus.core.resharper;
 using nexus.protocols.ble.gatt;
+using nexus.protocols.ble.gatt.adopted;
 using nexus.protocols.ble.scan;
 
 namespace nexus.protocols.ble
@@ -19,11 +20,10 @@ namespace nexus.protocols.ble
    /// An active connection to a <see cref="IBlePeripheral" />. Obtain by scanning for nearby devices with
    /// <see cref="IBluetoothLowEnergyAdapter" />
    /// <remarks>
-   /// The GATT Server connection is established when a Central device successfully establishes a client/server
-   /// connection to a Peripheral device.
+   /// The GATT Server connection is established when a Central device (e.g., the phone your app is running on) successfully
+   /// establishes a client/server connection to a Peripheral device.
    /// </remarks>
    /// </summary>
-   /// <see href="https://www.bluetooth.com/specifications/generic-attributes-overview" />
    public interface IBleGattServerConnection
       : IBlePeripheral,
         IObservable<ConnectionState>,
@@ -60,10 +60,10 @@ namespace nexus.protocols.ble
 
       /// <summary>
       /// Listen for NOTIFY or INDICATE events on this characteristic. Returns an <see cref="IDisposable" /> that removes the
-      /// notify when <see cref="IDisposable.Dispose" /> is called
+      /// notify when <see cref="IDisposable.Dispose" /> is called.
       /// <remarks>
-      /// The choice of INDICATE or NOTIFY is determined by the properties the device reports for
-      /// <paramref name="characteristic" />
+      /// The choice of INDICATE or NOTIFY is determined by the properties the server reports for this
+      /// <paramref name="characteristic" /> (see: <see cref="ReadCharacteristicProperties" />)
       /// </remarks>
       /// </summary>
       IDisposable NotifyCharacteristicValue( Guid service, Guid characteristic,
@@ -95,12 +95,15 @@ namespace nexus.protocols.ble
       new IDisposable Subscribe( IObserver<ConnectionState> observer );
 
       /// <summary>
-      /// Write to this characteristic's value
+      /// Write the given <paramref name="data" /> to this characteristic's value, returning the bytes that were written (in almost all cases
+      /// this returns a byte array identical to the <paramref name="data" /> passed as an argument).
       /// </summary>
       Task<Byte[]> WriteCharacteristicValue( Guid service, Guid characteristic, Byte[] data );
 
       /// <summary>
-      /// Write the given value to this descriptor
+      /// Write the given <paramref name="data" /> to this descriptor, returning the bytes that were written (in almost all cases
+      /// this returns a byte array identical to the <paramref name="data" /> passed as an argument).
+      /// <remarks>For common descriptors, see static fields on <see cref="AdoptedDescriptors" /></remarks>
       /// </summary>
       Task<Byte[]> WriteDescriptorValue( Guid service, Guid characteristic, Guid descriptor, Byte[] data );
    }
@@ -122,6 +125,7 @@ namespace nexus.protocols.ble
          {
             throw new ArgumentNullException( nameof(server) );
          }
+
          return server.NotifyCharacteristicValue(
             service,
             characteristic,
@@ -139,6 +143,7 @@ namespace nexus.protocols.ble
          {
             throw new ArgumentNullException( nameof(server) );
          }
+
          return server.NotifyCharacteristicValue(
             service,
             characteristic,
