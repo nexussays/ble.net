@@ -15,6 +15,7 @@ namespace nexus.protocols.ble
       /// The state of this entity is unknown
       /// </summary>
       Unknown,
+
       /// <summary>
       /// The entity is disabled and unavailable for use
       /// </summary>
@@ -23,6 +24,7 @@ namespace nexus.protocols.ble
       /// The entity is currently transitioning to <see cref="Disabled" />
       /// </summary>
       Disabling,
+
       /// <summary>
       /// The entity is currently transitioning to <see cref="Enabled" />
       /// </summary>

@@ -6,6 +6,7 @@
 
 using System;
 using System.Collections.Generic;
+using nexus.core.resharper;
 
 namespace nexus.protocols.ble.scan.advertisement
 {
@@ -27,21 +28,25 @@ namespace nexus.protocols.ble.scan.advertisement
       /// <summary>
       /// Manufacturer specific data
       /// </summary>
+      [NotNull]
       IEnumerable<AdvertisingManufacturerData> ManufacturerSpecificData { get; }
 
       /// <summary>
       /// List of the raw bytes of the advertisement fields, if available.
       /// </summary>
+      [NotNull]
       IEnumerable<AdvertisingDataItem> RawData { get; }
 
       /// <summary>
       /// The service data in this advertisement
       /// </summary>
+      [NotNull]
       IEnumerable<KeyValuePair<Guid, Byte[]>> ServiceData { get; }
 
       /// <summary>
       /// Select services advertised by this peripheral.
       /// </summary>
+      [NotNull]
       IEnumerable<Guid> Services { get; }
 
       /// <summary>

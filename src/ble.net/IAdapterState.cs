@@ -5,6 +5,7 @@
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
 using System;
+using System.ComponentModel;
 
 namespace nexus.protocols.ble
 {
@@ -25,5 +26,28 @@ namespace nexus.protocols.ble
       /// <see cref="IAdapterControl.DisableAdapter" />.
       /// </summary>
       new IDisposable Subscribe( IObserver<EnabledDisabledState> observer );
+   }
+
+   /// <summary>
+   /// Extension methods for <see cref="IAdapterState" />
+   /// </summary>
+   [EditorBrowsable( EditorBrowsableState.Never )]
+   public static class IAdapterStateExtensions
+   {
+      /// <summary>
+      /// <c>true</c> if <c>state.Value == EnabledDisabledState.Disabled || state.Value == EnabledDisabledState.Disabling</c>
+      /// </summary>
+      public static Boolean IsDisabledOrDisabling( this IAdapterState state )
+      {
+         return state.Value == EnabledDisabledState.Disabled || state.Value == EnabledDisabledState.Disabling;
+      }
+
+      /// <summary>
+      /// <c>true</c> if <c>state.Value == EnabledDisabledState.Enabled || state.Value == EnabledDisabledState.Enabling</c>
+      /// </summary>
+      public static Boolean IsEnabledOrEnabling( this IAdapterState state )
+      {
+         return state.Value == EnabledDisabledState.Enabled || state.Value == EnabledDisabledState.Enabling;
+      }
    }
 }

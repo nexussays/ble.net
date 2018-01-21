@@ -4,7 +4,7 @@
     "ble.net": "1.0.0-beta0009",
     "ble.net-uwp": "1.0.0-beta0009",
     "Microsoft.NETCore.UniversalWindowsPlatform": "5.4.0",
-    "nexus.core": "0.30.0",
+    "nexus.core": "0.31.0",
     "Xamarin.Forms": "2.3.4.231"
   },
   "frameworks": {

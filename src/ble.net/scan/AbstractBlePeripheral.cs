@@ -5,12 +5,17 @@
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
 using System;
+using System.ComponentModel;
 using nexus.core;
 using nexus.protocols.ble.scan.advertisement;
 
 namespace nexus.protocols.ble.scan
 {
    /// <inheritDoc />
+   /// <summary>
+   /// Base class for platform implementations
+   /// </summary>
+   [EditorBrowsable(EditorBrowsableState.Never)]
    public abstract class AbstractBlePeripheral : IBlePeripheral
    {
       /// <summary>

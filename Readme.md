@@ -16,23 +16,24 @@ You can make multiple simultaneous BLE requests on Android without worrying that
 
 ### 1. Install NuGet packages
 
-Install the `ble.net (API)` package in your (PCL/NetStandard) shared library
-```powershell
-Install-Package ble.net -Version 1.0.0-beta0009 
+#### In your .Net Standard or PCL or Shared project
+
+Install the `ble.net (API)` package.
+```
+dotnet add package ble.net --version 1.0.0-beta0010
 ```
 
-If you are making a library or are implementing support for a new platform, you are done.
+#### In your Android or iOS or Windows (UWP) project
 
-If you are making an app, then install the relevant package in each platform project:
-
-```powershell
-Install-Package ble.net-android -Version 1.0.0-beta0009 
+Install the relevant platform package.
 ```
-```powershell
-Install-Package ble.net-ios -Version 1.0.0-beta0009 
+dotnet add package ble.net-android --version 1.0.0-beta0010
 ```
-```powershell
-Install-Package ble.net-uwp -Version 1.0.0-beta0009 
+```
+dotnet add package ble.net-ios --version 1.0.0-beta0010
+```
+```
+dotnet add package ble.net-uwp --version 1.0.0-beta0010
 ```
 
 ### 2. Add relevant app permissions
@@ -44,22 +45,16 @@ Install-Package ble.net-uwp -Version 1.0.0-beta0009
 [assembly: UsesPermission( Manifest.Permission.BluetoothAdmin )]
 ```
 
-> If you are having issues discovering devices when scanning, try adding coarse location permissions.
+> If you are having issues discovering devices when scanning, try adding coarse location permissions. Android has inconsistent behavior across devices and adding this permission sometimes helps.
 > ```csharp
 > [assembly: UsesPermission( Manifest.Permission.AccessCoarseLocation )]
 > ```
+> Note also that this is a ["dangerous" permission](https://developer.android.com/guide/topics/permissions/requesting.html#normal-dangerous) in API 23+, so if you are targeting Android 6.0 or higher you will need to request this permission from the user at runtime.
+
 
 #### iOS
 
-Add a description string to display to the user indicating you want to use Bluetooth.
-
-```xml
-<!-- Info.plist -->
-<key>NSBluetoothPeripheralUsageDescription</key>
-<string>[MyAppNameHere] would like to use bluetooth.</string>
-```
-
-If you want to connect to peripherals in the background, add the [`bluetooth-central`](https://developer.apple.com/library/content/documentation/NetworkingInternetWeb/Conceptual/CoreBluetooth_concepts/CoreBluetoothBackgroundProcessingForIOSApps/PerformingTasksWhileYourAppIsInTheBackground.html#//apple_ref/doc/uid/TP40013257-CH7-SW6) background mode.
+If you want to use BLE in the background, add the [`bluetooth-central`](https://developer.apple.com/library/content/documentation/NetworkingInternetWeb/Conceptual/CoreBluetooth_concepts/CoreBluetoothBackgroundProcessingForIOSApps/PerformingTasksWhileYourAppIsInTheBackground.html#//apple_ref/doc/uid/TP40013257-CH7-SW6) background mode, as well as the [NSBluetoothPeripheralUsageDescription](https://developer.apple.com/library/content/documentation/General/Reference/InfoPlistKeyReference/Articles/CocoaKeys.html#//apple_ref/doc/uid/TP40009251-SW20) string which is displayed to the user indicating you want to use Bluetooth in the background.
 
 ```xml
 <!-- Info.plist -->
@@ -67,6 +62,8 @@ If you want to connect to peripherals in the background, add the [`bluetooth-cen
 <array>
    <string>bluetooth-central</string>
 </array>
+<key>NSBluetoothPeripheralUsageDescription</key>
+<string>[MyAppNameHere] would like to use bluetooth.</string>
 ```
 
 #### UWP
@@ -80,16 +77,14 @@ If you want to connect to peripherals in the background, add the [`bluetooth-cen
 
 ### 3. Obtain a reference to `BluetoothLowEnergyAdapter`
 
-Each platform project has a static method `BluetoothLowEnergyAdapter.ObtainDefaultAdapter()` with various overloads. Obtain this reference and then provide it to your application code using your dependency injector, or manual reference passing, or a singleton, or whatever strategy you are using in your project.
-
-Examples:
-* [Android Xamarin.Forms](src/ble.net.sampleapp-android/MyApplication.cs#L108)
-* [iOS Xamarin.Forms](src/ble.net.sampleapp-ios/MyApplication.cs#L59)
-* [UWP Xamarin.Forms](src/ble.net.sampleapp-uwp/MainPage.xaml.cs#L12)
+Each platform project has a static method `BluetoothLowEnergyAdapter.ObtainDefaultAdapter()` which you call from your platform project and provide to your application code using whatever strategy you prefer (dependency injection, manual reference passing, a singleton, etc). See the sample Xamarin Forms app for an example:
+* [Android Xamarin.Forms](src/ble.net.sampleapp-android/MyApplication.cs#L108) example
+* [iOS Xamarin.Forms](src/ble.net.sampleapp-ios/MyApplication.cs#L59) example
+* [UWP Xamarin.Forms](src/ble.net.sampleapp-uwp/MainPage.xaml.cs#L12) example
 
 #### Android-specific setup
 
-If you want `IBluetoothLowEnergyAdapter.State.DisableAdapter()` and `EnableAdapter()` to work, in your main `Activity`:
+If you want `IBluetoothLowEnergyAdapter.CurrentState.DisableAdapter()` and `EnableAdapter()` to work, in your main `Activity`:
 ```csharp
 protected override void OnCreate( Bundle bundle )
 {
@@ -99,7 +94,7 @@ protected override void OnCreate( Bundle bundle )
 }
 ```
 
-If you want `IBluetoothLowEnergyAdapter.State.Subscribe()` to work, in your calling `Activity`:
+If you want `IBluetoothLowEnergyAdapter.CurrentState.Subscribe()` to work, in your calling `Activity`:
 ```csharp
 protected sealed override void OnActivityResult( Int32 requestCode, Result resultCode, Intent data )
 {
@@ -111,9 +106,9 @@ protected sealed override void OnActivityResult( Int32 requestCode, Result resul
 
 > See [sample Xamarin Forms app](/src/ble.net.sampleapp/) included in the repo for a complete app example.
 
-All the examples presume you have some `adapter` passed in as per the setup notes above:
+All the examples presume you have obtained the `IBluetoothLowEnergyAdapter` as per the setup notes above, e.g.:
 ```csharp
-IBluetoothLowEnergyAdapter adapter = /* platform-provided adapter from BluetoothLowEnergyAdapter.ObtainDefaultAdapter()*/;
+IBluetoothLowEnergyAdapter ble = /* platform-provided adapter from BluetoothLowEnergyAdapter.ObtainDefaultAdapter()*/;
 ```
 
 ### Control the Bluetooth Adapter on the device
@@ -123,22 +118,22 @@ IBluetoothLowEnergyAdapter adapter = /* platform-provided adapter from Bluetooth
 > There are corresponding methods to disable the adapter.
 
 ```csharp
-if(adapter.AdapterCanBeEnabled && adapter.CurrentState.Value == EnabledDisabledState.Disabled) {
-   await adapter.EnableAdapter();
+if(ble.AdapterCanBeEnabled && ble.CurrentState.IsDisabledOrDisabling()) {
+   await ble.EnableAdapter();
 }
 ```
 
-#### See/Watch Adapter Status
+#### See & Observe Adapter Status
 
 ```csharp
-Debug.WriteLine(adapter.CurrentState.Value); // EnabledDisabledState.Enabled
-adapter.CurrentState.Subscribe( state => Debug.WriteLine("New State: {0}", state) );
+ble.CurrentState.Value; // e.g.: EnabledDisabledState.Enabled
+ble.CurrentState.Subscribe( state => Debug.WriteLine("New State: {0}", state) );
 ```
 
 ### Scan for broadcast advertisements
 
 ```csharp
-await adapter.ScanForBroadcasts(
+await ble.ScanForBroadcasts(
    // Optional scan filter to ensure that the
    // observer will only receive peripherals
    // that pass the filter. If you want to scan
@@ -190,7 +185,7 @@ new ScanFilter()
 
 If you just want to connect to a specific device, you can do so without manually scanning:
 ```csharp
-var connection = await adapter.FindAndConnectToDevice(
+var connection = await ble.FindAndConnectToDevice(
    new ScanFilter()
       .SetAdvertisedDeviceName( "foo" )
       .SetAdvertisedManufacturerCompanyId( 0xffff )
@@ -200,7 +195,7 @@ var connection = await adapter.FindAndConnectToDevice(
 
 If you have already scanned and discovered a peripheral you want to connect to:
 ```csharp
-var connection = await adapter.ConnectToDevice(
+var connection = await ble.ConnectToDevice(
    // The IBlePeripheral to connect to
    peripheral,
    // TimeSpan or CancellationToken to stop the
@@ -225,22 +220,27 @@ else
 }
 ```
 
-### Get descriptions for GATT GUIDs
+### Get and store descriptions for GATT GUIDs
 
 You can provide information for the GUIDs representing services, characteristics, and descriptors with `KnownAttributes`.
 
 ```csharp
 var known = new KnownAttributes();
-// You can include attributes that have
-// been adopted by the Bluetooth SIG.
+
+// You can add descriptions for any desired
+// characteristics, services, and descriptors
+known.AddService( myGuid1, "foo" );
+known.AddCharacteristic( myGuid2, "bar" );
+known.AddDescriptor( myGuid3, "baz" );
+
+// There are shortcuts to add all the attributes
+// that have been adopted by the Bluetooth SIG
 known.AddAdoptedServices();
 known.AddAdoptedCharacteristics();
 known.AddAdoptedDescriptors();
-// You can add descriptions for attributes
-// that aren't officially adopted.
-known.AddService( guid1, "foo" );
-known.AddCharacteristic( guid2, "bar" );
-known.AddDescriptor( guid3, "baz" );
+// You can also create a new KnownAttributes with all
+// the above adopted attributes already populated:
+known = KnownAttributes.CreateWithAdoptedAttributes();
 ```
 
 ### Enumerate all services on the GATT Server
@@ -248,7 +248,7 @@ known.AddDescriptor( guid3, "baz" );
 ```csharp
 foreach(var guid in await gattServer.ListAllServices())
 {
-   Debug.WriteLine( $"service: {guid} \"{known.Get(guid)?.Description}\"" );
+   Debug.WriteLine( $"service: {known.GetDescriptionOrGuid(guid)}" );
 }
 ```
 
@@ -258,7 +258,7 @@ foreach(var guid in await gattServer.ListAllServices())
 Debug.WriteLine( $"service: {serviceGuid}" );
 foreach(var guid in await gattServer.ListServiceCharacteristics( serviceGuid ))
 {
-   Debug.WriteLine( $"characteristic: {guid} \"{known.Get(guid)?.Description}\"" );
+   Debug.WriteLine( $"characteristic: {known.GetDescriptionOrGuid(guid)}" );
 }
 ```
 
@@ -321,7 +321,7 @@ catch(GattException ex)
 
 ### Do a bunch of things
 
-> If you've used the native BLE APIs on Android or iOS, hopefully you appreciate the simplicity here :)
+> If you've used the native BLE APIs on Android or iOS, hopefully you really appreciate the simplicity here :)
 
 ```csharp
 try
@@ -344,8 +344,8 @@ try
                service2, char4, new Byte[]{/* bytes */}
             ),
          } );
-   // Our read will have executed first, so we will
-   // have the value prior to the write.
+   // Even though we await it after the write calls, the read will have
+   // executed prior to the write calls since it was dispatched first
    return await read;
 }
 catch(GattException ex)

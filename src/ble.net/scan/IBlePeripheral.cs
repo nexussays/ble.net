@@ -15,9 +15,12 @@ namespace nexus.protocols.ble.scan
    public interface IBlePeripheral : IEquatable<IBlePeripheral>
    {
       /// <summary>
-      /// The <see cref="IBlePeripheral" />'s 6-byte MAC address, or an empty byte array if the address is unavailable or not
-      /// provided on the platform (e.g., iOS). If you want to re-discover this <see cref="IBlePeripheral" />, see
-      /// <see cref="DeviceId" />.
+      /// The (6-byte) MAC address of this peripheral, or an empty byte array if the address is unavailable or not
+      /// provided on the platform (e.g., iOS).
+      /// <remarks>
+      /// If you want to re-discover a previously discovered <see cref="IBlePeripheral" />, use <see cref="DeviceId" />
+      /// instead.
+      /// </remarks>
       /// </summary>
       Byte[ /*6*/] Address { get; }
 
@@ -38,14 +41,14 @@ namespace nexus.protocols.ble.scan
       /// A unique identifier for this <see cref="IBlePeripheral" /> that can be used to discover it again.
       /// </summary>
       /// <remarks>
-      /// Note that this value can be inconsistent between platforms (iOS, for example provides random IDs that are unique to the
-      /// given iPhone/iPad/etc), so you cannot share <see cref="DeviceId" /> between iOS and Android/UWP
-      /// app to discover the same <see cref="IBlePeripheral" />.
+      /// Note that this value is inconsistent between platforms (iOS, for example, provides random IDs that are unique to the
+      /// given iPhone/iPad/etc that is doing the scanning), so you cannot share <see cref="DeviceId" /> between iOS and
+      /// Android/UWP to discover the same <see cref="IBlePeripheral" />.
       /// </remarks>
       Guid DeviceId { get; }
 
       /// <summary>
-      /// Received signal strenth indicator, in decibels
+      /// Received signal strenth indicator, in dBm
       /// </summary>
       Int32 Rssi { get; }
    }

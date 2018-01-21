@@ -194,4 +194,19 @@ namespace nexus.protocols.ble.gatt.adopted
          return result;
       }
    }
+
+   /// <summary>
+   /// Extension methods for <see cref="KnownAttributes" />
+   /// </summary>
+   public static class KnownAttributesExtensions
+   {
+      /// <summary>
+      /// Returns the description of the known GUID value if it is known, else the GUID formatted according to
+      /// <paramref name="guidFormatString" />
+      /// </summary>
+      public static String GetDescriptionOrGuid( this KnownAttributes known, Guid id, String guidFormatString = null )
+      {
+         return known.Get( id )?.Description ?? id.ToString( guidFormatString );
+      }
+   }
 }
