@@ -51,10 +51,13 @@ dotnet add package ble.net-uwp --version 1.0.0-beta0011
 > ```
 > Note also that this is a ["dangerous" permission](https://developer.android.com/guide/topics/permissions/requesting.html#normal-dangerous) in API 23+, so if you are targeting Android 6.0 or higher you will need to request this permission from the user at runtime.
 
-
 #### iOS
 
-If you want to use BLE in the background, add the [`bluetooth-central`](https://developer.apple.com/library/content/documentation/NetworkingInternetWeb/Conceptual/CoreBluetooth_concepts/CoreBluetoothBackgroundProcessingForIOSApps/PerformingTasksWhileYourAppIsInTheBackground.html#//apple_ref/doc/uid/TP40013257-CH7-SW6) background mode, as well as the [NSBluetoothPeripheralUsageDescription](https://developer.apple.com/library/content/documentation/General/Reference/InfoPlistKeyReference/Articles/CocoaKeys.html#//apple_ref/doc/uid/TP40009251-SW20) string which is displayed to the user indicating you want to use Bluetooth in the background.
+If you are only using BLE in the foreground, when your app is active, you don't need to do any further setup for iOS. 
+
+If you need to use BLE in the background:
+1. Add [bluetooth-central](https://developer.apple.com/library/content/documentation/NetworkingInternetWeb/Conceptual/CoreBluetooth_concepts/CoreBluetoothBackgroundProcessingForIOSApps/PerformingTasksWhileYourAppIsInTheBackground.html#//apple_ref/doc/uid/TP40013257-CH7-SW6) to background modes
+2. Add a string value for key [NSBluetoothPeripheralUsageDescription](https://developer.apple.com/library/content/documentation/General/Reference/InfoPlistKeyReference/Articles/CocoaKeys.html#//apple_ref/doc/uid/TP40009251-SW20). iOS will display this value in a permission dialog box that the user must approve.
 
 ```xml
 <!-- Info.plist -->
@@ -75,16 +78,11 @@ If you want to use BLE in the background, add the [`bluetooth-central`](https://
 </Capabilities>
 ```
 
-### 3. Obtain a reference to `BluetoothLowEnergyAdapter`
+### 3. Initialize `BluetoothLowEnergyAdapter` (Android-only)
 
-Each platform project has a static method `BluetoothLowEnergyAdapter.ObtainDefaultAdapter()` which you call from your platform project and provide to your application code using whatever strategy you prefer (dependency injection, manual reference passing, a singleton, etc). See the sample Xamarin Forms app for an example:
-* [Android Xamarin.Forms](src/ble.net.sampleapp-android/MyApplication.cs#L108) example
-* [iOS Xamarin.Forms](src/ble.net.sampleapp-ios/MyApplication.cs#L59) example
-* [UWP Xamarin.Forms](src/ble.net.sampleapp-uwp/MainPage.xaml.cs#L12) example
+> There is no initialization needed for iOS or UWP.
 
-#### Android-specific setup
-
-If you want `IBluetoothLowEnergyAdapter.CurrentState.DisableAdapter()` and `EnableAdapter()` to work, in your main `Activity`:
+If you want `IBluetoothLowEnergyAdapter.DisableAdapter()` and `IBluetoothLowEnergyAdapter.EnableAdapter()` to work, then in your main `Activity` add:
 ```csharp
 protected override void OnCreate( Bundle bundle )
 {
@@ -94,7 +92,7 @@ protected override void OnCreate( Bundle bundle )
 }
 ```
 
-If you want `IBluetoothLowEnergyAdapter.CurrentState.Subscribe()` to work, in your calling `Activity`:
+If you want `IBluetoothLowEnergyAdapter.CurrentState.Subscribe()` to work, then in your calling `Activity` add:
 ```csharp
 protected sealed override void OnActivityResult( Int32 requestCode, Result resultCode, Intent data )
 {
@@ -102,9 +100,18 @@ protected sealed override void OnActivityResult( Int32 requestCode, Result resul
 }
 ```
 
+### 4. Obtain a reference to `BluetoothLowEnergyAdapter`
+
+Each platform project has a static method `BluetoothLowEnergyAdapter.ObtainDefaultAdapter()` which you call from your platform project and provide to your application code using whatever strategy you prefer (dependency injection, manual reference passing, a singleton or service locator, etc).
+
+See the sample Xamarin Forms app for real-life examples:
+* [Android Xamarin.Forms](src/ble.net.sampleapp-android/MyApplication.cs#L108) example
+* [iOS Xamarin.Forms](src/ble.net.sampleapp-ios/MyApplication.cs#L59) example
+* [UWP Xamarin.Forms](src/ble.net.sampleapp-uwp/MainPage.xaml.cs#L12) example
+
 ## API
 
-> See [sample Xamarin Forms app](/src/ble.net.sampleapp/) included in the repo for a complete app example.
+> See [sample Xamarin Forms app](/src/ble.net.sampleapp/) included in the repo for further examples of how to integrate BLE.net into an app.
 
 All the examples presume you have obtained the `IBluetoothLowEnergyAdapter` as per the setup notes above, e.g.:
 ```csharp
