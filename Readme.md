@@ -232,7 +232,7 @@ new ScanFilter()
 }
 ```
 
-#### Settings antenna power when scanning
+#### Setting antenna power when scanning
 
 > Currently, this is only applicable to Android; it has no effect on other platforms.
 
@@ -280,7 +280,8 @@ else
 }
 ```
 
-If you just want to connect to a specific device, you can do so without manually scanning:
+#### Connect to a specific device without manually scanning
+
 ```csharp
 var connection = await ble.FindAndConnectToDevice(
    new ScanFilter()
