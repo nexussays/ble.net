@@ -14,6 +14,7 @@ using Acr.UserDialogs;
 using ble.net.sampleapp.util;
 using nexus.core.logging;
 using nexus.protocols.ble;
+using nexus.protocols.ble.scan;
 using Xamarin.Forms;
 
 namespace ble.net.sampleapp.viewmodel
@@ -72,9 +73,19 @@ namespace ble.net.sampleapp.viewmodel
             } );
 
          await m_bleAdapter.ScanForBroadcasts(
-            // NOTE: You can provide a scan filter to look for particular devices. See Readme.md for more information
+            // NOTE:
+            //
+            // You can provide a scan filter to look for particular devices. See Readme.md for more information
             // e.g.:
             //    new ScanFilter().SetAdvertisedManufacturerCompanyId( 224 /*Google*/ ),
+            //
+            // You can also specify additional scan settings like the amount of power to direct to the Bluetooth antenna:
+            // e.g.:
+            //    new ScanSettings()
+            //    {
+            //       Mode = ScanMode.LowPower,
+            //       Filter = new ScanFilter().SetAdvertisedManufacturerCompanyId( 224 /*Google*/ )
+            //    },
             peripheral =>
             {
                Device.BeginInvokeOnMainThread(

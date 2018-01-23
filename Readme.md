@@ -4,13 +4,57 @@
 
 `ble.net` is a Bluetooth Low Energy (aka BLE, aka Bluetooth LE, aka Bluetooth Smart) cross-platform library to enable simple development of BLE clients on Android, iOS, and UWP/Windows.
 
+> Note: Currently UWP only supports listening for broadcasts/advertisements, not connecting to devices. The UWP BLE API is... proving difficult.
+
 It provides a consistent API across all supported platforms and hides many of the poor API decisions of each respective platform.
 
 You can make multiple simultaneous BLE requests on Android without worrying that some calls will silently fail. You can simply `await` all your calls without dealing with the book-keeping of an event-based system. If you know which characteristics and services you wish to interact with, then you can just read/write to them without having to query down into the device's attribute heirarchy and retain references to these characteristics and services. And so on, and so on...
 
-> Note: Currently UWP only supports listening for broadcasts/advertisements, not connecting to devices. The UWP BLE API is... proving difficult.
-
 ### [These projects are using BLE.net](https://github.com/nexussays/ble.net/wiki/Showcase)
+
+### Quick example
+
+This is a quick overview of the API and usage; continue reading below for setup instructions and more comprehensive examples.
+
+> If you've used the native BLE APIs on Android or iOS or UWP, hopefully you appreciate the simplicity here :)
+
+```csharp
+var connection = await ble.FindAndConnectToDevice(
+      new ScanFilter().AddAdvertisedService( service ),
+      TimeSpan.FromSeconds( 30 )
+   );
+if(connection.IsSuccessful())
+{
+   using(var gattServer = connection.GattServer)
+   try
+   {
+      var read = gattServer.ReadCharacteristicValue( service, char1 );
+      await Task.WhenAll( new Task[]
+      {
+         gattServer.WriteCharacteristicValue(
+            service, char1, new Byte[]{/* bytes */}
+         ),
+         gattServer.WriteCharacteristicValue(
+            service, char2, new Byte[]{/* bytes */}
+         ),
+         gattServer.WriteCharacteristicValue(
+            service2, char3, new Byte[]{/* bytes */}
+         ),
+         gattServer.WriteCharacteristicValue(
+            service2, char4, new Byte[]{/* bytes */}
+         ),
+      } );
+      // Even though we await "read" after awaiting the write calls, the read was
+      // dispatched first and so will have executed prior to the write calls
+      originalValue = await read;
+   }
+   catch(GattException ex)
+   {
+      Debug.WriteLine( ex.ToString() );
+   }
+   // we wrapped gattServer in a using statement so it will be disconnected and disposed now
+}
+```
 
 ## Getting Started
 
@@ -20,20 +64,20 @@ You can make multiple simultaneous BLE requests on Android without worrying that
 
 Install the `ble.net (API)` package.
 ```
-dotnet add package ble.net --version 1.0.0-beta0011
+dotnet add package ble.net --version 1.0.0-beta0012
 ```
 
 #### In your Android or iOS or Windows (UWP) project
 
 Install the relevant platform package.
 ```
-dotnet add package ble.net-android --version 1.0.0-beta0011
+dotnet add package ble.net-android --version 1.0.0-beta0012
 ```
 ```
-dotnet add package ble.net-ios --version 1.0.0-beta0011
+dotnet add package ble.net-ios --version 1.0.0-beta0012
 ```
 ```
-dotnet add package ble.net-uwp --version 1.0.0-beta0011
+dotnet add package ble.net-uwp --version 1.0.0-beta0012
 ```
 
 ### 2. Add relevant app permissions
@@ -137,7 +181,7 @@ ble.CurrentState.Value; // e.g.: EnabledDisabledState.Enabled
 ble.CurrentState.Subscribe( state => Debug.WriteLine("New State: {0}", state) );
 ```
 
-### Scan for broadcast advertisements
+### Scan for advertisements being broadcast by nearby BLE peripherals
 
 ```csharp
 await ble.ScanForBroadcasts(
@@ -188,19 +232,28 @@ new ScanFilter()
 }
 ```
 
-### Connect to a BLE device
+#### Settings antenna power when scanning
 
-If you just want to connect to a specific device, you can do so without manually scanning:
+> Currently, this is only applicable to Android; it has no effect on other platforms.
+
 ```csharp
-var connection = await ble.FindAndConnectToDevice(
-   new ScanFilter()
-      .SetAdvertisedDeviceName( "foo" )
-      .SetAdvertisedManufacturerCompanyId( 0xffff )
-      .AddAdvertisedService( guid ),
-   TimeSpan.FromSeconds( 30 ) );
+await ble.ScanForBroadcasts(
+   new ScanSettings()
+   {
+      Mode = ScanMode.HighPower
+      // or
+      //Mode = ScanMode.LowPower,
+      // if not provided, defaults to
+      //Mode = ScanMode.Balanced
+      Filter = // You can add your filter here as well
+   },
+   ( IBlePeripheral peripheral ) => { /* ... */ }
+);
 ```
 
-If you have already scanned and discovered a peripheral you want to connect to:
+### Connect to a BLE device
+
+If you have already scanned for and discovered a peripheral and you now want to connect to it:
 ```csharp
 var connection = await ble.ConnectToDevice(
    // The IBlePeripheral to connect to
@@ -227,6 +280,20 @@ else
 }
 ```
 
+If you just want to connect to a specific device, you can do so without manually scanning:
+```csharp
+var connection = await ble.FindAndConnectToDevice(
+   new ScanFilter()
+      .SetAdvertisedDeviceName( "foo" )
+      .SetAdvertisedManufacturerCompanyId( 0xffff )
+      .AddAdvertisedService( guid ),
+   TimeSpan.FromSeconds( 30 ) );
+if(connection.IsSuccessful())
+{
+   // ...
+}
+```
+
 ### Get and store descriptions for GATT GUIDs
 
 You can provide information for the GUIDs representing services, characteristics, and descriptors with `KnownAttributes`.
@@ -236,9 +303,9 @@ var known = new KnownAttributes();
 
 // You can add descriptions for any desired
 // characteristics, services, and descriptors
-known.AddService( myGuid1, "foo" );
-known.AddCharacteristic( myGuid2, "bar" );
-known.AddDescriptor( myGuid3, "baz" );
+known.AddService( myGuid1, "Foo" );
+known.AddCharacteristic( myGuid2, "Bar" );
+known.AddDescriptor( myGuid3, "Baz" );
 
 // There are shortcuts to add all the attributes
 // that have been adopted by the Bluetooth SIG
@@ -319,41 +386,6 @@ try
       someServiceGuid,
       someCharacteristicGuid,
       new byte[]{ 1, 2, 3 } );
-}
-catch(GattException ex)
-{
-   Debug.WriteLine( ex.ToString() );
-}
-```
-
-### Do a bunch of things
-
-> If you've used the native BLE APIs on Android or iOS, hopefully you really appreciate the simplicity here :)
-
-```csharp
-try
-{
-   var read = gattServer.ReadCharacteristicValue( service, char1 );
-   await
-      Task.WhenAll(
-         new Task[]
-         {
-            gattServer.WriteCharacteristicValue(
-               service, char1, new Byte[]{/* bytes */}
-            ),
-            gattServer.WriteCharacteristicValue(
-               service, char2, new Byte[]{/* bytes */}
-            ),
-            gattServer.WriteCharacteristicValue(
-               service2, char3, new Byte[]{/* bytes */}
-            ),
-            gattServer.WriteCharacteristicValue(
-               service2, char4, new Byte[]{/* bytes */}
-            ),
-         } );
-   // Even though we await it after the write calls, the read will have
-   // executed prior to the write calls since it was dispatched first
-   return await read;
 }
 catch(GattException ex)
 {

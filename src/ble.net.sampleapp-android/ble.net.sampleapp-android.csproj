@@ -73,10 +73,10 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="ble.net, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\lib\packages\ble.net.1.0.0-beta0011\lib\portable45-net45+win8\ble.net.dll</HintPath>
+      <HintPath>..\..\lib\packages\ble.net.1.0.0-beta0012\lib\portable45-net45+win8\ble.net.dll</HintPath>
     </Reference>
     <Reference Include="ble.net-android21, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\lib\packages\ble.net-android.1.0.0-beta0011\lib\MonoAndroid50\ble.net-android21.dll</HintPath>
+      <HintPath>..\..\lib\packages\ble.net-android.1.0.0-beta0012\lib\MonoAndroid50\ble.net-android21.dll</HintPath>
     </Reference>
     <Reference Include="FormsViewGroup, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\lib\packages\Xamarin.Forms.2.3.4.231\lib\MonoAndroid10\FormsViewGroup.dll</HintPath>
