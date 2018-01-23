@@ -16,7 +16,8 @@ namespace nexus.protocols.ble.scan
    public enum ScanMode
    {
       /// <summary>
-      /// Scan using a balance between power usage and scan latency. Scan results are returned at a rate that provides a good trade-off between scan frequency and power consumption. 
+      /// Scan using a balance between power usage and scan latency. Scan results are returned at a rate that provides a good
+      /// trade-off between scan frequency and power consumption.
       /// </summary>
       Balanced = 0,
 
@@ -27,7 +28,7 @@ namespace nexus.protocols.ble.scan
       HighPower,
 
       /// <summary>
-      /// Scan using less power but slightly higher latency
+      /// Scan using less power but with slightly higher latency
       /// </summary>
       LowPower
    }

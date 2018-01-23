@@ -209,25 +209,28 @@ namespace nexus.protocols.ble
       }
 
       /// <summary>
-      /// Attempt to connect to the first device that passes <paramref name="filter" />, and continue the attempt until
+      /// Attempt to connect to the first device that passes the filter of <paramref name="settings" />, and continue the attempt
+      /// until
       /// cancellation token is triggered.
       /// </summary>
       public static async Task<BlePeripheralConnectionRequest> FindAndConnectToDevice(
-         [NotNull] this IBluetoothLowEnergyAdapter adapter, [NotNull] IScanFilter filter, CancellationToken ct,
+         [NotNull] this IBluetoothLowEnergyAdapter adapter, ScanSettings settings, CancellationToken ct,
          IProgress<ConnectionProgress> progress = null )
       {
-         if(filter == null)
+         if(settings.Filter == null)
          {
-            throw new ArgumentNullException( nameof(filter) );
+            throw new ArgumentNullException(
+               nameof(settings),
+               "Scan settings must have a non-null ScanFilter when calling FindAndConnectToDevice" );
          }
 
          var cts = CancellationTokenSource.CreateLinkedTokenSource( ct );
          progress?.Report( ConnectionProgress.SearchingForDevice );
-         var device = adapter.DiscoveredPeripherals.FirstOrDefault( p => filter.Passes( p.Advertisement ) );
+         var device = adapter.DiscoveredPeripherals.FirstOrDefault( p => settings.Filter.Passes( p.Advertisement ) );
          if(device == null)
          {
             await adapter.ScanForBroadcasts(
-               filter,
+               settings,
                Observer.Create(
                   (Action<IBlePeripheral>)(p =>
                   {
@@ -249,33 +252,37 @@ namespace nexus.protocols.ble
       /// <paramref name="timeout" /> has elapsed.
       /// </summary>
       public static Task<BlePeripheralConnectionRequest> FindAndConnectToDevice(
-         [NotNull] this IBluetoothLowEnergyAdapter adapter, [NotNull] IScanFilter filter, TimeSpan timeout,
+         [NotNull] this IBluetoothLowEnergyAdapter adapter, ScanSettings settings, TimeSpan timeout,
          IProgress<ConnectionProgress> progress = null )
       {
-         return FindAndConnectToDevice( adapter, filter, new CancellationTokenSource( timeout ).Token, progress );
+         return FindAndConnectToDevice( adapter, settings, new CancellationTokenSource( timeout ).Token, progress );
       }
 
       /// <summary>
-      /// Scan for nearby BLE device advertisements. Stop scanning after <paramref name="timeout" />
+      /// Attempt to connect to the first device that passes <paramref name="filter" />, and continue the attempt until
+      /// cancellation token is triggered.
       /// </summary>
-      /// <param name="adapter">The adapter to use for scanning</param>
-      /// <param name="advertisementDiscovered">Callback to notify for each discovered advertisement</param>
-      /// <param name="timeout">
-      /// cancel scan after this length of time. If <c>null</c>, stop scanning after
-      /// <see cref="BluetoothLowEnergyUtils.DefaultScanTimeout" />
-      /// </param>
-      public static Task ScanForBroadcasts( [NotNull] this IBluetoothLowEnergyAdapter adapter,
-                                            IObserver<IBlePeripheral> advertisementDiscovered,
-                                            TimeSpan? timeout = null )
+      public static Task<BlePeripheralConnectionRequest> FindAndConnectToDevice(
+         [NotNull] this IBluetoothLowEnergyAdapter adapter, [NotNull] IScanFilter filter, CancellationToken ct,
+         IProgress<ConnectionProgress> progress = null )
       {
-         if(adapter == null)
+         if(filter == null)
          {
-            throw new ArgumentNullException( nameof(adapter) );
+            throw new ArgumentNullException( nameof(filter) );
          }
 
-         return adapter.ScanForBroadcasts(
-            advertisementDiscovered,
-            new CancellationTokenSource( timeout ?? BluetoothLowEnergyUtils.DefaultScanTimeout ).Token );
+         return FindAndConnectToDevice( adapter, new ScanSettings {Filter = filter}, ct, progress );
+      }
+
+      /// <summary>
+      /// Attempt to connect to the first device that passes <paramref name="filter" />, and continue the attempt until
+      /// <paramref name="timeout" /> has elapsed.
+      /// </summary>
+      public static Task<BlePeripheralConnectionRequest> FindAndConnectToDevice(
+         [NotNull] this IBluetoothLowEnergyAdapter adapter, [NotNull] IScanFilter filter, TimeSpan timeout,
+         IProgress<ConnectionProgress> progress = null )
+      {
+         return FindAndConnectToDevice( adapter, new ScanSettings {Filter = filter}, timeout, progress );
       }
 
       /// <summary>
@@ -305,6 +312,29 @@ namespace nexus.protocols.ble
       /// <see cref="BluetoothLowEnergyUtils.DefaultScanTimeout" />
       /// </param>
       public static Task ScanForBroadcasts( [NotNull] this IBluetoothLowEnergyAdapter adapter,
+                                            IObserver<IBlePeripheral> advertisementDiscovered,
+                                            TimeSpan? timeout = null )
+      {
+         if(adapter == null)
+         {
+            throw new ArgumentNullException( nameof(adapter) );
+         }
+
+         return adapter.ScanForBroadcasts(
+            advertisementDiscovered,
+            new CancellationTokenSource( timeout ?? BluetoothLowEnergyUtils.DefaultScanTimeout ).Token );
+      }
+
+      /// <summary>
+      /// Scan for nearby BLE device advertisements. Stop scanning after <paramref name="timeout" />
+      /// </summary>
+      /// <param name="adapter">The adapter to use for scanning</param>
+      /// <param name="advertisementDiscovered">Callback to notify for each discovered advertisement</param>
+      /// <param name="timeout">
+      /// cancel scan after this length of time. If <c>null</c>, stop scanning after
+      /// <see cref="BluetoothLowEnergyUtils.DefaultScanTimeout" />
+      /// </param>
+      public static Task ScanForBroadcasts( [NotNull] this IBluetoothLowEnergyAdapter adapter,
                                             Action<IBlePeripheral> advertisementDiscovered, TimeSpan? timeout = null )
       {
          if(adapter == null)
@@ -313,6 +343,82 @@ namespace nexus.protocols.ble
          }
 
          return ScanForBroadcasts( adapter, Observer.Create( advertisementDiscovered ), timeout );
+      }
+
+      /// <summary>
+      /// Scan for nearby BLE device advertisements. Stop scanning when <paramref name="ct" /> is cancelled.
+      /// </summary>
+      /// <param name="adapter">The adapter to use for scanning</param>
+      /// <param name="scanSettings">
+      /// Scan settings to configure scan mode and filter out certain advertisements, see:
+      /// <see cref="ScanFilter" />
+      /// </param>
+      /// <param name="advertisementDiscovered">Callback to notify for each discovered advertisement</param>
+      /// <param name="ct">Scan until this token is cancelled</param>
+      public static Task ScanForBroadcasts( [NotNull] this IBluetoothLowEnergyAdapter adapter,
+                                            ScanSettings scanSettings, Action<IBlePeripheral> advertisementDiscovered,
+                                            CancellationToken ct )
+      {
+         if(adapter == null)
+         {
+            throw new ArgumentNullException( nameof(adapter) );
+         }
+
+         return adapter.ScanForBroadcasts( scanSettings, Observer.Create( advertisementDiscovered ), ct );
+      }
+
+      /// <summary>
+      /// Scan for nearby BLE device advertisements. Stop scanning when <paramref name="ct" /> is cancelled.
+      /// </summary>
+      /// <param name="adapter">The adapter to use for scanning</param>
+      /// <param name="scanSettings">
+      /// Scan settings to configure scan mode and filter out certain advertisements, see:
+      /// <see cref="ScanFilter" />
+      /// </param>
+      /// <param name="advertisementDiscovered">Callback to notify for each discovered advertisement</param>
+      /// <param name="timeout">
+      /// cancel scan after this length of time. If <c>null</c>, stop scanning after
+      /// <see cref="BluetoothLowEnergyUtils.DefaultScanTimeout" />
+      /// </param>
+      public static Task ScanForBroadcasts( [NotNull] this IBluetoothLowEnergyAdapter adapter,
+                                            ScanSettings scanSettings,
+                                            IObserver<IBlePeripheral> advertisementDiscovered,
+                                            TimeSpan? timeout = null )
+      {
+         if(adapter == null)
+         {
+            throw new ArgumentNullException( nameof(adapter) );
+         }
+
+         return adapter.ScanForBroadcasts(
+            scanSettings,
+            advertisementDiscovered,
+            new CancellationTokenSource( timeout ?? BluetoothLowEnergyUtils.DefaultScanTimeout ).Token );
+      }
+
+      /// <summary>
+      /// Scan for nearby BLE device advertisements. Stop scanning when <paramref name="ct" /> is cancelled.
+      /// </summary>
+      /// <param name="adapter">The adapter to use for scanning</param>
+      /// <param name="scanSettings">
+      /// Scan settings to configure scan mode and filter out certain advertisements, see:
+      /// <see cref="ScanFilter" />
+      /// </param>
+      /// <param name="advertisementDiscovered">Callback to notify for each discovered advertisement</param>
+      /// <param name="timeout">
+      /// cancel scan after this length of time. If <c>null</c>, stop scanning after
+      /// <see cref="BluetoothLowEnergyUtils.DefaultScanTimeout" />
+      /// </param>
+      public static Task ScanForBroadcasts( [NotNull] this IBluetoothLowEnergyAdapter adapter,
+                                            ScanSettings scanSettings, Action<IBlePeripheral> advertisementDiscovered,
+                                            TimeSpan? timeout = null )
+      {
+         if(adapter == null)
+         {
+            throw new ArgumentNullException( nameof(adapter) );
+         }
+
+         return adapter.ScanForBroadcasts( scanSettings, Observer.Create( advertisementDiscovered ), timeout );
       }
 
       /// <summary>
@@ -334,6 +440,27 @@ namespace nexus.protocols.ble
          }
 
          return adapter.ScanForBroadcasts( new ScanSettings {Filter = filter}, advertisementDiscovered, ct );
+      }
+
+      /// <summary>
+      /// Scan for nearby BLE device advertisements that match <paramref name="filter" />.
+      /// </summary>
+      /// <param name="adapter">The adapter to use for scanning</param>
+      /// <param name="advertisementDiscovered">Callback to notify for each discovered advertisement</param>
+      /// <param name="filter">
+      /// Scan filter that will ignore broadcast advertisements that do not match.
+      /// <see cref="ScanFilter" />
+      /// </param>
+      /// <param name="ct">Scan will run continuously until this token is cancelled</param>
+      public static Task ScanForBroadcasts( [NotNull] this IBluetoothLowEnergyAdapter adapter, IScanFilter filter,
+                                            Action<IBlePeripheral> advertisementDiscovered, CancellationToken ct )
+      {
+         if(adapter == null)
+         {
+            throw new ArgumentNullException( nameof(adapter) );
+         }
+
+         return ScanForBroadcasts( adapter, filter, Observer.Create( advertisementDiscovered ), ct );
       }
 
       /// <summary>
@@ -359,7 +486,8 @@ namespace nexus.protocols.ble
             throw new ArgumentNullException( nameof(adapter) );
          }
 
-         return adapter.ScanForBroadcasts(
+         return ScanForBroadcasts(
+            adapter,
             filter,
             advertisementDiscovered,
             new CancellationTokenSource( timeout ?? BluetoothLowEnergyUtils.DefaultScanTimeout ).Token );
