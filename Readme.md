@@ -64,20 +64,20 @@ if(connection.IsSuccessful())
 
 Install the `ble.net (API)` package.
 ```
-dotnet add package ble.net --version 1.0.0-beta0012
+dotnet add package ble.net
 ```
 
 #### In your Android or iOS or Windows (UWP) project
 
 Install the relevant platform package.
 ```
-dotnet add package ble.net-android --version 1.0.0-beta0012
+dotnet add package ble.net-android
 ```
 ```
-dotnet add package ble.net-ios --version 1.0.0-beta0012
+dotnet add package ble.net-ios
 ```
 ```
-dotnet add package ble.net-uwp --version 1.0.0-beta0012
+dotnet add package ble.net-uwp
 ```
 
 ### 2. Add relevant app permissions
