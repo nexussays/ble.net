@@ -12,7 +12,7 @@ using ble.net.sampleapp.viewmodel;
 using nexus.core.logging;
 using nexus.protocols.ble;
 using Xamarin.Forms;
-
+using Device = Xamarin.Forms.Device;
 #if RELEASE
 using Microsoft.Azure.Mobile;
 using Microsoft.Azure.Mobile.Analytics;
@@ -65,12 +65,6 @@ namespace ble.net.sampleapp
       protected override void OnStart()
       {
          base.OnStart();
-#if RELEASE
-         MobileCenter.Start(
-            "ios=6b6689d5-0d94-476a-a632-81145dde8706;android=56864a4d-0dc3-4ab8-819b-bb5d412ba595",
-            typeof(Analytics),
-            typeof(Crashes) );
-#endif
          if(Device.RuntimePlatform == Device.Windows)
          {
             Device.StartTimer(
