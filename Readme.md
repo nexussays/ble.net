@@ -10,6 +10,14 @@ It provides a consistent API across all supported platforms and hides many of th
 
 You can make multiple simultaneous BLE requests on Android without worrying that some calls will silently fail. You can simply `await` all your calls without dealing with the book-keeping of an event-based system. If you know which characteristics and services you wish to interact with, then you can just read/write to them without having to query down into the device's attribute heirarchy and retain references to these characteristics and services. And so on, and so on...
 
+## Platform Support
+
+|Platform|Version|
+| ------------------- | :------------------: |
+|Xamarin.iOS|iOS 7+|
+|Xamarin.Android|API 18+|
+|Windows 10 UWP|1511+|
+
 *[These projects are using BLE.net](https://github.com/nexussays/ble.net/wiki/Showcase)*
 
 ## Quick example
