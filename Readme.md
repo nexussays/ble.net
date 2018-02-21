@@ -10,9 +10,9 @@ It provides a consistent API across all supported platforms and hides many of th
 
 You can make multiple simultaneous BLE requests on Android without worrying that some calls will silently fail. You can simply `await` all your calls without dealing with the book-keeping of an event-based system. If you know which characteristics and services you wish to interact with, then you can just read/write to them without having to query down into the device's attribute heirarchy and retain references to these characteristics and services. And so on, and so on...
 
-### [These projects are using BLE.net](https://github.com/nexussays/ble.net/wiki/Showcase)
+*[These projects are using BLE.net](https://github.com/nexussays/ble.net/wiki/Showcase)*
 
-### Quick example
+## Quick example
 
 This is a quick overview of the API and usage; continue reading below for setup instructions and more comprehensive examples.
 
@@ -178,6 +178,7 @@ if(ble.AdapterCanBeEnabled && ble.CurrentState.IsDisabledOrDisabling()) {
 
 ```csharp
 ble.CurrentState.Value; // e.g.: EnabledDisabledState.Enabled
+// The adapter implements IObservable<EnabledDisabledState> so you can subscribe to its state
 ble.CurrentState.Subscribe( state => Debug.WriteLine("New State: {0}", state) );
 ```
 
@@ -316,6 +317,20 @@ known.AddAdoptedDescriptors();
 // You can also create a new KnownAttributes with all
 // the above adopted attributes already populated:
 known = KnownAttributes.CreateWithAdoptedAttributes();
+```
+
+### See & Observe server connection Status
+
+```csharp
+gattServer.State; // e.g. ConnectionState.Connected
+// the server implements IObservable<ConnectionState> so you can subscribe to its state
+gattServer.Subscribe( state =>
+{
+   if(state == ConnectionState.Disconnected)
+   {
+      Debug.WriteLine("Connection Lost");
+   }
+} );
 ```
 
 ### Enumerate all services on the GATT Server
