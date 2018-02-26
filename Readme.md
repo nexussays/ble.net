@@ -4,9 +4,7 @@
 
 `ble.net` is a Bluetooth Low Energy (aka BLE, aka Bluetooth LE, aka Bluetooth Smart) cross-platform library to enable simple development of BLE clients on Android, iOS, and UWP/Windows.
 
-It provides a consistent API across all supported platforms and hides many of the poor API decisions of each respective platform.
-
-You can make multiple simultaneous BLE requests on Android without worrying that some calls will silently fail. You can simply `await` all your calls without dealing with the book-keeping of an event-based system. If you know which characteristics and services you wish to interact with, then you can just read/write to them without having to query down into the device's attribute heirarchy and retain references to these characteristics and services. And so on, and so on...
+It provides a consistent API across all supported platforms and hides most of the problems and poor API decisions of the native BLE APIs. (Seriously, **every** OS has an absolutely horrible BLE API. I do not understand it.)
 
 *[These projects are using BLE.net](https://github.com/nexussays/ble.net/wiki/Showcase)*
 
@@ -23,8 +21,6 @@ You can make multiple simultaneous BLE requests on Android without worrying that
 ## Quick example
 
 This is a quick overview of the API and usage; continue reading below for setup instructions and more comprehensive examples.
-
-> If you've used the native BLE APIs on Android or iOS or UWP, hopefully you appreciate the simplicity here :)
 
 ```csharp
 var connection = await ble.FindAndConnectToDevice(
@@ -47,10 +43,7 @@ if(connection.IsSuccessful())
          ),
          gattServer.WriteCharacteristicValue(
             service2, char3, new Byte[]{/* bytes */}
-         ),
-         gattServer.WriteCharacteristicValue(
-            service2, char4, new Byte[]{/* bytes */}
-         ),
+         )
       } );
       // Even though we await "read" after awaiting the write calls, the read was
       // dispatched first and so will have executed prior to the write calls
