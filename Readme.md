@@ -16,7 +16,7 @@ It provides a consistent API across all supported platforms and hides most of th
 |Xamarin.Android|API 18+|
 |Windows 10 UWP|1511+|
 
-> Note: Currently UWP only supports listening for broadcasts/advertisements, not connecting to devices. The UWP BLE API is... proving difficult.
+> Note: Currently UWP only supports listening for broadcasts/advertisements, not connecting to devices.
 
 ## Quick example
 
@@ -29,9 +29,9 @@ var connection = await ble.FindAndConnectToDevice(
    );
 if(connection.IsSuccessful())
 {
-   using(var gattServer = connection.GattServer)
    try
    {
+      var gattServer = connection.GattServer;
       var read = gattServer.ReadCharacteristicValue( service, char1 );
       await Task.WhenAll( new Task[]
       {
@@ -53,7 +53,11 @@ if(connection.IsSuccessful())
    {
       Debug.WriteLine( ex.ToString() );
    }
-   // we wrapped gattServer in a using statement so it will be disconnected and disposed now
+   finally
+   {
+     // The device will stay connected until you call Disconnect or the connection is lost through some external means.
+     await connection.GattServer.Disconnect();
+   }
 }
 ```
 
@@ -98,7 +102,7 @@ dotnet add package ble.net-uwp
 
 #### iOS
 
-If you are only using BLE in the foreground, when your app is active, you don't need to do any further setup for iOS. 
+If you are only using BLE in the foreground, when your app is active, you don't need to do any further setup for iOS.
 
 If you need to use BLE in the background:
 1. Add [bluetooth-central](https://developer.apple.com/library/content/documentation/NetworkingInternetWeb/Conceptual/CoreBluetooth_concepts/CoreBluetoothBackgroundProcessingForIOSApps/PerformingTasksWhileYourAppIsInTheBackground.html#//apple_ref/doc/uid/TP40013257-CH7-SW6) to background modes
@@ -272,7 +276,7 @@ var connection = await ble.ConnectToDevice(
 if(connection.IsSuccessful())
 {
    var gattServer = connection.GattServer;
-   // do things with gattServer here... (see later examples...)
+   // ... do things with gattServer here... (see later examples...)
 }
 else
 {
@@ -282,8 +286,15 @@ else
 }
 ```
 
+Be sure to disconnect when you are done:
+
+```csharp
+await gattServer.Disconnect();
+```
+
 #### Connect to a specific device without manually scanning
 
+In use-cases where you are not scanning for advertisements but rather looking to connect to a specific, known, device:
 ```csharp
 var connection = await ble.FindAndConnectToDevice(
    new ScanFilter()
@@ -295,6 +306,20 @@ if(connection.IsSuccessful())
 {
    // ...
 }
+```
+
+### See & Observe server connection Status
+
+```csharp
+Debug.WriteLine(gattServer.State); // e.g. ConnectionState.Connected
+// the server implements IObservable<ConnectionState> so you can subscribe to its state
+gattServer.Subscribe( state =>
+{
+   if(state == ConnectionState.Disconnected)
+   {
+      Debug.WriteLine("Connection Lost");
+   }
+} );
 ```
 
 ### Get and store descriptions for GATT GUIDs
@@ -309,29 +334,27 @@ var known = new KnownAttributes();
 known.AddService( myGuid1, "Foo" );
 known.AddCharacteristic( myGuid2, "Bar" );
 known.AddDescriptor( myGuid3, "Baz" );
+```
 
-// There are shortcuts to add all the attributes
-// that have been adopted by the Bluetooth SIG
+There are shortcuts to add all the attributes that have been adopted by the Bluetooth SIG.
+
+```csharp
 known.AddAdoptedServices();
 known.AddAdoptedCharacteristics();
 known.AddAdoptedDescriptors();
-// You can also create a new KnownAttributes with all
-// the above adopted attributes already populated:
+```
+
+You can also create a new KnownAttributes with all the above adopted attributes already populated:
+
+```csharp
 known = KnownAttributes.CreateWithAdoptedAttributes();
 ```
 
-### See & Observe server connection Status
+Then use it as a lookup as needed.
 
 ```csharp
-gattServer.State; // e.g. ConnectionState.Connected
-// the server implements IObservable<ConnectionState> so you can subscribe to its state
-gattServer.Subscribe( state =>
-{
-   if(state == ConnectionState.Disconnected)
-   {
-      Debug.WriteLine("Connection Lost");
-   }
-} );
+known.Get(guid);
+known.GetDescriptionOrGuid(guid);
 ```
 
 ### Enumerate all services on the GATT Server
@@ -369,14 +392,14 @@ catch(GattException ex)
 ### Listen for notifications on a characteristic
 
 ```csharp
-IDisposable notifier;
+IDisposable notifyHandler;
 
 try
 {
    // Will also stop listening when gattServer
    // is disconnected, so if that is acceptable,
    // you don't need to store this disposable.
-   notifier = gattServer.NotifyCharacteristicValue(
+   notifyHandler = gattServer.NotifyCharacteristicValue(
       someServiceGuid,
       someCharacteristicGuid,
       // IObserver<Tuple<Guid, Byte[]>> or IObserver<Byte[]> or
@@ -389,7 +412,7 @@ catch(GattException ex)
 }
 
 // ... later, once done listening for notifications ...
-notifier.Dispose();
+notifyHandler.Dispose();
 ```
 
 ### Write to a characteristic
