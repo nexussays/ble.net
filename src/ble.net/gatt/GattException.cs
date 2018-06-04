@@ -9,9 +9,9 @@ using System;
 namespace nexus.protocols.ble.gatt
 {
    /// <summary>
-   /// An exception at the GATT layer (includes errors as a result of disconnection from a device)
+   /// An exception at the GATT layer (includes errors as a result of disconnection from a device, <see cref="GattServerConnectionLostException"/>)
    /// </summary>
-   public sealed class GattException : Exception
+   public class GattException : Exception
    {
       /// <inheritdoc />
       public GattException( String message, Exception inner = null )

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 
@@ -12,7 +12,7 @@ namespace nexus.protocols.ble
    public static class RegisteredCompanyIds
    {
       private static readonly Regex s_stripCorpTerms =
-         new Regex( @"\s*,?\s*\.?([Ll][Ll][Cc]|Pty Ltd|Ltd|LTD|Inc|INC|Corp|AG|AB|GmbH|SAS)\.?\s*$" );
+         new Regex( @"\s*,?\s*\.?([Ll][Ll][Cc]|Pty Ltd|[Ll][Tt][Dd]|[Ii][Nn][Cc]|Corp|AG|AB|GmbH|SAS)\.?\s*$" );
       private static readonly Regex s_stripNee = new Regex( @"\s*\(formerly[^)]+\)\s*$" );
       private static readonly IDictionary<UInt16, String> s_values = new Dictionary<UInt16, String>
       {
@@ -1373,7 +1373,7 @@ namespace nexus.protocols.ble
       public static IEnumerable<KeyValuePair<UInt16, String>> All => s_values;
 
       /// <summary>
-      /// Return the name of the company registered for this identifier, with corporate nomenclature like "Inc." stripping out
+      /// Return the name of the company registered for this identifier, with corporate nomenclature like "Inc." stripped out
       /// </summary>
       public static String GetCommonName( UInt16? companyId )
       {

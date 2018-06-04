@@ -30,7 +30,7 @@ namespace nexus.protocols.ble
       public ConnectionResult ConnectionResult { get; }
 
       /// <summary>
-      /// The remote GATT server or null, if the connection was unsuccessful
+      /// The remote GATT server or <c>null</c>, if the connection was unsuccessful
       /// </summary>
       public IBleGattServerConnection GattServer { get; }
    }
