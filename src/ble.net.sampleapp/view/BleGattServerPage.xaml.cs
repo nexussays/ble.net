@@ -24,7 +24,7 @@ namespace ble.net.sampleapp.view
 
       protected override Boolean OnBackButtonPressed()
       {
-         ((BleGattServerViewModel)BindingContext).CloseConnection();
+         ((BleGattServerViewModel)BindingContext).DisconnectFromDeviceCommand.Execute( null );
          return base.OnBackButtonPressed();
       }
 

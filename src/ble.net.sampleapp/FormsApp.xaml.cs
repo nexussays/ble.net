@@ -43,7 +43,7 @@ namespace ble.net.sampleapp
             dialogs: dialogs,
             onSelectDevice: async p =>
             {
-               bleGattServerViewModel.Update( p );
+               await bleGattServerViewModel.Update( p );
                await m_rootPage.PushAsync(
                   new BleGattServerPage(
                      model: bleGattServerViewModel,

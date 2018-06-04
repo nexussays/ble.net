@@ -57,16 +57,5 @@ namespace ble.net.sampleapp.util
          RaisePropertyChanged(propertyName);
          return true;
       }
-
-      [Conditional("DEBUG")]
-      [DebuggerStepThrough]
-      protected void VerifyPropertyName( String propertyName )
-      {
-         var type = GetType();
-         if(!String.IsNullOrEmpty(propertyName) && type.GetTypeInfo().GetDeclaredProperty(propertyName) == null)
-         {
-            throw new ArgumentException("Property not found", propertyName);
-         }
-      }
    }
 }

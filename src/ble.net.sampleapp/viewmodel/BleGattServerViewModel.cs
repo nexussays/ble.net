@@ -35,7 +35,7 @@ namespace ble.net.sampleapp.viewmodel
          m_dialogManager = dialogsManager;
          m_connectionState = ConnectionState.Disconnected.ToString();
          Services = new ObservableCollection<BleGattServiceViewModel>();
-         DisconnectFromDeviceCommand = new Command( CloseConnection );
+         DisconnectFromDeviceCommand = new Command( async () => await CloseConnection() );
          ConnectToDeviceCommand = new Command( async () => await OpenConnection() );
       }
 
@@ -91,18 +91,6 @@ namespace ble.net.sampleapp.viewmodel
 
       public ObservableCollection<BleGattServiceViewModel> Services { get; }
 
-      public void CloseConnection()
-      {
-         if(m_gattServer != null)
-         {
-            Log.Trace( "Closing connection to GATT Server. state={0:g}", m_gattServer?.State );
-            m_gattServer.Dispose();
-            m_gattServer = null;
-         }
-         Services.Clear();
-         IsBusy = false;
-      }
-
       public async Task OpenConnection()
       {
          // if we're busy or have a valid connection, then no-op
@@ -112,7 +100,7 @@ namespace ble.net.sampleapp.viewmodel
             return;
          }
 
-         CloseConnection();
+         await CloseConnection();
          IsBusy = true;
 
          var connection = await m_bleAdapter.ConnectToDevice(
@@ -125,13 +113,14 @@ namespace ble.net.sampleapp.viewmodel
             Log.Debug( "Connected to device. id={0} status={1}", m_peripheral.Id, m_gattServer.State );
 
             m_gattServer.Subscribe(
-               c =>
+               async c =>
                {
                   if(c == ConnectionState.Disconnected)
                   {
                      m_dialogManager.Toast( "Device disconnected" );
-                     CloseConnection();
+                     await CloseConnection();
                   }
+
                   Connection = c.ToString();
                } );
 
@@ -145,12 +134,15 @@ namespace ble.net.sampleapp.viewmodel
                   {
                      continue;
                   }
+
                   Services.Add( new BleGattServiceViewModel( serviceId, m_gattServer, m_dialogManager ) );
                }
+
                if(Services.Count == 0)
                {
                   m_dialogManager.Toast( "No services found" );
                }
+
                Connection = m_gattServer.State.ToString();
             }
             catch(GattException ex)
@@ -172,19 +164,36 @@ namespace ble.net.sampleapp.viewmodel
             {
                errorMsg = "Error connecting to device: {0}".F( connection.ConnectionResult );
             }
+
             Log.Info( errorMsg );
             m_dialogManager.Toast( errorMsg, TimeSpan.FromSeconds( 5 ) );
          }
+
          IsBusy = false;
       }
 
-      public void Update( BlePeripheralViewModel peripheral )
+      public async Task Update( BlePeripheralViewModel peripheral )
       {
          if(m_peripheral != null && !m_peripheral.Model.Equals( peripheral.Model ))
          {
-            CloseConnection();
+            await CloseConnection();
          }
+
          m_peripheral = peripheral;
+      }
+
+      private async Task CloseConnection()
+      {
+         IsBusy = true;
+         if(m_gattServer != null)
+         {
+            Log.Trace( "Closing connection to GATT Server. state={0:g}", m_gattServer?.State );
+            await m_gattServer.Disconnect();
+            m_gattServer = null;
+         }
+
+         Services.Clear();
+         IsBusy = false;
       }
    }
 }
