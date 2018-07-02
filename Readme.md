@@ -67,6 +67,8 @@ if(connection.IsSuccessful())
 
 #### In your .Net Standard or PCL or Shared project
 
+> If you are targeting .Net Standard, add `<AssetTargetFallback>portable-net45+win8</AssetTargetFallback>` to your `.csproj`
+
 Install the `ble.net (API)` package.
 ```
 dotnet add package ble.net
