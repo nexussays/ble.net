@@ -24,7 +24,7 @@ namespace nexus.protocols.ble.scan.advertisement
       /// <summary>
       /// Convert the raw struct from the <see cref="BlePacket" /> into a typed advertisement class
       /// </summary>
-      internal static IBlePeripheral AsUndirectedAdvertisement( this AdvertisingChannelPDU pdu, Int32 rssi = 0 )
+      internal static IBlePeripheral AsUndirectedAdvertisement( this AdvertisingChannelPdu pdu, Int32 rssi = 0 )
       {
          if(pdu.Type.CanCarryPayload() && pdu.payload.Length >= 6)
          {

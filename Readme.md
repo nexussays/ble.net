@@ -10,9 +10,9 @@ It provides a consistent API across all supported platforms and hides most of th
 
 | Platform         |  Version  |
 | ---------------- | :-------: |
-| Xamarin.iOS      |  iOS 7+   |
-| Xamarin.Android  |  API 18+  |
-| Windows 10 (UWP) |  1511+    |
+| Xamarin.iOS      | iOS 8.3+  |
+| Xamarin.Android  | API 18+   |
+| Windows 10 (UWP) | 1709+     |
 
 > Note: Currently UWP only supports listening for broadcasts/advertisements, not connecting to devices.
 
@@ -71,7 +71,7 @@ Install the `ble.net (API)` package.
 dotnet add package ble.net
 ```
 
-> NOTE: BLE.net switched from a PCL (Profile7) to a .Net Standard (1.4) library in version `1.2.0`, if this causes problems please [file an issue](https://github.com/nexussays/ble.net/issues/new) and install version `1.1.1`
+> NOTE: BLE.net switched from targetting `portable-net45+win8` in version `1.1.1`, to `.netstandard1.4` in version `1.2.0`, to `.netstandard2.0` in `1.2.1` (where it will remain for the forseeable future). If you are having problems please [file an issue](https://github.com/nexussays/ble.net/issues/new)
 
 #### In your platform project(s)
 

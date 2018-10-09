@@ -14,7 +14,7 @@ namespace nexus.protocols.ble.scan.advertisement.link
    /// TODO: In-progress
    /// </summary>
    [StructLayout( LayoutKind.Sequential, Pack = 1 )]
-   internal struct AdvertisingChannelPDU
+   internal struct AdvertisingChannelPdu
    {
       /// <summary>
       /// 2 bytes

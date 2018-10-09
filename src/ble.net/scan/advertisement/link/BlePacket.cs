@@ -57,16 +57,16 @@ namespace nexus.protocols.ble.scan.advertisement.link
       /// <summary>
       /// Parse <see cref="Pdu" /> as an advertisement
       /// </summary>
-      public AdvertisingChannelPDU PduAsAdvertisement()
+      public AdvertisingChannelPdu PduAsAdvertisement()
       {
          if(!this.IsAdvertisingChannelPDU())
          {
-            return default(AdvertisingChannelPDU);
+            return default(AdvertisingChannelPdu);
          }
 
          var pdu = Pdu;
          // TODO: Can I just memory map the byte array into a AdvertisingChannelPDU struct?
-         return new AdvertisingChannelPDU {header = (UInt16)pdu.Slice( 0, 2 ).ToInt16(), payload = pdu.Slice( 3 )};
+         return new AdvertisingChannelPdu {header = (UInt16)pdu.Slice( 0, 2 ).ToInt16(), payload = pdu.Slice( 3 )};
       }
    }
 }
