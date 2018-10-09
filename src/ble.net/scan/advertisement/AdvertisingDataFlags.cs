@@ -1,4 +1,4 @@
-﻿// Copyright M. Griffie <nexus@nexussays.com>
+// Copyright M. Griffie <nexus@nexussays.com>
 // 
 // This Source Code Form is subject to the terms of the Mozilla Public
 // License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -17,26 +17,26 @@ namespace nexus.protocols.ble.scan.advertisement
       /// <summary>
       /// LE Limited Discoverable Mode.
       /// </summary>
-      LimitedDiscoverable = 1,
+      LimitedDiscoverable = 0b1,
 
       /// <summary>
       /// LE General Discoverable Mode.
       /// </summary>
-      GeneralDiscoverable = 2,
+      GeneralDiscoverable = 0b10,
 
       /// <summary>
       /// Basic Rate/Enhanced Data Rate (BR/EDR) not supported.
       /// </summary>
-      BluetoothClassicNotSupported = 4,
+      BluetoothClassicNotSupported = 0b100,
 
       /// <summary>
       /// Simultaneous Controller for both LE and Basic Rate/Enhanced Data Rate (BR/EDR).
       /// </summary>
-      DualModeControllerCapable = 8,
+      DualModeControllerCapable = 0b1000,
 
       /// <summary>
       /// Simultaneous Host for both LE and Basic Rate/Enhanced Data Rate (BR/EDR).
       /// </summary>
-      DualModeHostCapable = 16
+      DualModeHostCapable = 0b10000
    }
 }

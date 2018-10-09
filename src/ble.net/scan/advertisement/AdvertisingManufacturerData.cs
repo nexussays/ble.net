@@ -6,13 +6,15 @@
 
 using System;
 using System.ComponentModel;
+using nexus.core;
+using nexus.core.text;
 
 namespace nexus.protocols.ble.scan.advertisement
 {
    /// <summary>
    /// Manufacturer data in an advertising payload
    /// </summary>
-   public struct AdvertisingManufacturerData
+   public struct AdvertisingManufacturerData : IEquatable<AdvertisingManufacturerData>
    {
       /// <summary>
       /// </summary>
@@ -32,6 +34,33 @@ namespace nexus.protocols.ble.scan.advertisement
       /// The manufacturer data being advertised
       /// </summary>
       public Byte[] Data { get; }
+
+      /// <inheritdoc />
+      public override Boolean Equals( Object obj )
+      {
+         return !ReferenceEquals( null, obj ) && obj is AdvertisingManufacturerData data && Equals( data );
+      }
+
+      /// <inheritdoc />
+      public Boolean Equals( AdvertisingManufacturerData other )
+      {
+         return CompanyId == other.CompanyId && Data.EqualsByteArray( other.Data );
+      }
+
+      /// <inheritdoc />
+      public override Int32 GetHashCode()
+      {
+         unchecked
+         {
+            return (CompanyId.GetHashCode() * 397) ^ (Data != null ? Data.GetHashCode() : 0);
+         }
+      }
+
+      /// <inheritdoc />
+      public override String ToString()
+      {
+         return CompanyId + "=" + Data.EncodeToBase16String();
+      }
    }
 
    /// <summary>
@@ -42,11 +71,11 @@ namespace nexus.protocols.ble.scan.advertisement
    {
       /// <summary>
       /// Return the name of the company registered for <paramref name="adv.CompanyId" />
-      /// <remarks>Syntax sugar for <c>RegisteredCompanyIds.GetCommonName( adv.CompanyId )</c></remarks>
+      /// <remarks>Syntax sugar for <c>RegisteredCompanyIds.GetCommonName( adv.CompanyId ) ?? adv.CompanyId?.ToString()</c></remarks>
       /// </summary>
       public static String CompanyName( this AdvertisingManufacturerData adv )
       {
-         return RegisteredCompanyIds.GetCommonName( adv.CompanyId );
+         return RegisteredCompanyIds.GetCommonName( adv.CompanyId ) ?? adv.CompanyId?.ToString();
       }
    }
 }

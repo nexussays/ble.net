@@ -16,11 +16,10 @@ namespace nexus.protocols.ble.scan
    /// <inheritdoc cref="IScanFilter" />
    public sealed class ScanFilter : IScanFilter
    {
-      /// <summary>
-      /// Each discovered device will be provided to your observer once, and any additional broadcasts detected during this scan
-      /// will be ignored.
-      /// </summary>
-      /// <remarks>Syntax sugar for <c>new ScanFilter {IgnoreRepeatBroadcasts = true}</c></remarks>
+      [ObsoleteEx(
+         TreatAsErrorFromVersion = "2.0.0",
+         RemoveInVersion = "2.1.0",
+         ReplacementTypeOrMember = nameof(ScanSettings.UniqueBroadcastsOnly) )]
       public static readonly IScanFilter UniqueBroadcastsOnly = new ScanFilter {IgnoreRepeatBroadcasts = true};
 
       private ISet<Guid> m_advertisedServiceIsInList;
@@ -58,7 +57,6 @@ namespace nexus.protocols.ble.scan
          set { m_advertisedServiceIsInList = value == null ? new HashSet<Guid>() : new HashSet<Guid>( value ); }
       }
 
-      /// <inheritdoc />
       public Boolean IgnoreRepeatBroadcasts { get; set; }
 
       /// <summary>
@@ -67,26 +65,6 @@ namespace nexus.protocols.ble.scan
       public ScanFilter AddAdvertisedService( Guid guid )
       {
          m_advertisedServiceIsInList.Add( guid );
-         return this;
-      }
-
-      /// <summary>
-      /// Add an attribute GIUD. This will require BLE broadcasts to advertise at least one of the guids provided
-      /// </summary>
-      /// <exception cref="ArgumentNullException">If <paramref name="guid" /> is null</exception>
-      /// <exception cref="FormatException">If <paramref name="guid" /> is not properly formatted as a GUID</exception>
-      public ScanFilter AddAdvertisedService( String guid )
-      {
-         m_advertisedServiceIsInList.Add( Guid.Parse( guid ) );
-         return this;
-      }
-
-      /// <summary>
-      /// Add a reserved attribute GIUD. This will require BLE broadcasts to advertise at least one of the guids provided
-      /// </summary>
-      public ScanFilter AddAdvertisedService( UInt16 reserved )
-      {
-         m_advertisedServiceIsInList.Add( reserved.CreateGuidFromAdoptedKey() );
          return this;
       }
 
@@ -109,10 +87,10 @@ namespace nexus.protocols.ble.scan
          return this;
       }
 
-      /// <summary>
-      /// Each discovered device will be provided to your observer once, and any additional broadcasts detected during this scan
-      /// will be ignored.
-      /// </summary>
+      [ObsoleteEx(
+         Message = "IScanFilter.IgnoreRepeatBroadcasts was moved to ScanSettings.IgnoreRepeatBroadcasts",
+         TreatAsErrorFromVersion = "2.0.0",
+         RemoveInVersion = "2.1.0" )]
       public ScanFilter SetIgnoreRepeatBroadcasts( Boolean value )
       {
          IgnoreRepeatBroadcasts = value;

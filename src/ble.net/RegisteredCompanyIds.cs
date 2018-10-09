@@ -11,8 +11,8 @@ namespace nexus.protocols.ble
    /// </summary>
    public static class RegisteredCompanyIds
    {
-      private static readonly Regex s_stripCorpTerms =
-         new Regex( @"\s*,?\s*\.?([Ll][Ll][Cc]|Pty Ltd|[Ll][Tt][Dd]|[Ii][Nn][Cc]|Corp|AG|AB|GmbH|SAS)\.?\s*$" );
+      private static readonly Regex s_stripCorpTerms = new Regex(
+         @"\s*,?\s*\.?([Ll][Ll][Cc]|Pty Ltd|[Ll][Tt][Dd]|[Ii][Nn][Cc]|Corp|AG|AB|GmbH|SAS)\.?\s*$" );
       private static readonly Regex s_stripNee = new Regex( @"\s*\(formerly[^)]+\)\s*$" );
       private static readonly IDictionary<UInt16, String> s_values = new Dictionary<UInt16, String>
       {
@@ -1391,8 +1391,17 @@ namespace nexus.protocols.ble
          {
             return null;
          }
+
          s_values.TryGetValue( companyId.Value, out var result );
          return result;
+      }
+
+      /// <summary>
+      /// Return <c>true</c> if this is a company ID registered with the Bluetooth SIG
+      /// </summary>
+      public static Boolean IsRegisteredCompanyId( UInt16? companyId )
+      {
+         return companyId != null && s_values.ContainsKey( companyId.Value );
       }
    }
 }

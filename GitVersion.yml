@@ -1,0 +1,25 @@
+assembly-versioning-scheme: MajorMinorPatch
+assembly-informational-format: '{NuGetVersion}+{Sha}'
+mode: ContinuousDelivery
+branches:
+  ^(infra|bug|refactor)[/-]:
+    mode: ContinuousDeployment
+    tag: alpha
+    increment: Patch
+  features?[/-]:
+    mode: ContinuousDeployment
+    tag: alpha
+    increment: Patch
+  dev(elop)?(ment)?$:
+    mode: ContinuousDeployment
+    tag: beta
+    increment: Patch
+  rc:
+    mode: ContinuousDeployment
+    tag: rc
+    increment: Patch
+  master:
+    tag: ''
+    mode: ContinuousDelivery
+ignore:
+  sha: []

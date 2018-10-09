@@ -1,20 +1,18 @@
 <img src="http://public.nexussays.com/ble.net/logo_256x256.png" width="128" height="128" />
 
-# [ble.net](https://www.fuget.org/packages/ble.net) [![Build status](https://img.shields.io/vso/build/nexussays/ebc6aafa-2931-41dc-b030-7f1eff5a28e5/7.svg?style=flat-square)](#) [![NuGet](https://img.shields.io/nuget/vpre/ble.net.svg?style=flat-square)](https://www.nuget.org/packages/ble.net) [![MPLv2 License](https://img.shields.io/badge/license-MPLv2-blue.svg?style=flat-square)](https://www.mozilla.org/MPL/2.0/)
+# [ble.net](https://www.fuget.org/packages/ble.net) ![Build status](https://img.shields.io/vso/build/nexussays/ebc6aafa-2931-41dc-b030-7f1eff5a28e5/7.svg?style=flat-square) [![NuGet](https://img.shields.io/nuget/vpre/ble.net.svg?style=flat-square)](https://www.nuget.org/packages/ble.net) [![MPLv2 License](https://img.shields.io/badge/license-MPLv2-blue.svg?style=flat-square)](https://www.mozilla.org/MPL/2.0/)
 
-`ble.net` is a Bluetooth Low Energy (aka BLE, aka Bluetooth LE, aka Bluetooth Smart) cross-platform library to enable simple development of BLE clients on Android, iOS, and UWP/Windows.
+`ble.net` is a cross-platform Bluetooth Low Energy (aka BLE, aka Bluetooth LE, aka Bluetooth Smart) library to enable simple development of BLE clients on Android, iOS, and UWP/Windows.
 
-It provides a consistent API across all supported platforms and hides most of the problems and poor API decisions of the native BLE APIs. (Seriously, **every** OS has an absolutely horrible BLE API. I do not understand it.)
-
-*[These projects are using BLE.net](https://github.com/nexussays/ble.net/wiki/Showcase)*
+It provides a consistent API across all supported platforms and hides most of the problems and poor API decisions of the native BLE APIs.
 
 ## Platform Support
 
-|Platform|Version|
-| ------------------- | :------------------: |
-|Xamarin.iOS|iOS 7+|
-|Xamarin.Android|API 18+|
-|Windows 10 UWP|1511+|
+| Platform         |  Version  |
+| ---------------- | :-------: |
+| Xamarin.iOS      |  iOS 7+   |
+| Xamarin.Android  |  API 18+  |
+| Windows 10 (UWP) |  1511+    |
 
 > Note: Currently UWP only supports listening for broadcasts/advertisements, not connecting to devices.
 
@@ -65,25 +63,29 @@ if(connection.IsSuccessful())
 
 ### 1. Install NuGet packages
 
-#### In your .Net Standard or PCL or Shared project
-
-> If you are targeting .Net Standard, add `<AssetTargetFallback>portable-net45+win8</AssetTargetFallback>` to your `.csproj`
+#### In your shared library project
 
 Install the `ble.net (API)` package.
-```
+
+```shell
 dotnet add package ble.net
 ```
 
-#### In your Android or iOS or Windows (UWP) project
+> NOTE: BLE.net switched from a PCL (Profile7) to a .Net Standard (1.4) library in version `1.2.0`, if this causes problems please [file an issue](https://github.com/nexussays/ble.net/issues/new) and install version `1.1.1`
 
-Install the relevant platform package.
-```
+#### In your platform project(s)
+
+Install the relevant platform package. (See table at the top of the readme for supported versions.)
+
+```shell
 dotnet add package ble.net-android
 ```
-```
+
+```shell
 dotnet add package ble.net-ios
 ```
-```
+
+```shell
 dotnet add package ble.net-uwp
 ```
 
@@ -134,6 +136,7 @@ If you need to use BLE in the background:
 > There is no initialization needed for iOS or UWP.
 
 If you want `IBluetoothLowEnergyAdapter.DisableAdapter()` and `IBluetoothLowEnergyAdapter.EnableAdapter()` to work, then in your main `Activity` add:
+
 ```csharp
 protected override void OnCreate( Bundle bundle )
 {
@@ -144,6 +147,7 @@ protected override void OnCreate( Bundle bundle )
 ```
 
 If you want `IBluetoothLowEnergyAdapter.CurrentState.Subscribe()` to work, then in your calling `Activity` add:
+
 ```csharp
 protected sealed override void OnActivityResult( Int32 requestCode, Result resultCode, Intent data )
 {
@@ -156,6 +160,7 @@ protected sealed override void OnActivityResult( Int32 requestCode, Result resul
 Each platform project has a static method `BluetoothLowEnergyAdapter.ObtainDefaultAdapter()` which you call from your platform project and provide to your application code using whatever strategy you prefer (dependency injection, manual reference passing, a singleton or service locator, etc).
 
 See the sample Xamarin Forms app for real-life examples:
+
 * [Android Xamarin.Forms](src/ble.net.sampleapp-android/MyApplication.cs#L108) example
 * [iOS Xamarin.Forms](src/ble.net.sampleapp-ios/MyApplication.cs#L59) example
 * [UWP Xamarin.Forms](src/ble.net.sampleapp-uwp/MainPage.xaml.cs#L12) example
@@ -165,6 +170,7 @@ See the sample Xamarin Forms app for real-life examples:
 > See [sample Xamarin Forms app](/src/ble.net.sampleapp/) included in the repo for further examples of how to integrate BLE.net into an app.
 
 All the examples presume you have obtained the `IBluetoothLowEnergyAdapter` as per the setup notes above, e.g.:
+
 ```csharp
 IBluetoothLowEnergyAdapter ble = /* platform-provided adapter from BluetoothLowEnergyAdapter.ObtainDefaultAdapter()*/;
 ```
@@ -192,76 +198,65 @@ ble.CurrentState.Subscribe( state => Debug.WriteLine("New State: {0}", state) );
 ### Scan for advertisements being broadcast by nearby BLE peripherals
 
 ```csharp
+var cts = new CancellationTokenSource(TimeSpan.FromSeconds( 30 ));
 await ble.ScanForBroadcasts(
-   // Optional scan filter to ensure that the
-   // observer will only receive peripherals
-   // that pass the filter. If you want to scan
-   // for everything around, omit this argument.
-   new ScanFilter()
-      .SetAdvertisedDeviceName( "foobar" )
-      .SetAdvertisedManufacturerCompanyId( 76 )
-      // Discovered peripherals must advertise at-least-one
-      // of any GUIDs added by AddAdvertisedService()
-      .AddAdvertisedService( guid )
-      .SetIgnoreRepeatBroadcasts( false ),
-   // IObserver<IBlePeripheral> or Action<IBlePeripheral>
-   // will be triggered for each discovered peripheral
-   // that passes the above can filter (if provided).
+   // providing ScanSettings is optional
+   new ScanSettings()
+   {
+      // Setting the scan mode is currently only applicable to Android and has no effect on other platforms.
+      // If not provided, defaults to ScanMode.Balanced
+      Mode = ScanMode.LowPower,
+
+      // Optional scan filter to ensure that the observer will only receive peripherals
+      // that pass the filter. If you want to scan for everything around, omit the filter.
+      Filter = new ScanFilter()
+      {
+         AdvertisedDeviceName = "foobar",
+         AdvertisedManufacturerCompanyId = 76,
+         // peripherals must advertise at-least-one of any GUIDs in this list
+         AdvertisedServiceIsInList = new List<Guid>(){ someGuid },
+      },
+
+      // ignore repeated advertisements from the same device during this scan
+      IgnoreRepeatBroadcasts = false
+   },
+   // Your IObserver<IBlePeripheral> or Action<IBlePeripheral> will be triggered for each discovered
+   // peripheral based on the provided scan settings and filter (if any).
    ( IBlePeripheral peripheral ) =>
    {
-      // read the advertising data...
+      // read the advertising data
       var adv = peripheral.Advertisement;
       Debug.WriteLine( adv.DeviceName );
       Debug.WriteLine( adv.Services.Select( x => x.ToString() ).Join( "," ) );
       Debug.WriteLine( adv.ManufacturerSpecificData.FirstOrDefault().CompanyName() );
       Debug.WriteLine( adv.ServiceData );
 
-      // ...or connect to the device (see next example)...
+      // if we found what we needed, stop the scan manually
+      cts.Cancel();
+
+      // perhaps connect to the device (see next example)...
    },
-   // TimeSpan or CancellationToken to stop the scan
-   TimeSpan.FromSeconds( 30 )
-   // If you omit this argument, it will use
-   // BluetoothLowEnergyUtils.DefaultScanTimeout
+   // Provide a CancellationToken to stop the scan, or use the overload that takes a TimeSpan.
+   // If you omit this argument, the scan will timeout after BluetoothLowEnergyUtils.DefaultScanTimeout
+   cts.Token
 );
 
-// scanning has been stopped when code reached this point
+// scanning has stopped when code reached this point since the scan was awaited
 ```
 
-For the common case of ignoring duplicate advertisements (i.e., repeated advertisements from the same device), there is a static `ScanFilter.UniqueBroadcastsOnly` you can use as the scan filter.
+You can also create a `ScanFilter` using a fluent builder syntax if you prefer that:
 
-You can also create a `ScanFilter` using an object initializer if you prefer that syntax:
 ```csharp
 new ScanFilter()
-{
-   AdvertisedDeviceName = "foobar",
-   AdvertisedManufacturerCompanyId = 76,
-   AdvertisedServiceIsInList = new List<Guid>(){ guid },
-   IgnoreRepeatBroadcasts = true
-}
-```
-
-#### Setting antenna power when scanning
-
-> Currently, this is only applicable to Android; it has no effect on other platforms.
-
-```csharp
-await ble.ScanForBroadcasts(
-   new ScanSettings()
-   {
-      Mode = ScanMode.HighPower
-      // or
-      //Mode = ScanMode.LowPower,
-      // if not provided, defaults to
-      //Mode = ScanMode.Balanced
-      Filter = // You can add your filter here as well
-   },
-   ( IBlePeripheral peripheral ) => { /* ... */ }
-);
+      .SetAdvertisedDeviceName( "foobar" )
+      .SetAdvertisedManufacturerCompanyId( 76 )
+      .AddAdvertisedService( someGuid )
 ```
 
 ### Connect to a BLE device
 
 If you have already scanned for and discovered a peripheral and you now want to connect to it:
+
 ```csharp
 var connection = await ble.ConnectToDevice(
    // The IBlePeripheral to connect to
@@ -297,6 +292,7 @@ await gattServer.Disconnect();
 #### Connect to a specific device without manually scanning
 
 In use-cases where you are not scanning for advertisements but rather looking to connect to a specific, known, device:
+
 ```csharp
 var connection = await ble.FindAndConnectToDevice(
    new ScanFilter()
@@ -433,4 +429,57 @@ catch(GattException ex)
 {
    Debug.WriteLine( ex.ToString() );
 }
+```
+
+### Logging
+
+BLE.net uses a simple logging library internally. You can add a log "sink" to receive each log entry which you can then write to the console or a logging system of your choice.
+
+> Also, each platform's static `BluetoothLowEnergyAdapter.ObtainAdapter()` method has an overload that takes an `ILog`. If no log is provided the default log (`SystemLog.Instance`) is used, but you could provide your own entire logging implementation if you really wanted to.
+
+#### Add a debug log sink on Android
+
+```csharp
+var logId = Assembly.GetAssembly( GetType() ).GetName().Name;
+// ble.net will log to SystemLog.Instance unless provided a custom logger
+SystemLog.Instance.AddSink(
+   entry =>
+   {
+      var message = entry.FormatAsString();
+      switch(entry.Severity)
+      {
+         case LogLevel.Error:
+            Log.Error( logId, message );
+            break;
+         case LogLevel.Warn:
+            Log.Warn( logId, message );
+            break;
+         case LogLevel.Info:
+            Log.Info( logId, message );
+            break;
+         case LogLevel.Trace:
+         default:
+            Log.Debug( logId, message );
+            break;
+      }
+   } );
+```
+
+#### Add a console log sink on iOS
+
+```csharp
+// ble.net will log to SystemLog.Instance unless provided a custom logger
+SystemLog.Instance.AddSink(
+   entry =>
+   {
+      var message = entry.FormatAsString();
+      if(entry.Severity == LogLevel.Error)
+      {
+         Console.Error.WriteLine( message );
+      }
+      else
+      {
+         Console.Out.WriteLine( message );
+      }
+   } );
 ```

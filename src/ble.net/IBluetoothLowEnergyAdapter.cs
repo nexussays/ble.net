@@ -11,6 +11,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using nexus.core;
+using nexus.core.logging;
 using nexus.core.resharper;
 using nexus.protocols.ble.scan;
 
@@ -63,9 +64,9 @@ namespace nexus.protocols.ble
       Task ScanForBroadcasts( IObserver<IBlePeripheral> advertisementDiscovered, CancellationToken ct );
 
       /// <summary>
-      /// Scan for nearby BLE device advertisements that match <paramref name="filter" />. The devices discovered are not
-      /// guaranteed to be unique, i.e. -- each device
-      /// will likely be provided to the observer multiple times as the BLE scanner picks up advertisements.
+      /// Scan for nearby BLE device advertisements. If a filter is provided in <paramref name="scanSettings" />, then only
+      /// matching devices will be returned. The devices discovered are not guaranteed to be unique, i.e. -- each device will
+      /// likely be provided to the observer multiple times as the BLE scanner picks up advertisements.
       /// </summary>
       /// <param name="scanSettings">
       /// Scan settings to configure scan mode and filter out certain advertisements, see:
@@ -221,12 +222,13 @@ namespace nexus.protocols.ble
          {
             throw new ArgumentNullException(
                nameof(settings),
-               "Scan settings must have a non-null ScanFilter when calling FindAndConnectToDevice" );
+               $"Scan settings must have a non-null ScanFilter when calling {nameof(FindAndConnectToDevice)}" );
          }
 
          var cts = CancellationTokenSource.CreateLinkedTokenSource( ct );
          progress?.Report( ConnectionProgress.SearchingForDevice );
          var device = adapter.DiscoveredPeripherals.FirstOrDefault( p => settings.Filter.Passes( p.Advertisement ) );
+         Log.Debug( "{0}, device already found? {1}", nameof(FindAndConnectToDevice), device != null );
          if(device == null)
          {
             await adapter.ScanForBroadcasts(
@@ -242,7 +244,8 @@ namespace nexus.protocols.ble
 
          return device == null
             ? ct.IsCancellationRequested
-               ? new BlePeripheralConnectionRequest( ConnectionResult.ConnectionAttemptCancelled, null )
+               ?
+               new BlePeripheralConnectionRequest( ConnectionResult.ConnectionAttemptCancelled, null )
                : new BlePeripheralConnectionRequest( ConnectionResult.DeviceNotFound, null )
             : await adapter.ConnectToDevice( device, ct, progress ).ConfigureAwait( false );
       }

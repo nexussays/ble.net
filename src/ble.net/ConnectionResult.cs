@@ -21,7 +21,7 @@ namespace nexus.protocols.ble
       AdapterDisabled,
       /// <summary>
       /// The remote device could not be found (prior to the connection attempt stopping) likely because the device is not in
-      /// range or is not broadcasting.
+      /// range or is not broadcasting. I.e., a connection timeout.
       /// </summary>
       DeviceNotFound,
       /// <summary>

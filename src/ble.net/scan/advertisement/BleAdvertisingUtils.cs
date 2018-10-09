@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using nexus.core;
+using nexus.core.logging;
 using nexus.protocols.ble.scan.advertisement.link;
 
 namespace nexus.protocols.ble.scan.advertisement
@@ -57,7 +58,7 @@ namespace nexus.protocols.ble.scan.advertisement
       /// <remarks>You should never need to call this from client code, the BLE.net platform libraries handle it for you.</remarks>
       /// </summary>
       /// <exception cref="InvalidDataException">If the advertisement payload reports an incorrect length</exception>
-      public static IEnumerable<AdvertisingDataItem> ParseAdvertisingPayloadData( Byte[] advD )
+      public static IList<AdvertisingDataItem> ParseAdvertisingPayloadData( Byte[] advD )
       {
          var records = new List<AdvertisingDataItem>();
          var index = 0;
@@ -67,12 +68,14 @@ namespace nexus.protocols.ble.scan.advertisement
             index++;
             if(length > 0)
             {
-               if(!(advD.Length > index + length))
+               if(!(advD.Length >= index + length))
                {
-                  throw new InvalidDataException(
-                     "Advertising data specifies length {0} but only has {1} bytes remaining".F(
-                        length,
-                        advD.Length ) );
+                  Log.Warn(
+                     "BLE advertising payload incorrectly formatted: length {0} at index {1} would overflow the payload ({2} bytes total)",
+                     length,
+                     index,
+                     advD.Length );
+                  return records;
                }
 
                var type = advD[index];

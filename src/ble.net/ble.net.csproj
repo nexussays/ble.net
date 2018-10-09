@@ -1,80 +1,13 @@
-<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
-  <PropertyGroup>
-    <MinimumVisualStudioVersion>10.0</MinimumVisualStudioVersion>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{48788CDA-AD31-4D16-BA67-831D0F6897F1}</ProjectGuid>
-    <OutputType>Library</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>nexus.protocols.ble</RootNamespace>
-    <AssemblyName>ble.net</AssemblyName>
-    <DefaultLanguage>en-US</DefaultLanguage>
-    <FileAlignment>512</FileAlignment>
-    <ProjectTypeGuids>{786C830F-07A1-408B-BD7F-6EE04809D6DB};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
-    <TargetFrameworkProfile>Profile7</TargetFrameworkProfile>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
-    <DocumentationFile>$(SolutionDir)artifacts\bin\$(Configuration)\$(MSBuildProjectName)\$(Platform)\$(MSBuildProjectName).xml</DocumentationFile>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-  </PropertyGroup>
-  <ItemGroup>
-    <Compile Include="gatt\adopted\AdoptedCharacteristics.cs" />
-    <Compile Include="gatt\adopted\AdoptedDescriptors.cs" />
-    <Compile Include="gatt\adopted\AdoptedServices.cs" />
-    <Compile Include="gatt\adopted\KnownAttributes.cs" />
-    <Compile Include="gatt\GattServerConnectionLostException.cs" />
-    <Compile Include="RegisteredCompanyIds.cs" />
-    <Compile Include="gatt\BleGattUtils.cs" />
-    <Compile Include="ScanSettings.cs" />
-    <Compile Include="scan\advertisement\AdvertisingManufacturerData.cs" />
-    <Compile Include="scan\advertisement\AdvertisingDataItem.cs" />
-    <Compile Include="scan\advertisement\AdvertisingDataType.cs" />
-    <Compile Include="scan\advertisement\AdvertisingDataFlags.cs" />
-    <Compile Include="scan\advertisement\AdvertisingType.cs" />
-    <Compile Include="scan\advertisement\link\AdvertisingChannelPDU.cs" />
-    <Compile Include="scan\advertisement\BleAdvertisingUtils.cs" />
-    <Compile Include="scan\advertisement\link\BlePacket.cs" />
-    <Compile Include="scan\AbstractBlePeripheral.cs" />
-    <Compile Include="EnabledDisabledState.cs" />
-    <Compile Include="BlePeripheralConnectionRequest.cs" />
-    <Compile Include="ConnectionProgress.cs" />
-    <Compile Include="ConnectionResult.cs" />
-    <Compile Include="gatt\GattAttributeType.cs" />
-    <Compile Include="IAdapterState.cs" />
-    <Compile Include="IAdapterControl.cs" />
-    <Compile Include="gatt\IGattAttribute.cs" />
-    <Compile Include="scan\IScanFilter.cs" />
-    <Compile Include="BluetoothLowEnergyUtils.cs" />
-    <Compile Include="gatt\CharacteristicProperty.cs" />
-    <Compile Include="ConnectionState.cs" />
-    <Compile Include="gatt\GattException.cs" />
-    <Compile Include="scan\advertisement\IBleAdvertisement.cs" />
-    <Compile Include="IBluetoothLowEnergyAdapter.cs" />
-    <Compile Include="scan\IBlePeripheral.cs" />
-    <Compile Include="IBleGattServerConnection.cs" />
-    <Compile Include="scan\ScanFilter.cs" />
-    <Compile Include="scan\ScanMode.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <PackageReference Include="nexus.core">
-      <Version>0.32.0</Version>
-    </PackageReference>
-  </ItemGroup>
-  <ItemGroup />
-  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
+<Project Sdk="Microsoft.NET.Sdk">
+
+   <PropertyGroup>
+      <TargetFramework>netstandard1.4</TargetFramework>
+      <RootNamespace>nexus.protocols.ble</RootNamespace>
+      <AssemblyName>ble.net</AssemblyName>
+   </PropertyGroup>
+
+   <ItemGroup>
+      <PackageReference Include="nexus.core" Version="0.33.4" />
+   </ItemGroup>
+
 </Project>
