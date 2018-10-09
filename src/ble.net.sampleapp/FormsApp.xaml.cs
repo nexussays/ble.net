@@ -1,4 +1,4 @@
-﻿// Copyright M. Griffie <nexus@nexussays.com>
+// Copyright M. Griffie <nexus@nexussays.com>
 //
 // This Source Code Form is subject to the terms of the Mozilla Public
 // License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -65,7 +65,7 @@ namespace ble.net.sampleapp
       protected override void OnStart()
       {
          base.OnStart();
-         if(Device.RuntimePlatform == Device.Windows)
+         if(Device.RuntimePlatform == Device.UWP)
          {
             Device.StartTimer(
                TimeSpan.FromSeconds( 3 ),
