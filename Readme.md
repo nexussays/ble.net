@@ -141,7 +141,7 @@ If you want `IBluetoothLowEnergyAdapter.DisableAdapter()` and `IBluetoothLowEner
 protected override void OnCreate( Bundle bundle )
 {
    // ...
-   BluetoothLowEnergyAdapter.InitActivity( this );
+   BluetoothLowEnergyAdapter.Init( this );
    // ...
 }
 ```
